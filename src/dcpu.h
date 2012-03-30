@@ -18,9 +18,6 @@ class Dcpu {
     Word *end();
     const Word *end() const;
 
-    void ReadVideoMemory(Word *const out) const;
-    void WriteVideoMemory(Word *const begin, Word *const end);
-
   private:
     Word memory_[0x10000];
 };

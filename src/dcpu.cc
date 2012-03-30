@@ -28,11 +28,3 @@ Dcpu::Word *Dcpu::end() {
 const Dcpu::Word *Dcpu::end() const {
   return begin() + 0x10000;
 }
-
-void Dcpu::ReadVideoMemory(Dcpu::Word *const out) const {
-  std::copy(address(0x8000), address(0x8000+1000), out);
-}
-
-void Dcpu::WriteVideoMemory(Dcpu::Word *const begin, Dcpu::Word *const end) {
-  std::copy(begin, end, address(0x8000));
-}
