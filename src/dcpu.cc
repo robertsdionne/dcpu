@@ -6,11 +6,11 @@
 Dcpu::Dcpu() {}
 
 unsigned short *Dcpu::address(unsigned short address_value) {
-  return &memory_[address_value];
+  return begin() + address_value;
 }
 
 const unsigned short *Dcpu::address(unsigned short address_value) const {
-  return &memory_[address_value];
+  return begin() + address_value;
 }
 
 unsigned short *Dcpu::begin() {
