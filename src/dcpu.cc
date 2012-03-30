@@ -56,3 +56,91 @@ Dcpu::Word *Dcpu::video_memory_end() {
 const Dcpu::Word *Dcpu::video_memory_end() const {
   return address(kVideoMemoryEnd);
 }
+
+Dcpu::Word &Dcpu::register_a() {
+  return register_a_;
+}
+
+Dcpu::Word Dcpu::register_a() const {
+  return register_a_;
+}
+
+Dcpu::Word &Dcpu::register_b() {
+  return register_b_;
+}
+
+Dcpu::Word Dcpu::register_b() const {
+  return register_b_;
+}
+
+Dcpu::Word &Dcpu::register_c() {
+  return register_c_;
+}
+
+Dcpu::Word Dcpu::register_c() const {
+  return register_c_;
+}
+
+Dcpu::Word &Dcpu::register_x() {
+  return register_x_;
+}
+
+Dcpu::Word Dcpu::register_x() const {
+  return register_x_;
+}
+
+Dcpu::Word &Dcpu::register_y() {
+  return register_y_;
+}
+
+Dcpu::Word Dcpu::register_y() const {
+  return register_y_;
+}
+
+Dcpu::Word &Dcpu::register_z() {
+  return register_z_;
+}
+
+Dcpu::Word Dcpu::register_z() const {
+  return register_z_;
+}
+
+Dcpu::Word &Dcpu::register_i() {
+  return register_i_;
+}
+
+Dcpu::Word Dcpu::register_i() const {
+  return register_i_;
+}
+
+Dcpu::Word &Dcpu::register_j() {
+  return register_j_;
+}
+
+Dcpu::Word Dcpu::register_j() const {
+  return register_j_;
+}
+
+Dcpu::Word &Dcpu::program_counter() {
+  return program_counter_;
+}
+
+Dcpu::Word Dcpu::program_counter() const {
+  return program_counter_;
+}
+
+Dcpu::Word &Dcpu::stack_pointer() {
+  return stack_pointer_;
+}
+
+Dcpu::Word Dcpu::stack_pointer() const {
+  return stack_pointer_;
+}
+
+Dcpu::Word &Dcpu::overflow() {
+  return overflow_;
+}
+
+Dcpu::Word Dcpu::overflow() const {
+  return overflow_;
+}

@@ -131,6 +131,39 @@ class Dcpu {
     Word *video_memory_end();
     const Word *video_memory_end() const;
 
+    Word &register_a();
+    Word register_a() const;
+
+    Word &register_b();
+    Word register_b() const;
+
+    Word &register_c();
+    Word register_c() const;
+
+    Word &register_x();
+    Word register_x() const;
+
+    Word &register_y();
+    Word register_y() const;
+
+    Word &register_z();
+    Word register_z() const;
+
+    Word &register_i();
+    Word register_i() const;
+
+    Word &register_j();
+    Word register_j() const;
+
+    Word &program_counter();
+    Word program_counter() const;
+
+    Word &stack_pointer();
+    Word stack_pointer() const;
+
+    Word &overflow();
+    Word overflow() const;
+
   private:
     Word memory_[kMemorySize];
     Word register_a_;
