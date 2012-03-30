@@ -8,6 +8,17 @@ class Dcpu {
     Dcpu();
     virtual ~Dcpu() {}
 
+    unsigned short *address(unsigned short address_value);
+    const unsigned short *address(unsigned short address_value) const;
+    unsigned short *begin();
+    const unsigned short *begin() const;
+    unsigned short *end();
+    const unsigned short *end() const;
+
+    void ReadVideoMemory(unsigned short *const out) const;
+    void WriteVideoMemory(
+        unsigned short *const begin, unsigned short *const end) const;
+
   private:
     unsigned short memory_[0x10000];
 };

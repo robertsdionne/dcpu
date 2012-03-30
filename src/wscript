@@ -4,6 +4,7 @@
 def build(ctx):
   ctx.program(
       source = [
+          'dcpu.cc',
           'main.cc',
           ],
       target = '../dcpu',
