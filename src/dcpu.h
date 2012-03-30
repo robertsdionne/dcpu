@@ -17,10 +17,16 @@ class Dcpu {
 
     Word *address(const Word address_value);
     const Word *address(const Word address_value) const;
-    Word *begin();
-    const Word *begin() const;
-    Word *end();
-    const Word *end() const;
+
+    Word *memory_begin();
+    const Word *memory_begin() const;
+    Word *memory_end();
+    const Word *memory_end() const;
+
+    Word *video_memory_begin();
+    const Word *video_memory_begin() const;
+    Word *video_memory_end();
+    const Word *video_memory_end() const;
 
   private:
     Word memory_[kMemorySize];

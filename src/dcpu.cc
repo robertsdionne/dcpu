@@ -1,6 +1,5 @@
 // Copyright 2012 Robert Scott Dionne. All rights reserved.
 
-#include <algorithm>
 #include "dcpu.h"
 
 const unsigned int Dcpu::kMemorySize;
@@ -14,25 +13,41 @@ Dcpu::Dcpu()
 {}
 
 Dcpu::Word *Dcpu::address(const Dcpu::Word address_value) {
-  return begin() + address_value;
+  return memory_begin() + address_value;
 }
 
 const Dcpu::Word *Dcpu::address(const Dcpu::Word address_value) const {
-  return begin() + address_value;
+  return memory_begin() + address_value;
 }
 
-Dcpu::Word *Dcpu::begin() {
+Dcpu::Word *Dcpu::memory_begin() {
   return &memory_[0];
 }
 
-const Dcpu::Word *Dcpu::begin() const {
+const Dcpu::Word *Dcpu::memory_begin() const {
   return &memory_[0];
 }
 
-Dcpu::Word *Dcpu::end() {
-  return begin() + kMemorySize;
+Dcpu::Word *Dcpu::memory_end() {
+  return memory_begin() + kMemorySize;
 }
 
-const Dcpu::Word *Dcpu::end() const {
-  return begin() + kMemorySize;
+const Dcpu::Word *Dcpu::memory_end() const {
+  return memory_begin() + kMemorySize;
+}
+
+Dcpu::Word *Dcpu::video_memory_begin() {
+  return address(kVideoMemoryBegin);
+}
+
+const Dcpu::Word *Dcpu::video_memory_begin() const {
+  return address(kVideoMemoryBegin);
+}
+
+Dcpu::Word *Dcpu::video_memory_end() {
+  return address(kVideoMemoryEnd);
+}
+
+const Dcpu::Word *Dcpu::video_memory_end() const {
+  return address(kVideoMemoryEnd);
 }
