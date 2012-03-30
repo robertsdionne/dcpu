@@ -20,6 +20,17 @@ class Dcpu {
 
   private:
     Word memory_[0x10000];
+    Word register_a_;
+    Word register_b_;
+    Word register_c_;
+    Word register_x_;
+    Word register_y_;
+    Word register_z_;
+    Word register_i_;
+    Word register_j_;
+    Word program_counter_;
+    Word stack_pointer_;
+    Word overflow_;
 };
 
 #endif  // DCPU_DCPU_H_
