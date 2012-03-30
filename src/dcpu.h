@@ -5,22 +5,24 @@
 
 class Dcpu {
   public:
+    typedef unsigned short Word;
+
+  public:
     Dcpu();
     virtual ~Dcpu() {}
 
-    unsigned short *address(unsigned short address_value);
-    const unsigned short *address(unsigned short address_value) const;
-    unsigned short *begin();
-    const unsigned short *begin() const;
-    unsigned short *end();
-    const unsigned short *end() const;
+    Word *address(const Word address_value);
+    const Word *address(const Word address_value) const;
+    Word *begin();
+    const Word *begin() const;
+    Word *end();
+    const Word *end() const;
 
-    void ReadVideoMemory(unsigned short *const out) const;
-    void WriteVideoMemory(
-        unsigned short *const begin, unsigned short *const end) const;
+    void ReadVideoMemory(Word *const out) const;
+    void WriteVideoMemory(Word *const begin, Word *const end) const;
 
   private:
-    unsigned short memory_[0x10000];
+    Word memory_[0x10000];
 };
 
 #endif  // DCPU_DCPU_H_
