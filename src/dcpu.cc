@@ -5,6 +5,11 @@
 const unsigned int Dcpu::kMemorySize;
 const Dcpu::Word Dcpu::kVideoMemoryBegin;
 const Dcpu::Word Dcpu::kVideoMemoryEnd;
+const Dcpu::Word Dcpu::kOpcodeMask;
+const Dcpu::Word Dcpu::kOperandMaskA;
+const Dcpu::Word Dcpu::kOperandMaskB;
+const Dcpu::Word Dcpu::kOperandShiftA;
+const Dcpu::Word Dcpu::kOperandShiftB;
 
 Dcpu::Dcpu()
   : register_a_(0), register_b_(0), register_c_(0), register_x_(0),

@@ -17,6 +17,8 @@ class Dcpu {
     /**
      * Opcodes.
      */
+    static const Word kOpcodeMask = 0x000F;
+
     enum Opcode {
       kReserved = 0x0,
       kSet = 0x1,
@@ -39,6 +41,12 @@ class Dcpu {
     /**
      * Operands.
      */
+    static const Word kOperandMaskA = 0x03F0;
+    static const Word kOperandMaskB = 0xFC00;
+
+    static const Word kOperandShiftA = 0x4;
+    static const Word kOperandShiftB = 0xA;
+
     enum Operand {
       kRegisterA = 0x00,
       kRegisterB = 0x01,
