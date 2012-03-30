@@ -11,4 +11,4 @@ def configure(ctx):
   ctx.load('compiler_cxx')
 
 def build(ctx):
-  pass
+  ctx.recurse('src')
