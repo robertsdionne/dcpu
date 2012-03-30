@@ -1,8 +1,13 @@
 // Copyright 2012 Robert Scott Dionne. All rights reserved.
 
-#include <iostream>
+#include <ncurses.h>
+#include "dcpu.h"
 
 int main(int argc, char *argv[]) {
-  std::cout << "Hello, world!" << std::endl;
+  initscr();
+  printw("Hello, world!");
+  refresh();
+  getch();
+  endwin();
   return 0;
 }

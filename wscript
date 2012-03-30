@@ -9,6 +9,7 @@ def options(ctx):
 
 def configure(ctx):
   ctx.load('compiler_cxx')
+  ctx.env.LIB_NCURSES = ['ncurses']
 
 def build(ctx):
   ctx.recurse('src')
