@@ -2,4 +2,16 @@
 # encoding: utf-8
 
 def build(ctx):
-  pass
+  ctx.program(
+      source = [
+          'main.cc',
+          ],
+      target = '../dcpu',
+      includes = [
+        '.',
+        ],
+      use = [
+        ],
+      cxxflags = [
+        '-g',
+        ])

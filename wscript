@@ -12,3 +12,12 @@ def configure(ctx):
 
 def build(ctx):
   ctx.recurse('src')
+
+def run(ctx):
+  ctx.exec_command('build/dcpu')
+
+def debug(ctx):
+  ctx.exec_command('gdb build/dcpu')
+
+def valgrind(ctx):
+  ctx.exec_command('valgrind build/dcpu')
