@@ -30,10 +30,9 @@ const Dcpu::Word *Dcpu::end() const {
 }
 
 void Dcpu::ReadVideoMemory(Dcpu::Word *const out) const {
-  const Dcpu::Word *const begin = &memory_[0x8000];
-  const Dcpu::Word *const end = &memory_[0x8000+1000];
-  std::copy(begin, end, out);
+  std::copy(address(0x8000), address(0x8000+1000), out);
 }
 
-void Dcpu::WriteVideoMemory(Dcpu::Word *const begin, Dcpu::Word *const end) const {
+void Dcpu::WriteVideoMemory(Dcpu::Word *const begin, Dcpu::Word *const end) {
+  std::copy(begin, end, address(0x8000));
 }
