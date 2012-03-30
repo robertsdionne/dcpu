@@ -1,0 +1,5 @@
+build/
+.lock-waf_darwin_build
+.lock-waf_linux2_build
+*.swp
+.waf*
