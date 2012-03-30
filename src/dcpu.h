@@ -7,6 +7,10 @@ class Dcpu {
   public:
     typedef unsigned short Word;
 
+    static const unsigned int kMemorySize = 0x10000;
+    static const Word kVideoMemoryBegin = 0x8000;
+    static const Word kVideoMemoryEnd = 0x87D0;
+
   public:
     Dcpu();
     virtual ~Dcpu() {}
@@ -19,7 +23,7 @@ class Dcpu {
     const Word *end() const;
 
   private:
-    Word memory_[0x10000];
+    Word memory_[kMemorySize];
     Word register_a_;
     Word register_b_;
     Word register_c_;
