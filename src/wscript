@@ -2,17 +2,40 @@
 # encoding: utf-8
 
 def build(ctx):
-  ctx.program(
+  ctx.stlib(
       source = [
-          'dcpu.cc',
-          'main.cc',
-          ],
-      target = '../dcpu',
+        'dcpu.cc',
+        ],
+      target = 'dcpu',
       includes = [
         '.',
         ],
       use = [
         'NCURSES',
+        ],
+      cxxflags = [
+        '-g',
+        ])
+  ctx.objects(
+      source = [
+        'dcpu_test.cc',
+        ],
+      target = 'dcpu_tests',
+      includes = [
+        '../lib/gtest-1.6.0/include',
+        '.',
+        ],
+      use = [
+        'dcpu',
+        'gtest',
+        ])
+  ctx.program(
+      source = [
+        'main.cc',
+        ],
+      target = '../dcpu',
+      use = [
+        'dcpu',
         ],
       cxxflags = [
         '-g',
