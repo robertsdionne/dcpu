@@ -370,6 +370,7 @@ TEST(DcpuTest, ExecuteCycle_set_literal_with_low_literal) {
       program + sizeof(program)/sizeof(Dcpu::Word);
   std::copy(program, program_end, dcpu.memory_begin());
   dcpu.ExecuteCycle();
+  // set 0x1000, 13 should be a noop.
   EXPECT_EQ(0, *dcpu.address(0x1000));
 }
 
@@ -382,5 +383,6 @@ TEST(DcpuTest, ExecuteCycle_set_low_literal_with_low_literal) {
       program + sizeof(program)/sizeof(Dcpu::Word);
   std::copy(program, program_end, dcpu.memory_begin());
   dcpu.ExecuteCycle();
+  // set 10, 13 should be a noop.
   EXPECT_EQ(0, *dcpu.address(0xA));
 }
