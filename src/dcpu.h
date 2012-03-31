@@ -167,6 +167,8 @@ class Dcpu {
     void ExecuteCycle(const bool skip = false);
     void ExecuteCycles(const unsigned long int count);
 
+    void Reset();
+
   private:
     Word *register_address(const Word register_index);
     Word register_value(const Word register_index);

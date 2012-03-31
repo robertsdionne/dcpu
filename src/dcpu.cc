@@ -1,5 +1,6 @@
 // Copyright 2012 Robert Scott Dionne. All rights reserved.
 
+#include <algorithm>
 #include "dcpu.h"
 
 const unsigned int Dcpu::kMemorySize;
@@ -15,7 +16,9 @@ Dcpu::Dcpu()
   : register_a_(0), register_b_(0), register_c_(0), register_x_(0),
     register_y_(0), register_z_(0), register_i_(0), register_j_(0),
     program_counter_(0), stack_pointer_(0), overflow_(0)
-{}
+{
+  std::fill(memory_begin(), memory_end(), 0);
+}
 
 Dcpu::Word *Dcpu::address(const Dcpu::Word address_value) {
   return memory_begin() + address_value;
@@ -247,6 +250,16 @@ void Dcpu::ExecuteCycles(const unsigned long int count) {
   for (unsigned long int i = 0; i < count; ++i) {
     ExecuteCycle();
   }
+}
+
+void Dcpu::Reset() {
+  std::fill(memory_begin(), memory_end(), 0);
+  register_a_ = register_b_ = register_c_ = 0;
+  register_x_ = register_y_ = register_z_ = 0;
+  register_i_ = register_j_ = 0;
+  program_counter_ = 0;
+  stack_pointer_ = 0;
+  overflow_ = 0;
 }
 
 Dcpu::Word *Dcpu::register_address(const Word register_index) {
