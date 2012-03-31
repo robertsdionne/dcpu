@@ -41,8 +41,8 @@ def build(ctx):
         'src',
         ],
       use = [
-        'gtest',
         'dcpu_tests',
+        'gtest',
         ])
   ctx.recurse('src')
   ctx.add_post_fun(test)
