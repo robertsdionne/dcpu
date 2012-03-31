@@ -42,7 +42,10 @@ int main(int argc, char *argv[]) {
     printw("I: %X J: %X\n", dcpu.register_i(), dcpu.register_j());
     printw("PC: %X SP: %X O: %X\n\n",
         dcpu.program_counter(), dcpu.stack_pointer(), dcpu.overflow());
-    printw("Instruction: %X\n\n", *dcpu.address(dcpu.program_counter()));
+    printw("Instruction(s): %X %X %X\n\n",
+        *dcpu.address(dcpu.program_counter()),
+        *dcpu.address(dcpu.program_counter() + 1),
+        *dcpu.address(dcpu.program_counter() + 2));
     printw("Memory:\n");
     printw("0x1000: %X\n", *dcpu.address(0x1000));
     printw("Video Memory:\n");
