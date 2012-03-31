@@ -144,3 +144,69 @@ Dcpu::Word &Dcpu::overflow() {
 Dcpu::Word Dcpu::overflow() const {
   return overflow_;
 }
+
+void Dcpu::ExecuteCycle() {
+  const Word instruction = *address(program_counter());
+  const Word opcode = instruction & kOpcodeMask;
+  const Word operand_a = (instruction & kOperandMaskA) >> kOperandShiftA;
+  const Word operand_b = (instruction & kOperandMaskB) >> kOperandShiftB;
+  Word program_counter_delta = 0;
+  Word literal_a = 0;
+  const Word *operand_a_address = GetOperandAddressOrLiteral(
+      operand_a, program_counter_delta, literal_a);
+  Word literal_b = 0;
+  const Word *operand_b_address = GetOperandAddressOrLiteral(
+      operand_b, program_counter_delta, literal_b);
+}
+
+void Dcpu::ExecuteCycles(const unsigned long int count) {
+  for (unsigned long int i = 0; i < count; ++i) {
+    ExecuteCycle();
+  }
+}
+
+Dcpu::Word *Dcpu::register_address(const Word register_index) {
+  return &register_a_ + register_index % kLocationInRegisterA;
+}
+
+Dcpu::Word Dcpu::register_value(const Word register_index) {
+  return *register_address(register_index);
+}
+
+Dcpu::Word *Dcpu::GetOperandAddressOrLiteral(
+    const Word operand, Word &program_counter_delta, Word &literal) {
+  if (operand < kLocationInRegisterA) {
+    return register_address(operand);
+  } else if (kLocationInRegisterA <= operand
+      && operand < kLocationOffsetByRegisterA) {
+    return address(register_value(operand));
+  } else if (kLocationOffsetByRegisterA <= operand && operand < kPop) {
+    program_counter_delta += 1;
+    return address(program_counter_ + program_counter_delta)
+        + register_value(operand);
+  } else if (operand == kPop) {
+    Word *result = address(stack_pointer_);
+    stack_pointer_ += 1;
+    return result;
+  } else if (operand == kPeek) {
+    return address(stack_pointer_);
+  } else if (operand == kPush) {
+    stack_pointer_ -= 1;
+    return address(stack_pointer_);
+  } else if (operand == kStackPointer) {
+    return &stack_pointer_;
+  } else if (operand == kProgramCounter) {
+    return &program_counter_;
+  } else if (operand == kOverflow) {
+    return &overflow_;
+  } else if (operand == kLocation) {
+    program_counter_delta += 1;
+    return address(program_counter_ + program_counter_delta);
+  } else if (operand == kLiteral) {
+    literal = *address(program_counter_ + program_counter_delta);
+    return 0;
+  } else {
+    literal = operand - k0;
+    return 0;
+  }
+}

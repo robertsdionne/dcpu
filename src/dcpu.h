@@ -164,6 +164,16 @@ class Dcpu {
     Word &overflow();
     Word overflow() const;
 
+    void ExecuteCycle();
+    void ExecuteCycles(const unsigned long int count);
+
+  private:
+    Word *register_address(const Word register_index);
+    Word register_value(const Word register_index);
+
+    Word *GetOperandAddressOrLiteral(
+        const Word operand, Word &program_counter_delta, Word &literal);
+
   private:
     Word memory_[kMemorySize];
     Word register_a_;
