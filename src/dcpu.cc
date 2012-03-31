@@ -214,7 +214,7 @@ void Dcpu::ExecuteCycle(const bool skip) {
       break;
     case kShiftRight:
       result = operand_a_value >> operand_b_value;
-      overflow_ = operand_a_value & ((1 << operand_b_value) - 1);
+      overflow_ = operand_a_value << (0x10 - operand_b_value);
       MaybeAssignResult(operand_a_address, result);
       break;
     case kBinaryAnd:
