@@ -25,7 +25,7 @@ class Dcpu {
       kAdd = 0x2,
       kSubtract = 0x3,
       kMultiply = 0x4,
-      kDivde = 0x5,
+      kDivide = 0x5,
       kModulo = 0x6,
       kShiftLeft = 0x7,
       kShiftRight = 0x8,
@@ -35,7 +35,7 @@ class Dcpu {
       kIfEqual = 0xC,
       kIfNotEqual = 0xD,
       kIfGreaterThan = 0xE,
-      kIfBlank = 0xF
+      kIfBoth = 0xF
     };
 
     /**
@@ -164,15 +164,15 @@ class Dcpu {
     Word &overflow();
     Word overflow() const;
 
-    void ExecuteCycle();
+    void ExecuteCycle(const bool skip = false);
     void ExecuteCycles(const unsigned long int count);
 
   private:
     Word *register_address(const Word register_index);
     Word register_value(const Word register_index);
 
-    Word *GetOperandAddressOrLiteral(
-        const Word operand, Word &program_counter_delta, Word &literal);
+    Word *GetOperandAddressOrLiteral(const Word operand, Word &literal);
+    void MaybeAssignResult(Word *const slot, const unsigned int result);
 
   private:
     Word memory_[kMemorySize];

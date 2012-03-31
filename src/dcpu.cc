@@ -145,18 +145,102 @@ Dcpu::Word Dcpu::overflow() const {
   return overflow_;
 }
 
-void Dcpu::ExecuteCycle() {
-  const Word instruction = *address(program_counter());
+void Dcpu::ExecuteCycle(const bool skip) {
+  const Word stack_pointer_backup = stack_pointer_;
+  const Word instruction = *address(program_counter_);
+  program_counter_ += 1;
   const Word opcode = instruction & kOpcodeMask;
   const Word operand_a = (instruction & kOperandMaskA) >> kOperandShiftA;
   const Word operand_b = (instruction & kOperandMaskB) >> kOperandShiftB;
-  Word program_counter_delta = 0;
-  Word literal_a = 0;
-  const Word *operand_a_address = GetOperandAddressOrLiteral(
-      operand_a, program_counter_delta, literal_a);
-  Word literal_b = 0;
-  const Word *operand_b_address = GetOperandAddressOrLiteral(
-      operand_b, program_counter_delta, literal_b);
+  Word operand_a_literal = 0;
+  Word *const operand_a_address = GetOperandAddressOrLiteral(
+      operand_a, operand_a_literal);
+  Word operand_b_literal = 0;
+  const Word *const operand_b_address = GetOperandAddressOrLiteral(
+      operand_b, operand_b_literal);
+  const Word operand_a_value = operand_a_address ?
+      *operand_a_address : operand_a_literal;
+  const Word operand_b_value = operand_b_address ?
+      *operand_b_address : operand_b_literal;
+  if (skip) {
+    stack_pointer_ = stack_pointer_backup;
+    return;
+  }
+  unsigned int result;
+  switch (opcode) {
+    case kReserved:
+      break;
+    case kSet:
+      MaybeAssignResult(operand_a_address, operand_b_value);
+      break;
+    case kAdd:
+      result = operand_a_value + operand_b_value;
+      overflow_ = result >> 16;
+      MaybeAssignResult(operand_a_address, result);
+      break;
+    case kSubtract:
+      overflow_ = operand_a_value < operand_b_value;
+      MaybeAssignResult(operand_a_address, operand_a_value - operand_b_value);
+      break;
+    case kMultiply:
+      result = operand_a_value * operand_b_value;
+      overflow_ = result >> 16;
+      MaybeAssignResult(operand_a_address, result);
+      break;
+    case kDivide:
+      if (operand_b_value) {
+        overflow_ = 0;
+        MaybeAssignResult(operand_a_address, operand_a_value / operand_b_value);
+      } else {
+        overflow_ = 1;
+        MaybeAssignResult(operand_a_address, 0);
+      }
+      break;
+    case kModulo:
+      MaybeAssignResult(operand_a_address, operand_a_value % operand_b_value);
+      break;
+    case kShiftLeft:
+      result = operand_a_value << operand_b_value;
+      overflow_ = result >> 16;
+      MaybeAssignResult(operand_a_address, result);
+      break;
+    case kShiftRight:
+      result = operand_a_value >> operand_b_value;
+      overflow_ = operand_a_value & ((1 << operand_b_value) - 1);
+      MaybeAssignResult(operand_a_address, result);
+      break;
+    case kBinaryAnd:
+      MaybeAssignResult(operand_a_address, operand_a_value & operand_b_value);
+      break;
+    case kBinaryOr:
+      MaybeAssignResult(operand_a_address, operand_a_value | operand_b_value);
+      break;
+    case kBinaryExclusiveOr:
+      MaybeAssignResult(operand_a_address, operand_a_value ^ operand_b_value);
+      break;
+    case kIfEqual:
+      if (operand_a_value != operand_b_value) {
+        ExecuteCycle(/* skip */ true);
+      }
+      break;
+    case kIfNotEqual:
+      if (operand_a_value == operand_b_value) {
+        ExecuteCycle(/* skip */ true);
+      }
+      break;
+    case kIfGreaterThan:
+      if (operand_a_value <= operand_b_value) {
+        ExecuteCycle(/* skip */ true);
+      }
+      break;
+    case kIfBoth:
+      if (operand_a_value & operand_b_value == 0) {
+        ExecuteCycle(/* skip */ true);
+      }
+      break;
+    default:
+      break;
+  }
 }
 
 void Dcpu::ExecuteCycles(const unsigned long int count) {
@@ -174,16 +258,16 @@ Dcpu::Word Dcpu::register_value(const Word register_index) {
 }
 
 Dcpu::Word *Dcpu::GetOperandAddressOrLiteral(
-    const Word operand, Word &program_counter_delta, Word &literal) {
+    const Word operand, Word &literal) {
   if (operand < kLocationInRegisterA) {
     return register_address(operand);
   } else if (kLocationInRegisterA <= operand
       && operand < kLocationOffsetByRegisterA) {
     return address(register_value(operand));
   } else if (kLocationOffsetByRegisterA <= operand && operand < kPop) {
-    program_counter_delta += 1;
-    return address(program_counter_ + program_counter_delta)
-        + register_value(operand);
+    Word *const result = address(program_counter_) + register_value(operand);
+    program_counter_ += 1;
+    return result;
   } else if (operand == kPop) {
     Word *result = address(stack_pointer_);
     stack_pointer_ += 1;
@@ -200,13 +284,21 @@ Dcpu::Word *Dcpu::GetOperandAddressOrLiteral(
   } else if (operand == kOverflow) {
     return &overflow_;
   } else if (operand == kLocation) {
-    program_counter_delta += 1;
-    return address(program_counter_ + program_counter_delta);
+    Word *const result = address(*address(program_counter_));
+    program_counter_ += 1;
+    return result;
   } else if (operand == kLiteral) {
-    literal = *address(program_counter_ + program_counter_delta);
-    return 0;
+    Word *const result = address(program_counter_);
+    program_counter_ += 1;
+    return result;
   } else {
     literal = operand - k0;
     return 0;
+  }
+}
+
+void Dcpu::MaybeAssignResult(Word *const slot, const unsigned int result) {
+  if (slot) {
+    *slot = static_cast<Word>(result);
   }
 }
