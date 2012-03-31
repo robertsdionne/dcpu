@@ -8,7 +8,7 @@
 int main(int argc, char *argv[]) {
   Dcpu dcpu;
   initscr();
-  short program[] = {
+  Dcpu::Word program[] = {
     Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterA, Dcpu::kLiteral),
     0xBEEF,
     Dcpu::Instruct(Dcpu::kSet, Dcpu::kLocation, Dcpu::kRegisterA),
@@ -29,7 +29,8 @@ int main(int argc, char *argv[]) {
     'H', 'e', 'l', 'l', 'o', ' ', 'w', 'o', 'r', 'l', 'd', '!', '\0',
     Dcpu::Instruct(Dcpu::kSubtract, Dcpu::kProgramCounter, Dcpu::k1)
   };
-  std::copy(program, program + sizeof(program)/2, dcpu.memory_begin());
+  std::copy(program,
+      program + sizeof(program)/sizeof(Dcpu::Word), dcpu.memory_begin());
   bool quit = false;
   while (!quit) {
     move(0, 0);
