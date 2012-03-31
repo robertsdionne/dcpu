@@ -12,6 +12,11 @@ const Dcpu::Word Dcpu::kOperandMaskB;
 const Dcpu::Word Dcpu::kOperandShiftA;
 const Dcpu::Word Dcpu::kOperandShiftB;
 
+Dcpu::Word Dcpu::Instruct(const Dcpu::Word opcode,
+    const Dcpu::Word operand_a, const Dcpu::Word operand_b) {
+  return opcode | (operand_a << kOperandShiftA) | (operand_b << kOperandShiftB);
+}
+
 Dcpu::Dcpu()
   : register_a_(0), register_b_(0), register_c_(0), register_x_(0),
     register_y_(0), register_z_(0), register_i_(0), register_j_(0),
@@ -278,7 +283,8 @@ Dcpu::Word *Dcpu::GetOperandAddressOrLiteral(
       && operand < kLocationOffsetByRegisterA) {
     return address(register_value(operand));
   } else if (kLocationOffsetByRegisterA <= operand && operand < kPop) {
-    Word *const result = address(program_counter_) + register_value(operand);
+    Word *const result =
+        address(*address(program_counter_)) + register_value(operand);
     program_counter_ += 1;
     return result;
   } else if (operand == kPop) {

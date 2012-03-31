@@ -115,6 +115,9 @@ class Dcpu {
     };
 
   public:
+    static Word Instruct(
+        const Word opcode, const Word operand_a, const Word operand_b);
+
     Dcpu();
     virtual ~Dcpu() {}
 
