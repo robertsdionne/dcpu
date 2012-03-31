@@ -46,22 +46,22 @@ int main(int argc, char *argv[]) {
     printw("0x1000: %X\n", *dcpu.address(0x1000));
     printw("Video Memory:\n");
     printw("0x8000: %X %X %X %X %X %X %X %X %X %X %X %X %X %X %X %X\n\n",
-        *dcpu.address(Dcpu::kVideoMemoryBegin + 0x0),
-        *dcpu.address(Dcpu::kVideoMemoryBegin + 0x1),
-        *dcpu.address(Dcpu::kVideoMemoryBegin + 0x2),
-        *dcpu.address(Dcpu::kVideoMemoryBegin + 0x3),
-        *dcpu.address(Dcpu::kVideoMemoryBegin + 0x4),
-        *dcpu.address(Dcpu::kVideoMemoryBegin + 0x5),
-        *dcpu.address(Dcpu::kVideoMemoryBegin + 0x6),
-        *dcpu.address(Dcpu::kVideoMemoryBegin + 0x7),
-        *dcpu.address(Dcpu::kVideoMemoryBegin + 0x8),
-        *dcpu.address(Dcpu::kVideoMemoryBegin + 0x9),
-        *dcpu.address(Dcpu::kVideoMemoryBegin + 0xA),
-        *dcpu.address(Dcpu::kVideoMemoryBegin + 0xB),
-        *dcpu.address(Dcpu::kVideoMemoryBegin + 0xC),
-        *dcpu.address(Dcpu::kVideoMemoryBegin + 0xD),
-        *dcpu.address(Dcpu::kVideoMemoryBegin + 0xE),
-        *dcpu.address(Dcpu::kVideoMemoryBegin + 0xF));
+        *(dcpu.video_memory_begin() + 0x0),
+        *(dcpu.video_memory_begin() + 0x1),
+        *(dcpu.video_memory_begin() + 0x2),
+        *(dcpu.video_memory_begin() + 0x3),
+        *(dcpu.video_memory_begin() + 0x4),
+        *(dcpu.video_memory_begin() + 0x5),
+        *(dcpu.video_memory_begin() + 0x6),
+        *(dcpu.video_memory_begin() + 0x7),
+        *(dcpu.video_memory_begin() + 0x8),
+        *(dcpu.video_memory_begin() + 0x9),
+        *(dcpu.video_memory_begin() + 0xA),
+        *(dcpu.video_memory_begin() + 0xB),
+        *(dcpu.video_memory_begin() + 0xC),
+        *(dcpu.video_memory_begin() + 0xD),
+        *(dcpu.video_memory_begin() + 0xE),
+        *(dcpu.video_memory_begin() + 0xF));
     printw("Display:\n");
     for (int i = 0; i < 160; ++i) {
       char character = *(dcpu.video_memory_begin() + i);
