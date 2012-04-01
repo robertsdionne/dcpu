@@ -71,7 +71,9 @@ TEST(DcpuTest, ExecuteCycles) {
 TEST(DcpuTest, ExecuteCycle_set_register_with_register) {
   Dcpu dcpu;
   const Dcpu::Word program[] = {
+    // set b, 1
     Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterB, Dcpu::k1),
+    // set a, b
     Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterA, Dcpu::kRegisterB)
   };
   const Dcpu::Word *const program_end =
@@ -85,10 +87,13 @@ TEST(DcpuTest, ExecuteCycle_set_register_with_register) {
 TEST(DcpuTest, ExecuteCycle_set_register_with_location_in_register) {
   Dcpu dcpu;
   const Dcpu::Word program[] = {
+    // set [0x1000], 13
     Dcpu::Instruct(Dcpu::kSet, Dcpu::kLocation, Dcpu::k13),
     0x1000,
+    // set b, 0x1000
     Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterB, Dcpu::kLiteral),
     0x1000,
+    // set a, [b]
     Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterA, Dcpu::kLocationInRegisterB)
   };
   const Dcpu::Word *const program_end =
@@ -101,9 +106,12 @@ TEST(DcpuTest, ExecuteCycle_set_register_with_location_in_register) {
 TEST(DcpuTest, ExecuteCycle_set_register_with_location_offset_by_register) {
   Dcpu dcpu;
   const Dcpu::Word program[] = {
+    // set [0x100A], 13
     Dcpu::Instruct(Dcpu::kSet, Dcpu::kLocation, Dcpu::k13),
     0x100A,
+    // set b, 10
     Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterB, Dcpu::k10),
+    // set a, [0x1000+b]
     Dcpu::Instruct(
         Dcpu::kSet, Dcpu::kRegisterA, Dcpu::kLocationOffsetByRegisterB),
     0x1000
@@ -118,7 +126,9 @@ TEST(DcpuTest, ExecuteCycle_set_register_with_location_offset_by_register) {
 TEST(DcpuTest, ExecuteCycle_set_register_with_pop) {
   Dcpu dcpu;
   const Dcpu::Word program[] = {
+    // set push, 13
     Dcpu::Instruct(Dcpu::kSet, Dcpu::kPush, Dcpu::k13),
+    // set a, pop
     Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterA, Dcpu::kPop)
   };
   const Dcpu::Word *const program_end =
@@ -134,7 +144,9 @@ TEST(DcpuTest, ExecuteCycle_set_register_with_pop) {
 TEST(DcpuTest, ExecuteCycle_set_register_with_peek) {
   Dcpu dcpu;
   const Dcpu::Word program[] = {
+    // set push, 13
     Dcpu::Instruct(Dcpu::kSet, Dcpu::kPush, Dcpu::k13),
+    // set a, peek
     Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterA, Dcpu::kPeek)
   };
   const Dcpu::Word *const program_end =
@@ -150,7 +162,9 @@ TEST(DcpuTest, ExecuteCycle_set_register_with_peek) {
 TEST(DcpuTest, ExecuteCycle_set_register_with_push) {
   Dcpu dcpu;
   const Dcpu::Word program[] = {
+    // set push, 13
     Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterA, Dcpu::k13),
+    // set a, push
     Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterA, Dcpu::kPush)
   };
   const Dcpu::Word *const program_end =
@@ -166,7 +180,9 @@ TEST(DcpuTest, ExecuteCycle_set_register_with_push) {
 TEST(DcpuTest, ExecuteCycle_set_register_with_stack_pointer) {
   Dcpu dcpu;
   const Dcpu::Word program[] = {
+    // set push, 13
     Dcpu::Instruct(Dcpu::kSet, Dcpu::kPush, Dcpu::k13),
+    // set a, sp
     Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterA, Dcpu::kStackPointer)
   };
   const Dcpu::Word *const program_end =
@@ -181,7 +197,9 @@ TEST(DcpuTest, ExecuteCycle_set_register_with_stack_pointer) {
 TEST(DcpuTest, ExecuteCycle_set_register_with_program_counter) {
   Dcpu dcpu;
   const Dcpu::Word program[] = {
+    // reserved 0, 0
     Dcpu::Instruct(Dcpu::kReserved, Dcpu::k0, Dcpu::k0),
+    // set a, pc
     Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterA, Dcpu::kProgramCounter)
   };
   const Dcpu::Word *const program_end =
@@ -194,7 +212,9 @@ TEST(DcpuTest, ExecuteCycle_set_register_with_program_counter) {
 TEST(DcpuTest, ExecuteCycle_set_register_with_overflow) {
   Dcpu dcpu;
   const Dcpu::Word program[] = {
+    // set o, 13
     Dcpu::Instruct(Dcpu::kSet, Dcpu::kOverflow, Dcpu::k13),
+    // set a, o
     Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterA, Dcpu::kOverflow)
   };
   const Dcpu::Word *const program_end =
@@ -207,8 +227,10 @@ TEST(DcpuTest, ExecuteCycle_set_register_with_overflow) {
 TEST(DcpuTest, ExecuteCycle_set_register_with_location) {
   Dcpu dcpu;
   const Dcpu::Word program[] = {
+    // set [0x1000], 13
     Dcpu::Instruct(Dcpu::kSet, Dcpu::kLocation, Dcpu::k13),
     0x1000,
+    // set a, [0x1000]
     Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterA, Dcpu::kLocation),
     0x1000
   };
@@ -222,6 +244,7 @@ TEST(DcpuTest, ExecuteCycle_set_register_with_location) {
 TEST(DcpuTest, ExecuteCycle_set_register_with_high_literal) {
   Dcpu dcpu;
   const Dcpu::Word program[] = {
+    // set a, 0x1001
     Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterA, Dcpu::kLiteral),
     0x1001
   };
@@ -235,6 +258,7 @@ TEST(DcpuTest, ExecuteCycle_set_register_with_high_literal) {
 TEST(DcpuTest, ExecuteCycle_set_register_with_low_literal) {
   Dcpu dcpu;
   const Dcpu::Word program[] = {
+    // set a, 1
     Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterA, Dcpu::k1),
   };
   const Dcpu::Word *const program_end =
@@ -247,8 +271,10 @@ TEST(DcpuTest, ExecuteCycle_set_register_with_low_literal) {
 TEST(DcpuTest, ExecuteCycle_set_location_in_register_with_low_literal) {
   Dcpu dcpu;
   const Dcpu::Word program[] = {
+    // set a, 0x1000
     Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterA, Dcpu::kLiteral),
     0x1000,
+    // set [a], 13
     Dcpu::Instruct(Dcpu::kSet, Dcpu::kLocationInRegisterA, Dcpu::k13)
   };
   const Dcpu::Word *const program_end =
@@ -261,7 +287,9 @@ TEST(DcpuTest, ExecuteCycle_set_location_in_register_with_low_literal) {
 TEST(DcpuTest, ExecuteCycle_set_location_offset_by_register_with_low_literal) {
   Dcpu dcpu;
   const Dcpu::Word program[] = {
+    // set a, 10
     Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterA, Dcpu::k10),
+    // set [0x1000+a], 13
     Dcpu::Instruct(
         Dcpu::kSet, Dcpu::kLocationOffsetByRegisterA, Dcpu::k13),
     0x1000
@@ -276,7 +304,9 @@ TEST(DcpuTest, ExecuteCycle_set_location_offset_by_register_with_low_literal) {
 TEST(DcpuTest, ExecuteCycle_set_pop_with_low_literal) {
   Dcpu dcpu;
   const Dcpu::Word program[] = {
+    // set push, 13
     Dcpu::Instruct(Dcpu::kSet, Dcpu::kPush, Dcpu::k13),
+    // set pop, 14
     Dcpu::Instruct(Dcpu::kSet, Dcpu::kPop, Dcpu::k14)
   };
   const Dcpu::Word *const program_end =
@@ -289,7 +319,9 @@ TEST(DcpuTest, ExecuteCycle_set_pop_with_low_literal) {
 TEST(DcpuTest, ExecuteCycle_set_peek_with_low_literal) {
   Dcpu dcpu;
   const Dcpu::Word program[] = {
+    // set push, 13
     Dcpu::Instruct(Dcpu::kSet, Dcpu::kPush, Dcpu::k13),
+    // set peek, 14
     Dcpu::Instruct(Dcpu::kSet, Dcpu::kPeek, Dcpu::k14)
   };
   const Dcpu::Word *const program_end =
@@ -302,6 +334,7 @@ TEST(DcpuTest, ExecuteCycle_set_peek_with_low_literal) {
 TEST(DcpuTest, ExecuteCycle_set_push_with_low_literal) {
   Dcpu dcpu;
   const Dcpu::Word program[] = {
+    // set push, 13
     Dcpu::Instruct(Dcpu::kSet, Dcpu::kPush, Dcpu::k13)
   };
   const Dcpu::Word *const program_end =
@@ -314,6 +347,7 @@ TEST(DcpuTest, ExecuteCycle_set_push_with_low_literal) {
 TEST(DcpuTest, ExecuteCycle_set_stack_pointer_with_low_literal) {
   Dcpu dcpu;
   const Dcpu::Word program[] = {
+    // set sp, 13
     Dcpu::Instruct(Dcpu::kSet, Dcpu::kStackPointer, Dcpu::k13)
   };
   const Dcpu::Word *const program_end =
@@ -326,6 +360,7 @@ TEST(DcpuTest, ExecuteCycle_set_stack_pointer_with_low_literal) {
 TEST(DcpuTest, ExecuteCycle_set_program_counter_with_low_literal) {
   Dcpu dcpu;
   const Dcpu::Word program[] = {
+    // set pc, 13
     Dcpu::Instruct(Dcpu::kSet, Dcpu::kProgramCounter, Dcpu::k13)
   };
   const Dcpu::Word *const program_end =
@@ -338,6 +373,7 @@ TEST(DcpuTest, ExecuteCycle_set_program_counter_with_low_literal) {
 TEST(DcpuTest, ExecuteCycle_set_overflow_with_low_literal) {
   Dcpu dcpu;
   const Dcpu::Word program[] = {
+    // set o, 13
     Dcpu::Instruct(Dcpu::kSet, Dcpu::kOverflow, Dcpu::k13)
   };
   const Dcpu::Word *const program_end =
@@ -350,6 +386,7 @@ TEST(DcpuTest, ExecuteCycle_set_overflow_with_low_literal) {
 TEST(DcpuTest, ExecuteCycle_set_location_with_low_literal) {
   Dcpu dcpu;
   const Dcpu::Word program[] = {
+    // set [0x1000], 13
     Dcpu::Instruct(Dcpu::kSet, Dcpu::kLocation, Dcpu::k13),
     0x1000
   };
@@ -363,6 +400,7 @@ TEST(DcpuTest, ExecuteCycle_set_location_with_low_literal) {
 TEST(DcpuTest, ExecuteCycle_set_literal_with_low_literal) {
   Dcpu dcpu;
   const Dcpu::Word program[] = {
+    // set 0x1000, 13
     Dcpu::Instruct(Dcpu::kSet, Dcpu::kLiteral, Dcpu::k13),
     0x1000
   };
@@ -377,6 +415,7 @@ TEST(DcpuTest, ExecuteCycle_set_literal_with_low_literal) {
 TEST(DcpuTest, ExecuteCycle_set_low_literal_with_low_literal) {
   Dcpu dcpu;
   const Dcpu::Word program[] = {
+    // set 10, 13
     Dcpu::Instruct(Dcpu::kSet, Dcpu::k10, Dcpu::k13)
   };
   const Dcpu::Word *const program_end =
