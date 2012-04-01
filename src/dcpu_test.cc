@@ -425,3 +425,420 @@ TEST(DcpuTest, ExecuteCycle_set_low_literal_with_low_literal) {
   // set 10, 13 should be a noop.
   EXPECT_EQ(0, *dcpu.address(0xA));
 }
+
+TEST(DcpuTest, ExecuteCycle_add_register_with_low_literal) {
+  Dcpu dcpu;
+  const Dcpu::Word program[] = {
+    // set a, 0x0D
+    Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterA, Dcpu::k13),
+    // add a, 0x0E
+    Dcpu::Instruct(Dcpu::kAdd, Dcpu::kRegisterA, Dcpu::k14)
+  };
+  const Dcpu::Word *const program_end =
+      program + sizeof(program)/sizeof(Dcpu::Word);
+  std::copy(program, program_end, dcpu.memory_begin());
+  dcpu.ExecuteCycles(2);
+  EXPECT_EQ(0x1B, dcpu.register_a());
+  EXPECT_EQ(0, dcpu.overflow());
+}
+
+TEST(DcpuTest, ExecuteCycle_add_register_with_overflow) {
+  Dcpu dcpu;
+  const Dcpu::Word program[] = {
+    // set a, 0xFFFF
+    Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterA, Dcpu::kLiteral),
+    0xFFFF,
+    // add a, 0xFFFF
+    Dcpu::Instruct(Dcpu::kAdd, Dcpu::kRegisterA, Dcpu::kLiteral),
+    0xFFFF
+  };
+  const Dcpu::Word *const program_end =
+      program + sizeof(program)/sizeof(Dcpu::Word);
+  std::copy(program, program_end, dcpu.memory_begin());
+  dcpu.ExecuteCycles(2);
+  EXPECT_EQ(0xFFFE, dcpu.register_a());
+  EXPECT_EQ(1, dcpu.overflow());
+}
+
+TEST(DcpuTest, ExecuteCycle_subtract_register_with_low_literal) {
+  Dcpu dcpu;
+  const Dcpu::Word program[] = {
+    // set a, 0x1F
+    Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterA, Dcpu::k31),
+    // sub a, 0x10
+    Dcpu::Instruct(Dcpu::kSubtract, Dcpu::kRegisterA, Dcpu::k16)
+  };
+  const Dcpu::Word *const program_end =
+      program + sizeof(program)/sizeof(Dcpu::Word);
+  std::copy(program, program_end, dcpu.memory_begin());
+  dcpu.ExecuteCycles(2);
+  EXPECT_EQ(0xF, dcpu.register_a());
+  EXPECT_EQ(0, dcpu.overflow());
+}
+
+TEST(DcpuTest, ExecuteCycle_subtract_register_with_underflow) {
+  Dcpu dcpu;
+  const Dcpu::Word program[] = {
+    // set a, 0x10
+    Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterA, Dcpu::k16),
+    // sub a, 0x1F
+    Dcpu::Instruct(Dcpu::kSubtract, Dcpu::kRegisterA, Dcpu::k31)
+  };
+  const Dcpu::Word *const program_end =
+      program + sizeof(program)/sizeof(Dcpu::Word);
+  std::copy(program, program_end, dcpu.memory_begin());
+  dcpu.ExecuteCycles(2);
+  EXPECT_EQ(0xFFF1, dcpu.register_a());
+  EXPECT_EQ(1, dcpu.overflow());
+}
+
+TEST(DcpuTest, ExecuteCycle_multiply_register_with_low_literal) {
+  Dcpu dcpu;
+  const Dcpu::Word program[] = {
+    // set a, 0x10
+    Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterA, Dcpu::k16),
+    // mul a, 0x1F
+    Dcpu::Instruct(Dcpu::kMultiply, Dcpu::kRegisterA, Dcpu::k31)
+  };
+  const Dcpu::Word *const program_end =
+      program + sizeof(program)/sizeof(Dcpu::Word);
+  std::copy(program, program_end, dcpu.memory_begin());
+  dcpu.ExecuteCycles(2);
+  EXPECT_EQ(0x01F0, dcpu.register_a());
+  EXPECT_EQ(0, dcpu.overflow());
+}
+
+TEST(DcpuTest, ExecuteCycle_multiply_register_with_overflow) {
+  Dcpu dcpu;
+  const Dcpu::Word program[] = {
+    // set a, 0xFFFF
+    Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterA, Dcpu::kLiteral),
+    0xFFFF,
+    // add a, 0xFFFF
+    Dcpu::Instruct(Dcpu::kMultiply, Dcpu::kRegisterA, Dcpu::kLiteral),
+    0xFFFF
+  };
+  const Dcpu::Word *const program_end =
+      program + sizeof(program)/sizeof(Dcpu::Word);
+  std::copy(program, program_end, dcpu.memory_begin());
+  dcpu.ExecuteCycles(2);
+  EXPECT_EQ(0x0001, dcpu.register_a());
+  EXPECT_EQ(0xFFFE, dcpu.overflow());
+}
+
+TEST(DcpuTest, ExecuteCycle_divide_register_with_low_literal) {
+  Dcpu dcpu;
+  const Dcpu::Word program[] = {
+    // set a, 0x1F
+    Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterA, Dcpu::k31),
+    // div a, 0x10
+    Dcpu::Instruct(Dcpu::kDivide, Dcpu::kRegisterA, Dcpu::k16)
+  };
+  const Dcpu::Word *const program_end =
+      program + sizeof(program)/sizeof(Dcpu::Word);
+  std::copy(program, program_end, dcpu.memory_begin());
+  dcpu.ExecuteCycles(2);
+  EXPECT_EQ(1, dcpu.register_a());
+  EXPECT_EQ(0, dcpu.overflow());
+}
+
+TEST(DcpuTest, ExecuteCycle_divide_register_by_zero) {
+  Dcpu dcpu;
+  const Dcpu::Word program[] = {
+    // set a, 0x1F
+    Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterA, Dcpu::k31),
+    // div a, 0x00
+    Dcpu::Instruct(Dcpu::kDivide, Dcpu::kRegisterA, Dcpu::k0)
+  };
+  const Dcpu::Word *const program_end =
+      program + sizeof(program)/sizeof(Dcpu::Word);
+  std::copy(program, program_end, dcpu.memory_begin());
+  dcpu.ExecuteCycles(2);
+  EXPECT_EQ(0, dcpu.register_a());
+  EXPECT_EQ(1, dcpu.overflow());
+}
+
+TEST(DcpuTest, ExecuteCycle_modulo_register_with_low_literal) {
+  Dcpu dcpu;
+  const Dcpu::Word program[] = {
+    // set a, 0x1F
+    Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterA, Dcpu::k31),
+    // mod a, 0x0B
+    Dcpu::Instruct(Dcpu::kModulo, Dcpu::kRegisterA, Dcpu::k11)
+  };
+  const Dcpu::Word *const program_end =
+      program + sizeof(program)/sizeof(Dcpu::Word);
+  std::copy(program, program_end, dcpu.memory_begin());
+  dcpu.ExecuteCycles(2);
+  EXPECT_EQ(0x9, dcpu.register_a());
+}
+
+TEST(DcpuTest, ExecuteCycle_shift_left_register_with_low_literal) {
+  Dcpu dcpu;
+  const Dcpu::Word program[] = {
+    // set a, 0x1F
+    Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterA, Dcpu::k31),
+    // shl a, 0x02
+    Dcpu::Instruct(Dcpu::kShiftLeft, Dcpu::kRegisterA, Dcpu::k2)
+  };
+  const Dcpu::Word *const program_end =
+      program + sizeof(program)/sizeof(Dcpu::Word);
+  std::copy(program, program_end, dcpu.memory_begin());
+  dcpu.ExecuteCycles(2);
+  EXPECT_EQ(0x7C, dcpu.register_a());
+  EXPECT_EQ(0, dcpu.overflow());
+}
+
+TEST(DcpuTest, ExecuteCycle_shift_left_register_with_overflow) {
+  Dcpu dcpu;
+  const Dcpu::Word program[] = {
+    // set a, 0xFFFF
+    Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterA, Dcpu::kLiteral),
+    0xFFFF,
+    // shl a, 0x02
+    Dcpu::Instruct(Dcpu::kShiftLeft, Dcpu::kRegisterA, Dcpu::k2)
+  };
+  const Dcpu::Word *const program_end =
+      program + sizeof(program)/sizeof(Dcpu::Word);
+  std::copy(program, program_end, dcpu.memory_begin());
+  dcpu.ExecuteCycles(2);
+  EXPECT_EQ(0xFFFC, dcpu.register_a());
+  EXPECT_EQ(0x0003, dcpu.overflow());
+}
+
+TEST(DcpuTest, ExecuteCycle_shift_right_register_with_low_literal) {
+  Dcpu dcpu;
+  const Dcpu::Word program[] = {
+    // set a, 0xFFF0
+    Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterA, Dcpu::kLiteral),
+    0xFFF0,
+    // shr a, 0x02
+    Dcpu::Instruct(Dcpu::kShiftRight, Dcpu::kRegisterA, Dcpu::k2)
+  };
+  const Dcpu::Word *const program_end =
+      program + sizeof(program)/sizeof(Dcpu::Word);
+  std::copy(program, program_end, dcpu.memory_begin());
+  dcpu.ExecuteCycles(2);
+  EXPECT_EQ(0x3FFC, dcpu.register_a());
+  EXPECT_EQ(0, dcpu.overflow());
+}
+
+TEST(DcpuTest, ExecuteCycle_shift_right_register_with_underflow) {
+  Dcpu dcpu;
+  const Dcpu::Word program[] = {
+    // set a, 0xFFFF
+    Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterA, Dcpu::kLiteral),
+    0xFFFF,
+    // shr a, 0x02
+    Dcpu::Instruct(Dcpu::kShiftRight, Dcpu::kRegisterA, Dcpu::k2)
+  };
+  const Dcpu::Word *const program_end =
+      program + sizeof(program)/sizeof(Dcpu::Word);
+  std::copy(program, program_end, dcpu.memory_begin());
+  dcpu.ExecuteCycles(2);
+  EXPECT_EQ(0x3FFF, dcpu.register_a());
+  EXPECT_EQ(0xC000, dcpu.overflow());
+}
+
+TEST(DcpuTest, ExecuteCycle_and_register_with_low_literal) {
+  Dcpu dcpu;
+  const Dcpu::Word program[] = {
+    // set a, 0xF0F0
+    Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterA, Dcpu::kLiteral),
+    0xF0F0,
+    // and a, 0x00FF
+    Dcpu::Instruct(Dcpu::kBinaryAnd, Dcpu::kRegisterA, Dcpu::kLiteral),
+    0x00FF
+  };
+  const Dcpu::Word *const program_end =
+      program + sizeof(program)/sizeof(Dcpu::Word);
+  std::copy(program, program_end, dcpu.memory_begin());
+  dcpu.ExecuteCycles(2);
+  EXPECT_EQ(0x00F0, dcpu.register_a());
+}
+
+TEST(DcpuTest, ExecuteCycle_or_register_with_low_literal) {
+  Dcpu dcpu;
+  const Dcpu::Word program[] = {
+    // set a, 0xF0F0
+    Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterA, Dcpu::kLiteral),
+    0xF0F0,
+    // bor a, 0x00FF
+    Dcpu::Instruct(Dcpu::kBinaryOr, Dcpu::kRegisterA, Dcpu::kLiteral),
+    0x00FF
+  };
+  const Dcpu::Word *const program_end =
+      program + sizeof(program)/sizeof(Dcpu::Word);
+  std::copy(program, program_end, dcpu.memory_begin());
+  dcpu.ExecuteCycles(2);
+  EXPECT_EQ(0xF0FF, dcpu.register_a());
+}
+
+TEST(DcpuTest, ExecuteCycle_xor_register_with_low_literal) {
+  Dcpu dcpu;
+  const Dcpu::Word program[] = {
+    // set a, 0xF0F0
+    Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterA, Dcpu::kLiteral),
+    0xF0F0,
+    // xor a, 0x00FF
+    Dcpu::Instruct(Dcpu::kBinaryExclusiveOr, Dcpu::kRegisterA, Dcpu::kLiteral),
+    0x00FF
+  };
+  const Dcpu::Word *const program_end =
+      program + sizeof(program)/sizeof(Dcpu::Word);
+  std::copy(program, program_end, dcpu.memory_begin());
+  dcpu.ExecuteCycles(2);
+  EXPECT_EQ(0xF00F, dcpu.register_a());
+}
+
+TEST(DcpuTest, ExecuteCycle_if_equal_register_with_equal_low_literal) {
+  Dcpu dcpu;
+  const Dcpu::Word program[] = {
+    // set a, 0x0F
+    Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterA, Dcpu::k15),
+    // ife a, 0x0F
+    Dcpu::Instruct(Dcpu::kIfEqual, Dcpu::kRegisterA, Dcpu::k15),
+    // set push, 13
+    Dcpu::Instruct(Dcpu::kSet, Dcpu::kPush, Dcpu::k13),
+    // set push, 14
+    Dcpu::Instruct(Dcpu::kSet, Dcpu::kPush, Dcpu::k14)
+  };
+  const Dcpu::Word *const program_end =
+      program + sizeof(program)/sizeof(Dcpu::Word);
+  std::copy(program, program_end, dcpu.memory_begin());
+  dcpu.ExecuteCycles(3);
+  EXPECT_EQ(13, *dcpu.address(dcpu.stack_pointer()));
+}
+
+TEST(DcpuTest, ExecuteCycle_if_equal_register_with_unequal_low_literal) {
+  Dcpu dcpu;
+  const Dcpu::Word program[] = {
+    // set a, 0x0F
+    Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterA, Dcpu::k15),
+    // ife a, 0x00
+    Dcpu::Instruct(Dcpu::kIfEqual, Dcpu::kRegisterA, Dcpu::k0),
+    // set push, 13
+    Dcpu::Instruct(Dcpu::kSet, Dcpu::kPush, Dcpu::k13),
+    // set push, 14
+    Dcpu::Instruct(Dcpu::kSet, Dcpu::kPush, Dcpu::k14)
+  };
+  const Dcpu::Word *const program_end =
+      program + sizeof(program)/sizeof(Dcpu::Word);
+  std::copy(program, program_end, dcpu.memory_begin());
+  dcpu.ExecuteCycles(3);
+  EXPECT_EQ(14, *dcpu.address(dcpu.stack_pointer()));
+}
+
+TEST(DcpuTest, ExecuteCycle_if_not_equal_register_with_unequal_low_literal) {
+  Dcpu dcpu;
+  const Dcpu::Word program[] = {
+    // set a, 0x0F
+    Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterA, Dcpu::k15),
+    // ife a, 0x00
+    Dcpu::Instruct(Dcpu::kIfNotEqual, Dcpu::kRegisterA, Dcpu::k0),
+    // set push, 13
+    Dcpu::Instruct(Dcpu::kSet, Dcpu::kPush, Dcpu::k13),
+    // set push, 14
+    Dcpu::Instruct(Dcpu::kSet, Dcpu::kPush, Dcpu::k14)
+  };
+  const Dcpu::Word *const program_end =
+      program + sizeof(program)/sizeof(Dcpu::Word);
+  std::copy(program, program_end, dcpu.memory_begin());
+  dcpu.ExecuteCycles(3);
+  EXPECT_EQ(13, *dcpu.address(dcpu.stack_pointer()));
+}
+
+TEST(DcpuTest, ExecuteCycle_if_not_equal_register_with_equal_low_literal) {
+  Dcpu dcpu;
+  const Dcpu::Word program[] = {
+    // set a, 0x0F
+    Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterA, Dcpu::k15),
+    // ife a, 0x0F
+    Dcpu::Instruct(Dcpu::kIfNotEqual, Dcpu::kRegisterA, Dcpu::k15),
+    // set push, 13
+    Dcpu::Instruct(Dcpu::kSet, Dcpu::kPush, Dcpu::k13),
+    // set push, 14
+    Dcpu::Instruct(Dcpu::kSet, Dcpu::kPush, Dcpu::k14)
+  };
+  const Dcpu::Word *const program_end =
+      program + sizeof(program)/sizeof(Dcpu::Word);
+  std::copy(program, program_end, dcpu.memory_begin());
+  dcpu.ExecuteCycles(3);
+  EXPECT_EQ(14, *dcpu.address(dcpu.stack_pointer()));
+}
+
+TEST(DcpuTest, ExecuteCycle_if_greater_than_register_with_lesser_low_literal) {
+  Dcpu dcpu;
+  const Dcpu::Word program[] = {
+    // set a, 0x1F
+    Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterA, Dcpu::k31),
+    // ife a, 0x0F
+    Dcpu::Instruct(Dcpu::kIfGreaterThan, Dcpu::kRegisterA, Dcpu::k15),
+    // set push, 13
+    Dcpu::Instruct(Dcpu::kSet, Dcpu::kPush, Dcpu::k13),
+    // set push, 14
+    Dcpu::Instruct(Dcpu::kSet, Dcpu::kPush, Dcpu::k14)
+  };
+  const Dcpu::Word *const program_end =
+      program + sizeof(program)/sizeof(Dcpu::Word);
+  std::copy(program, program_end, dcpu.memory_begin());
+  dcpu.ExecuteCycles(3);
+  EXPECT_EQ(13, *dcpu.address(dcpu.stack_pointer()));
+}
+
+TEST(DcpuTest, ExecuteCycle_if_greater_than_register_with_greater_low_literal) {
+  Dcpu dcpu;
+  const Dcpu::Word program[] = {
+    // set a, 0x0F
+    Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterA, Dcpu::k15),
+    // ife a, 0x1F
+    Dcpu::Instruct(Dcpu::kIfGreaterThan, Dcpu::kRegisterA, Dcpu::k31),
+    // set push, 13
+    Dcpu::Instruct(Dcpu::kSet, Dcpu::kPush, Dcpu::k13),
+    // set push, 14
+    Dcpu::Instruct(Dcpu::kSet, Dcpu::kPush, Dcpu::k14)
+  };
+  const Dcpu::Word *const program_end =
+      program + sizeof(program)/sizeof(Dcpu::Word);
+  std::copy(program, program_end, dcpu.memory_begin());
+  dcpu.ExecuteCycles(3);
+  EXPECT_EQ(14, *dcpu.address(dcpu.stack_pointer()));
+}
+
+TEST(DcpuTest, ExecuteCycle_if_both_register_with_common_bits_low_literal) {
+  Dcpu dcpu;
+  const Dcpu::Word program[] = {
+    // set a, 0x1F
+    Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterA, Dcpu::k31),
+    // ife a, 0x0F
+    Dcpu::Instruct(Dcpu::kIfGreaterThan, Dcpu::kRegisterA, Dcpu::k15),
+    // set push, 13
+    Dcpu::Instruct(Dcpu::kSet, Dcpu::kPush, Dcpu::k13),
+    // set push, 14
+    Dcpu::Instruct(Dcpu::kSet, Dcpu::kPush, Dcpu::k14)
+  };
+  const Dcpu::Word *const program_end =
+      program + sizeof(program)/sizeof(Dcpu::Word);
+  std::copy(program, program_end, dcpu.memory_begin());
+  dcpu.ExecuteCycles(3);
+  EXPECT_EQ(13, *dcpu.address(dcpu.stack_pointer()));
+}
+
+TEST(DcpuTest, ExecuteCycle_if_both_register_with_uncommon_bits_low_literal) {
+  Dcpu dcpu;
+  const Dcpu::Word program[] = {
+    // set a, 0x0F
+    Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterA, Dcpu::k15),
+    // ife a, 0x10
+    Dcpu::Instruct(Dcpu::kIfGreaterThan, Dcpu::kRegisterA, Dcpu::k16),
+    // set push, 13
+    Dcpu::Instruct(Dcpu::kSet, Dcpu::kPush, Dcpu::k13),
+    // set push, 14
+    Dcpu::Instruct(Dcpu::kSet, Dcpu::kPush, Dcpu::k14)
+  };
+  const Dcpu::Word *const program_end =
+      program + sizeof(program)/sizeof(Dcpu::Word);
+  std::copy(program, program_end, dcpu.memory_begin());
+  dcpu.ExecuteCycles(3);
+  EXPECT_EQ(14, *dcpu.address(dcpu.stack_pointer()));
+}
