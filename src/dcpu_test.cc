@@ -84,6 +84,22 @@ TEST(DcpuTest, ExecuteCycle_set_register_with_register) {
   EXPECT_EQ(1, dcpu.register_a());
 }
 
+TEST(DcpuTest, ExecuteCycle_set_register_with_last_register) {
+  Dcpu dcpu;
+  const Dcpu::Word program[] = {
+    // set j, 1
+    Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterJ, Dcpu::k1),
+    // set a, j
+    Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterA, Dcpu::kRegisterJ)
+  };
+  const Dcpu::Word *const program_end =
+      program + sizeof(program)/sizeof(Dcpu::Word);
+  std::copy(program, program_end, dcpu.memory_begin());
+  // dcpu.register_a() == 0 by DcpuTest.DefaultConstructor
+  dcpu.ExecuteCycles(2);
+  EXPECT_EQ(1, dcpu.register_a());
+}
+
 TEST(DcpuTest, ExecuteCycle_set_register_with_location_in_register) {
   Dcpu dcpu;
   const Dcpu::Word program[] = {
@@ -103,6 +119,25 @@ TEST(DcpuTest, ExecuteCycle_set_register_with_location_in_register) {
   EXPECT_EQ(13, dcpu.register_a());
 }
 
+TEST(DcpuTest, ExecuteCycle_set_register_with_location_in_last_register) {
+  Dcpu dcpu;
+  const Dcpu::Word program[] = {
+    // set [0x1000], 13
+    Dcpu::Instruct(Dcpu::kSet, Dcpu::kLocation, Dcpu::k13),
+    0x1000,
+    // set j, 0x1000
+    Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterJ, Dcpu::kLiteral),
+    0x1000,
+    // set a, [j]
+    Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterA, Dcpu::kLocationInRegisterJ)
+  };
+  const Dcpu::Word *const program_end =
+      program + sizeof(program)/sizeof(Dcpu::Word);
+  std::copy(program, program_end, dcpu.memory_begin());
+  dcpu.ExecuteCycles(3);
+  EXPECT_EQ(13, dcpu.register_a());
+}
+
 TEST(DcpuTest, ExecuteCycle_set_register_with_location_offset_by_register) {
   Dcpu dcpu;
   const Dcpu::Word program[] = {
@@ -114,6 +149,27 @@ TEST(DcpuTest, ExecuteCycle_set_register_with_location_offset_by_register) {
     // set a, [0x1000+b]
     Dcpu::Instruct(
         Dcpu::kSet, Dcpu::kRegisterA, Dcpu::kLocationOffsetByRegisterB),
+    0x1000
+  };
+  const Dcpu::Word *const program_end =
+      program + sizeof(program)/sizeof(Dcpu::Word);
+  std::copy(program, program_end, dcpu.memory_begin());
+  dcpu.ExecuteCycles(3);
+  EXPECT_EQ(13, dcpu.register_a());
+}
+
+TEST(DcpuTest,
+    ExecuteCycle_set_register_with_location_offset_by_last_register) {
+  Dcpu dcpu;
+  const Dcpu::Word program[] = {
+    // set [0x100A], 13
+    Dcpu::Instruct(Dcpu::kSet, Dcpu::kLocation, Dcpu::k13),
+    0x100A,
+    // set j, 10
+    Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterJ, Dcpu::k10),
+    // set a, [0x1000+j]
+    Dcpu::Instruct(
+        Dcpu::kSet, Dcpu::kRegisterA, Dcpu::kLocationOffsetByRegisterJ),
     0x1000
   };
   const Dcpu::Word *const program_end =
@@ -268,6 +324,20 @@ TEST(DcpuTest, ExecuteCycle_set_register_with_low_literal) {
   EXPECT_EQ(1, dcpu.register_a());
 }
 
+TEST(DcpuTest, ExecuteCycle_set_last_register_with_low_literal) {
+  Dcpu dcpu;
+  const Dcpu::Word program[] = {
+    // set j, 1
+    Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterJ, Dcpu::k1),
+  };
+  const Dcpu::Word *const program_end =
+      program + sizeof(program)/sizeof(Dcpu::Word);
+  std::copy(program, program_end, dcpu.memory_begin());
+  // dcpu.register_a() == 0 by DcpuTest.DefaultConstructor
+  dcpu.ExecuteCycles(2);
+  EXPECT_EQ(1, dcpu.register_j());
+}
+
 TEST(DcpuTest, ExecuteCycle_set_location_in_register_with_low_literal) {
   Dcpu dcpu;
   const Dcpu::Word program[] = {
@@ -284,6 +354,22 @@ TEST(DcpuTest, ExecuteCycle_set_location_in_register_with_low_literal) {
   EXPECT_EQ(13, *dcpu.address(0x1000));
 }
 
+TEST(DcpuTest, ExecuteCycle_set_location_in_last_register_with_low_literal) {
+  Dcpu dcpu;
+  const Dcpu::Word program[] = {
+    // set j, 0x1000
+    Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterJ, Dcpu::kLiteral),
+    0x1000,
+    // set [j], 13
+    Dcpu::Instruct(Dcpu::kSet, Dcpu::kLocationInRegisterJ, Dcpu::k13)
+  };
+  const Dcpu::Word *const program_end =
+      program + sizeof(program)/sizeof(Dcpu::Word);
+  std::copy(program, program_end, dcpu.memory_begin());
+  dcpu.ExecuteCycles(2);
+  EXPECT_EQ(13, *dcpu.address(0x1000));
+}
+
 TEST(DcpuTest, ExecuteCycle_set_location_offset_by_register_with_low_literal) {
   Dcpu dcpu;
   const Dcpu::Word program[] = {
@@ -292,6 +378,24 @@ TEST(DcpuTest, ExecuteCycle_set_location_offset_by_register_with_low_literal) {
     // set [0x1000+a], 13
     Dcpu::Instruct(
         Dcpu::kSet, Dcpu::kLocationOffsetByRegisterA, Dcpu::k13),
+    0x1000
+  };
+  const Dcpu::Word *const program_end =
+      program + sizeof(program)/sizeof(Dcpu::Word);
+  std::copy(program, program_end, dcpu.memory_begin());
+  dcpu.ExecuteCycles(2);
+  EXPECT_EQ(13, *dcpu.address(0x100A));
+}
+
+TEST(DcpuTest,
+    ExecuteCycle_set_location_offset_by_last_register_with_low_literal) {
+  Dcpu dcpu;
+  const Dcpu::Word program[] = {
+    // set j, 10
+    Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterJ, Dcpu::k10),
+    // set [0x1000+j], 13
+    Dcpu::Instruct(
+        Dcpu::kSet, Dcpu::kLocationOffsetByRegisterJ, Dcpu::k13),
     0x1000
   };
   const Dcpu::Word *const program_end =
