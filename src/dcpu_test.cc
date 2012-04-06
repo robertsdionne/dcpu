@@ -955,3 +955,29 @@ TEST(DcpuTest,
   dcpu.ExecuteInstructions(3);
   EXPECT_EQ(14, *dcpu.address(dcpu.stack_pointer()));
 }
+
+TEST(DcpuTest, ExecuteInstruction_jump_sub_routine) {
+  Dcpu dcpu;
+  const Dcpu::Word program[] = {
+    // jsr subroutine
+    Dcpu::Instruct(Dcpu::kJumpSubRoutine, Dcpu::k3),
+    // set a, 13
+    Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterA, Dcpu::k13),
+    // sub pc, 1
+    Dcpu::Instruct(Dcpu::kSubtract, Dcpu::kProgramCounter, Dcpu::k1),
+    // subroutine: set b, 14
+    Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterB, Dcpu::k14),
+    // set pc, pop
+    Dcpu::Instruct(Dcpu::kSet, Dcpu::kProgramCounter, Dcpu::kPop)
+  };
+  const Dcpu::Word *const program_end =
+      program + sizeof(program)/sizeof(Dcpu::Word);
+  std::copy(program, program_end, dcpu.memory_begin());
+  dcpu.ExecuteInstruction();
+  EXPECT_EQ(0xFFFF, dcpu.stack_pointer());
+  dcpu.ExecuteInstructions(4);
+  EXPECT_EQ(13, dcpu.register_a());
+  EXPECT_EQ(14, dcpu.register_b());
+  EXPECT_EQ(2, dcpu.program_counter());
+  EXPECT_EQ(0, dcpu.stack_pointer());
+}
