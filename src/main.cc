@@ -78,7 +78,7 @@ int main(int argc, char *argv[]) {
     }
     refresh();
     quit = getch() == 'q';
-    dcpu.ExecuteCycle();
+    dcpu.ExecuteInstruction();
   }
   endwin();
   return 0;

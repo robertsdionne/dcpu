@@ -6,15 +6,19 @@
 const unsigned int Dcpu::kMemorySize;
 const Dcpu::Word Dcpu::kVideoMemoryBegin;
 const Dcpu::Word Dcpu::kVideoMemoryEnd;
-const Dcpu::Word Dcpu::kOpcodeMask;
-const Dcpu::Word Dcpu::kOperandMaskA;
-const Dcpu::Word Dcpu::kOperandMaskB;
-const Dcpu::Word Dcpu::kOperandShiftA;
-const Dcpu::Word Dcpu::kOperandShiftB;
+const Dcpu::Word Dcpu::kBasicOpcodeMask;
+const Dcpu::Word Dcpu::kAdvancedOpcodeMask;
+const Dcpu::Word Dcpu::kBasicOperandMaskA;
+const Dcpu::Word Dcpu::kBasicOperandMaskB;
+const Dcpu::Word Dcpu::kBasicOperandShiftA;
+const Dcpu::Word Dcpu::kBasicOperandShiftB;
+const Dcpu::Word Dcpu::kAdvancedOperandMaskA;
+const Dcpu::Word Dcpu::kAdvancedOperandShiftA;
 
 Dcpu::Word Dcpu::Instruct(const Dcpu::Word opcode,
     const Dcpu::Word operand_a, const Dcpu::Word operand_b) {
-  return opcode | (operand_a << kOperandShiftA) | (operand_b << kOperandShiftB);
+  return opcode | (
+      operand_a << kBasicOperandShiftA) | (operand_b << kBasicOperandShiftB);
 }
 
 Dcpu::Dcpu()
@@ -153,107 +157,138 @@ Dcpu::Word Dcpu::overflow() const {
   return overflow_;
 }
 
-void Dcpu::ExecuteCycle(const bool skip) {
+void Dcpu::ExecuteInstruction(const bool skip) {
   const Word stack_pointer_backup = stack_pointer_;
   const Word instruction = *address(program_counter_);
   program_counter_ += 1;
-  const Word opcode = instruction & kOpcodeMask;
-  const Word operand_a = (instruction & kOperandMaskA) >> kOperandShiftA;
-  const Word operand_b = (instruction & kOperandMaskB) >> kOperandShiftB;
-  Word operand_a_literal = 0;
-  Word *const operand_a_address = GetOperandAddressOrLiteral(
-      operand_a, operand_a_literal);
-  Word operand_b_literal = 0;
-  const Word *const operand_b_address = GetOperandAddressOrLiteral(
-      operand_b, operand_b_literal);
-  const Word operand_a_value = operand_a_address ?
+  const Word basic_opcode = instruction & kBasicOpcodeMask;
+
+  if (basic_opcode == kBasicReserved) {
+    const Word advanced_opcode = (
+        instruction & kAdvancedOpcodeMask) >> kAdvancedOpcodeShift;
+    const Word operand_a = (
+        instruction & kAdvancedOperandMaskA) >> kAdvancedOperandShiftA;
+    Word operand_a_literal = 0;
+    Word *const operand_a_address = GetOperandAddressOrLiteral(
+        operand_a, operand_a_literal);
+    const Word operand_a_value = operand_a_address ?
       *operand_a_address : operand_a_literal;
-  const Word operand_b_value = operand_b_address ?
-      *operand_b_address : operand_b_literal;
-  if (skip) {
-    stack_pointer_ = stack_pointer_backup;
-    return;
-  }
-  unsigned int result;
-  switch (opcode) {
-    case kReserved:
-      break;
-    case kSet:
-      MaybeAssignResult(operand_a_address, operand_b_value);
-      break;
-    case kAdd:
-      result = operand_a_value + operand_b_value;
-      overflow_ = result >> 16;
-      MaybeAssignResult(operand_a_address, result);
-      break;
-    case kSubtract:
-      overflow_ = operand_a_value < operand_b_value;
-      MaybeAssignResult(operand_a_address, operand_a_value - operand_b_value);
-      break;
-    case kMultiply:
-      result = operand_a_value * operand_b_value;
-      overflow_ = result >> 16;
-      MaybeAssignResult(operand_a_address, result);
-      break;
-    case kDivide:
-      if (operand_b_value) {
-        overflow_ = 0;
-        MaybeAssignResult(operand_a_address, operand_a_value / operand_b_value);
-      } else {
-        overflow_ = 1;
-        MaybeAssignResult(operand_a_address, 0);
-      }
-      break;
-    case kModulo:
-      MaybeAssignResult(operand_a_address, operand_a_value % operand_b_value);
-      break;
-    case kShiftLeft:
-      result = operand_a_value << operand_b_value;
-      overflow_ = result >> 16;
-      MaybeAssignResult(operand_a_address, result);
-      break;
-    case kShiftRight:
-      result = operand_a_value >> operand_b_value;
-      overflow_ = operand_a_value << (0x10 - operand_b_value);
-      MaybeAssignResult(operand_a_address, result);
-      break;
-    case kBinaryAnd:
-      MaybeAssignResult(operand_a_address, operand_a_value & operand_b_value);
-      break;
-    case kBinaryOr:
-      MaybeAssignResult(operand_a_address, operand_a_value | operand_b_value);
-      break;
-    case kBinaryExclusiveOr:
-      MaybeAssignResult(operand_a_address, operand_a_value ^ operand_b_value);
-      break;
-    case kIfEqual:
-      if (operand_a_value != operand_b_value) {
-        ExecuteCycle(/* skip */ true);
-      }
-      break;
-    case kIfNotEqual:
-      if (operand_a_value == operand_b_value) {
-        ExecuteCycle(/* skip */ true);
-      }
-      break;
-    case kIfGreaterThan:
-      if (operand_a_value <= operand_b_value) {
-        ExecuteCycle(/* skip */ true);
-      }
-      break;
-    case kIfBoth:
-      if (operand_a_value & operand_b_value == 0) {
-        ExecuteCycle(/* skip */ true);
-      }
-      break;
-    default:
-      break;
+    if (skip) {
+      stack_pointer_ = stack_pointer_backup;
+      return;
+    }
+    switch (advanced_opcode) {
+      case kAdvancedReserved:
+        break;
+      case kJumpSubRoutine:
+        stack_pointer_ -= 1;
+        *address(stack_pointer_) = program_counter_;
+        program_counter_ = operand_a_value;
+        break;
+      default:
+        break;
+    }
+  } else {
+    const Word operand_a = (
+        instruction & kBasicOperandMaskA) >> kBasicOperandShiftA;
+    const Word operand_b = (
+        instruction & kBasicOperandMaskB) >> kBasicOperandShiftB;
+    Word operand_a_literal = 0;
+    Word *const operand_a_address = GetOperandAddressOrLiteral(
+        operand_a, operand_a_literal);
+    Word operand_b_literal = 0;
+    const Word *const operand_b_address = GetOperandAddressOrLiteral(
+        operand_b, operand_b_literal);
+    const Word operand_a_value = operand_a_address ?
+        *operand_a_address : operand_a_literal;
+    const Word operand_b_value = operand_b_address ?
+        *operand_b_address : operand_b_literal;
+    if (skip) {
+      stack_pointer_ = stack_pointer_backup;
+      return;
+    }
+    unsigned int result;
+    switch (basic_opcode) {
+      case kBasicReserved:
+        break;
+      case kSet:
+        MaybeAssignResult(operand_a_address, operand_b_value);
+        break;
+      case kAdd:
+        result = operand_a_value + operand_b_value;
+        overflow_ = result >> 16;
+        MaybeAssignResult(operand_a_address, result);
+        break;
+      case kSubtract:
+        overflow_ = operand_a_value < operand_b_value;
+        MaybeAssignResult(operand_a_address, operand_a_value - operand_b_value);
+        break;
+      case kMultiply:
+        result = operand_a_value * operand_b_value;
+        overflow_ = result >> 16;
+        MaybeAssignResult(operand_a_address, result);
+        break;
+      case kDivide:
+        if (operand_b_value) {
+          overflow_ = 0;
+          MaybeAssignResult(
+              operand_a_address, operand_a_value / operand_b_value);
+        } else {
+          overflow_ = 1;
+          MaybeAssignResult(operand_a_address, 0);
+        }
+        break;
+      case kModulo:
+        MaybeAssignResult(operand_a_address, operand_a_value % operand_b_value);
+        break;
+      case kShiftLeft:
+        result = operand_a_value << operand_b_value;
+        overflow_ = result >> 16;
+        MaybeAssignResult(operand_a_address, result);
+        break;
+      case kShiftRight:
+        result = operand_a_value >> operand_b_value;
+        overflow_ = operand_a_value << (0x10 - operand_b_value);
+        MaybeAssignResult(operand_a_address, result);
+        break;
+      case kBinaryAnd:
+        MaybeAssignResult(operand_a_address, operand_a_value & operand_b_value);
+        break;
+      case kBinaryOr:
+        MaybeAssignResult(operand_a_address, operand_a_value | operand_b_value);
+        break;
+      case kBinaryExclusiveOr:
+        MaybeAssignResult(operand_a_address, operand_a_value ^ operand_b_value);
+        break;
+      case kIfEqual:
+        if (operand_a_value != operand_b_value) {
+          ExecuteInstruction(/* skip */ true);
+        }
+        break;
+      case kIfNotEqual:
+        if (operand_a_value == operand_b_value) {
+          ExecuteInstruction(/* skip */ true);
+        }
+        break;
+      case kIfGreaterThan:
+        if (operand_a_value <= operand_b_value) {
+          ExecuteInstruction(/* skip */ true);
+        }
+        break;
+      case kIfBoth:
+        if (operand_a_value & operand_b_value == 0) {
+          ExecuteInstruction(/* skip */ true);
+        }
+        break;
+      default:
+        break;
+    }
   }
 }
 
-void Dcpu::ExecuteCycles(const unsigned long int count) {
+void Dcpu::ExecuteInstructions(const unsigned long int count) {
   for (unsigned long int i = 0; i < count; ++i) {
-    ExecuteCycle();
+    ExecuteInstruction();
   }
 }
 

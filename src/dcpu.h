@@ -17,10 +17,12 @@ class Dcpu {
     /**
      * Opcodes.
      */
-    static const Word kOpcodeMask = 0x000F;
+    static const Word kBasicOpcodeMask = 0x000F;
+    static const Word kAdvancedOpcodeMask = 0x03F0;
+    static const Word kAdvancedOpcodeShift = 0x4;
 
-    enum Opcode {
-      kReserved = 0x0,
+    enum BasicOpcode {
+      kBasicReserved = 0x0,
       kSet = 0x1,
       kAdd = 0x2,
       kSubtract = 0x3,
@@ -38,14 +40,20 @@ class Dcpu {
       kIfBoth = 0xF
     };
 
+    enum AdvancedOpcode {
+      kAdvancedReserved = 0x00,
+      kJumpSubRoutine = 0x01
+    };
+
     /**
      * Operands.
      */
-    static const Word kOperandMaskA = 0x03F0;
-    static const Word kOperandMaskB = 0xFC00;
-
-    static const Word kOperandShiftA = 0x4;
-    static const Word kOperandShiftB = 0xA;
+    static const Word kBasicOperandMaskA = 0x03F0;
+    static const Word kBasicOperandMaskB = 0xFC00;
+    static const Word kBasicOperandShiftA = 0x4;
+    static const Word kBasicOperandShiftB = 0xA;
+    static const Word kAdvancedOperandMaskA = 0xFC00;
+    static const Word kAdvancedOperandShiftA = 0xA;
 
     enum Operand {
       kRegisterA = 0x00,
@@ -167,8 +175,8 @@ class Dcpu {
     Word &overflow();
     Word overflow() const;
 
-    void ExecuteCycle(const bool skip = false);
-    void ExecuteCycles(const unsigned long int count);
+    void ExecuteInstruction(const bool skip = false);
+    void ExecuteInstructions(const unsigned long int count);
 
     void Reset();
 
