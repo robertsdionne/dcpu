@@ -9,24 +9,36 @@ int main(int argc, char *argv[]) {
   Dcpu dcpu;
   initscr();
   Dcpu::Word program[] = {
+    // set a, 0xBEEF
     Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterA, Dcpu::kLiteral),
     0xBEEF,
+    // set [0x1000], a
     Dcpu::Instruct(Dcpu::kSet, Dcpu::kLocation, Dcpu::kRegisterA),
     0x1000,
+    // ifn a, [0x1000]
     Dcpu::Instruct(Dcpu::kIfNotEqual, Dcpu::kRegisterA, Dcpu::kLocation),
     0x1000,
+    //   set pc, end
     Dcpu::Instruct(Dcpu::kSet, Dcpu::kProgramCounter, Dcpu::k29),
+    // set i, 0
     Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterI, Dcpu::k0),
+    // nextchar: ife i, 0
     Dcpu::Instruct(Dcpu::kIfEqual, Dcpu::kLocationOffsetByRegisterI, Dcpu::k0),
     0x0010,
+    //   set pc, end
     Dcpu::Instruct(Dcpu::kSet, Dcpu::kProgramCounter, Dcpu::k29),
+    // set [0x8000+i], [data+i]
     Dcpu::Instruct(Dcpu::kSet,
         Dcpu::kLocationOffsetByRegisterI, Dcpu::kLocationOffsetByRegisterI),
     Dcpu::kVideoMemoryBegin,
     0x0010,
+    // add i, 1
     Dcpu::Instruct(Dcpu::kAdd, Dcpu::kRegisterI, Dcpu::k1),
+    // set pc, nextchar
     Dcpu::Instruct(Dcpu::kSet, Dcpu::kProgramCounter, Dcpu::k8),
+    // data: dat "Hello world!", 0
     'H', 'e', 'l', 'l', 'o', ' ', 'w', 'o', 'r', 'l', 'd', '!', '\0',
+    // end: sub pc, 1
     Dcpu::Instruct(Dcpu::kSubtract, Dcpu::kProgramCounter, Dcpu::k1)
   };
   std::copy(program,
