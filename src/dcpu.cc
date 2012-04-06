@@ -15,10 +15,16 @@ const Dcpu::Word Dcpu::kBasicOperandShiftB;
 const Dcpu::Word Dcpu::kAdvancedOperandMaskA;
 const Dcpu::Word Dcpu::kAdvancedOperandShiftA;
 
-Dcpu::Word Dcpu::Instruct(const Dcpu::Word opcode,
+Dcpu::Word Dcpu::Instruct(const Dcpu::BasicOpcode basic_opcode,
     const Dcpu::Word operand_a, const Dcpu::Word operand_b) {
-  return opcode | (
+  return basic_opcode | (
       operand_a << kBasicOperandShiftA) | (operand_b << kBasicOperandShiftB);
+}
+
+Dcpu::Word Dcpu::Instruct(
+    const Dcpu::AdvancedOpcode advanced_opcode, const Dcpu::Word operand_a) {
+  return (advanced_opcode << kAdvancedOpcodeShift) | (
+      operand_a << kAdvancedOperandShiftA);
 }
 
 Dcpu::Dcpu()

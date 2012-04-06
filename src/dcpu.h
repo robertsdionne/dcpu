@@ -123,8 +123,10 @@ class Dcpu {
     };
 
   public:
+    static Word Instruct(const BasicOpcode basic_opcode,
+        const Word operand_a, const Word operand_b);
     static Word Instruct(
-        const Word opcode, const Word operand_a, const Word operand_b);
+        const AdvancedOpcode advanced_opcode, const Word operand_a);
 
     Dcpu();
     virtual ~Dcpu() {}
