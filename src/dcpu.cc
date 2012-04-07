@@ -282,7 +282,7 @@ void Dcpu::ExecuteInstruction(const bool skip) {
         }
         break;
       case kIfBoth:
-        if (operand_a_value & operand_b_value == 0) {
+        if ((operand_a_value & operand_b_value) == 0) {
           ExecuteInstruction(/* skip */ true);
         }
         break;

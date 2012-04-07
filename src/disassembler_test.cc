@@ -1,75 +1,44 @@
 // Copyright 2012 Robert Scott Dionne. All rights reserved.
 
 #include <algorithm>
+#include <sstream>
 #include <gtest/gtest.h>
 #include "dcpu.h"
+#include "disassembler.h"
 
-TEST(DcpuTest, DefaultConstructor) {
-  Dcpu dcpu;
-  EXPECT_EQ(0, *dcpu.address(0x1000));
-  EXPECT_EQ(0, dcpu.register_a());
-  EXPECT_EQ(0, dcpu.register_b());
-  EXPECT_EQ(0, dcpu.register_c());
-  EXPECT_EQ(0, dcpu.register_x());
-  EXPECT_EQ(0, dcpu.register_y());
-  EXPECT_EQ(0, dcpu.register_z());
-  EXPECT_EQ(0, dcpu.register_i());
-  EXPECT_EQ(0, dcpu.register_j());
-  EXPECT_EQ(0, dcpu.program_counter());
-  EXPECT_EQ(0, dcpu.stack_pointer());
-  EXPECT_EQ(0, dcpu.overflow());
+TEST(DisassemblerTest, Disassemble) {
+  Disassembler disassembler;
+  const Dcpu::Word program[] = {
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+  };
+  const Dcpu::Word *const program_end =
+      program + sizeof(program)/sizeof(Dcpu::Word);
+  std::ostringstream out;
+  disassembler.Disassemble(program, program_end, out);
+  EXPECT_EQ(
+      "set 0, 0\n"
+      "set 0, 0\n"
+      "set 0, 0\n"
+      "set 0, 0\n"
+      "set 0, 0\n"
+      "set 0, 0\n"
+      "set 0, 0\n"
+      "set 0, 0\n"
+      "set 0, 0\n"
+      "set 0, 0\n", out.str());
 }
 
-TEST(DcpuTest, Reset) {
-  Dcpu dcpu;
-  *dcpu.address(0x1000) = 1;
-  dcpu.register_a() = 2;
-  dcpu.register_b() = 3;
-  dcpu.register_c() = 4;
-  dcpu.register_x() = 5;
-  dcpu.register_y() = 6;
-  dcpu.register_z() = 7;
-  dcpu.register_i() = 8;
-  dcpu.register_j() = 9;
-  dcpu.program_counter() = 10;
-  dcpu.stack_pointer() = 11;
-  dcpu.overflow() = 12;
-  EXPECT_EQ(1, *dcpu.address(0x1000));
-  EXPECT_EQ(2, dcpu.register_a());
-  EXPECT_EQ(3, dcpu.register_b());
-  EXPECT_EQ(4, dcpu.register_c());
-  EXPECT_EQ(5, dcpu.register_x());
-  EXPECT_EQ(6, dcpu.register_y());
-  EXPECT_EQ(7, dcpu.register_z());
-  EXPECT_EQ(8, dcpu.register_i());
-  EXPECT_EQ(9, dcpu.register_j());
-  EXPECT_EQ(10, dcpu.program_counter());
-  EXPECT_EQ(11, dcpu.stack_pointer());
-  EXPECT_EQ(12, dcpu.overflow());
-  dcpu.Reset();
-  EXPECT_EQ(0, *dcpu.address(0x1000));
-  EXPECT_EQ(0, dcpu.register_a());
-  EXPECT_EQ(0, dcpu.register_b());
-  EXPECT_EQ(0, dcpu.register_c());
-  EXPECT_EQ(0, dcpu.register_x());
-  EXPECT_EQ(0, dcpu.register_y());
-  EXPECT_EQ(0, dcpu.register_z());
-  EXPECT_EQ(0, dcpu.register_i());
-  EXPECT_EQ(0, dcpu.register_j());
-  EXPECT_EQ(0, dcpu.program_counter());
-  EXPECT_EQ(0, dcpu.stack_pointer());
-  EXPECT_EQ(0, dcpu.overflow());
-}
-
-TEST(DcpuTest, ExecuteInstructions) {
-  Dcpu dcpu;
-  // dcpu.program_counter() == 0 by DcpuTest.DefaultConstructor
-  dcpu.ExecuteInstructions(10);
-  EXPECT_EQ(10, dcpu.program_counter());
-}
-
-TEST(DcpuTest, ExecuteInstruction_set_register_with_register) {
-  Dcpu dcpu;
+TEST(DisassemblerTest, Disassemble_set_register_with_register) {
+  Disassembler disassembler;
   const Dcpu::Word program[] = {
     // set b, 1
     Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterB, Dcpu::k1),
@@ -78,14 +47,15 @@ TEST(DcpuTest, ExecuteInstruction_set_register_with_register) {
   };
   const Dcpu::Word *const program_end =
       program + sizeof(program)/sizeof(Dcpu::Word);
-  std::copy(program, program_end, dcpu.memory_begin());
-  // dcpu.register_a() == 0 by DcpuTest.DefaultConstructor
-  dcpu.ExecuteInstructions(2);
-  EXPECT_EQ(1, dcpu.register_a());
+  std::ostringstream out;
+  disassembler.Disassemble(program, program_end, out);
+  EXPECT_EQ(
+      "set b, 0x1\n"
+      "set a, b\n", out.str());
 }
 
-TEST(DcpuTest, ExecuteInstruction_set_register_with_last_register) {
-  Dcpu dcpu;
+TEST(DisassemblerTest, Disassemble_set_register_with_last_register) {
+  Disassembler disassembler;
   const Dcpu::Word program[] = {
     // set j, 1
     Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterJ, Dcpu::k1),
@@ -94,14 +64,15 @@ TEST(DcpuTest, ExecuteInstruction_set_register_with_last_register) {
   };
   const Dcpu::Word *const program_end =
       program + sizeof(program)/sizeof(Dcpu::Word);
-  std::copy(program, program_end, dcpu.memory_begin());
-  // dcpu.register_a() == 0 by DcpuTest.DefaultConstructor
-  dcpu.ExecuteInstructions(2);
-  EXPECT_EQ(1, dcpu.register_a());
+  std::ostringstream out;
+  disassembler.Disassemble(program, program_end, out);
+  EXPECT_EQ(
+      "set j, 0x1\n"
+      "set a, j\n", out.str());
 }
 
-TEST(DcpuTest, ExecuteInstruction_set_register_with_location_in_register) {
-  Dcpu dcpu;
+TEST(DisassemblerTest, Disassemble_set_register_with_location_in_register) {
+  Disassembler disassembler;
   const Dcpu::Word program[] = {
     // set [0x1000], 13
     Dcpu::Instruct(Dcpu::kSet, Dcpu::kLocation, Dcpu::k13),
@@ -114,13 +85,17 @@ TEST(DcpuTest, ExecuteInstruction_set_register_with_location_in_register) {
   };
   const Dcpu::Word *const program_end =
       program + sizeof(program)/sizeof(Dcpu::Word);
-  std::copy(program, program_end, dcpu.memory_begin());
-  dcpu.ExecuteInstructions(3);
-  EXPECT_EQ(13, dcpu.register_a());
+  std::ostringstream out;
+  disassembler.Disassemble(program, program_end, out);
+  EXPECT_EQ(
+      "set [0x1000], 0xd\n"
+      "set b, 0x1000\n"
+      "set a, [b]\n", out.str());
 }
 
-TEST(DcpuTest, ExecuteInstruction_set_register_with_location_in_last_register) {
-  Dcpu dcpu;
+TEST(DisassemblerTest,
+    Disassemble_set_register_with_location_in_last_register) {
+  Disassembler disassembler;
   const Dcpu::Word program[] = {
     // set [0x1000], 13
     Dcpu::Instruct(Dcpu::kSet, Dcpu::kLocation, Dcpu::k13),
@@ -133,14 +108,17 @@ TEST(DcpuTest, ExecuteInstruction_set_register_with_location_in_last_register) {
   };
   const Dcpu::Word *const program_end =
       program + sizeof(program)/sizeof(Dcpu::Word);
-  std::copy(program, program_end, dcpu.memory_begin());
-  dcpu.ExecuteInstructions(3);
-  EXPECT_EQ(13, dcpu.register_a());
+  std::ostringstream out;
+  disassembler.Disassemble(program, program_end, out);
+  EXPECT_EQ(
+      "set [0x1000], 0xd\n"
+      "set j, 0x1000\n"
+      "set a, [j]\n", out.str());
 }
 
-TEST(DcpuTest,
-    ExecuteInstruction_set_register_with_location_offset_by_register) {
-  Dcpu dcpu;
+TEST(DisassemblerTest,
+    Disassemble_set_register_with_location_offset_by_register) {
+  Disassembler disassembler;
   const Dcpu::Word program[] = {
     // set [0x100A], 13
     Dcpu::Instruct(Dcpu::kSet, Dcpu::kLocation, Dcpu::k13),
@@ -154,14 +132,17 @@ TEST(DcpuTest,
   };
   const Dcpu::Word *const program_end =
       program + sizeof(program)/sizeof(Dcpu::Word);
-  std::copy(program, program_end, dcpu.memory_begin());
-  dcpu.ExecuteInstructions(3);
-  EXPECT_EQ(13, dcpu.register_a());
+  std::ostringstream out;
+  disassembler.Disassemble(program, program_end, out);
+  EXPECT_EQ(
+      "set [0x100a], 0xd\n"
+      "set b, 0xa\n"
+      "set a, [0x1000+b]\n", out.str());
 }
 
-TEST(DcpuTest,
-    ExecuteInstruction_set_register_with_location_offset_by_last_register) {
-  Dcpu dcpu;
+TEST(DisassemblerTest,
+    Disassemble_set_register_with_location_offset_by_last_register) {
+  Disassembler disassembler;
   const Dcpu::Word program[] = {
     // set [0x100A], 13
     Dcpu::Instruct(Dcpu::kSet, Dcpu::kLocation, Dcpu::k13),
@@ -175,13 +156,16 @@ TEST(DcpuTest,
   };
   const Dcpu::Word *const program_end =
       program + sizeof(program)/sizeof(Dcpu::Word);
-  std::copy(program, program_end, dcpu.memory_begin());
-  dcpu.ExecuteInstructions(3);
-  EXPECT_EQ(13, dcpu.register_a());
+  std::ostringstream out;
+  disassembler.Disassemble(program, program_end, out);
+  EXPECT_EQ(
+      "set [0x100a], 0xd\n"
+      "set j, 0xa\n"
+      "set a, [0x1000+j]\n", out.str());
 }
 
-TEST(DcpuTest, ExecuteInstruction_set_register_with_pop) {
-  Dcpu dcpu;
+TEST(DisassemblerTest, Disassemble_set_register_with_pop) {
+  Disassembler disassembler;
   const Dcpu::Word program[] = {
     // set push, 13
     Dcpu::Instruct(Dcpu::kSet, Dcpu::kPush, Dcpu::k13),
@@ -190,16 +174,15 @@ TEST(DcpuTest, ExecuteInstruction_set_register_with_pop) {
   };
   const Dcpu::Word *const program_end =
       program + sizeof(program)/sizeof(Dcpu::Word);
-  std::copy(program, program_end, dcpu.memory_begin());
-  dcpu.ExecuteInstruction();
-  EXPECT_EQ(0xFFFF, dcpu.stack_pointer());
-  dcpu.ExecuteInstruction();
-  EXPECT_EQ(0, dcpu.stack_pointer());
-  EXPECT_EQ(13, dcpu.register_a());
+  std::ostringstream out;
+  disassembler.Disassemble(program, program_end, out);
+  EXPECT_EQ(
+      "set push, 0xd\n"
+      "set a, pop\n", out.str());
 }
 
-TEST(DcpuTest, ExecuteInstruction_set_register_with_peek) {
-  Dcpu dcpu;
+TEST(DisassemblerTest, Disassemble_set_register_with_peek) {
+  Disassembler disassembler;
   const Dcpu::Word program[] = {
     // set push, 13
     Dcpu::Instruct(Dcpu::kSet, Dcpu::kPush, Dcpu::k13),
@@ -208,16 +191,15 @@ TEST(DcpuTest, ExecuteInstruction_set_register_with_peek) {
   };
   const Dcpu::Word *const program_end =
       program + sizeof(program)/sizeof(Dcpu::Word);
-  std::copy(program, program_end, dcpu.memory_begin());
-  dcpu.ExecuteInstruction();
-  EXPECT_EQ(0xFFFF, dcpu.stack_pointer());
-  dcpu.ExecuteInstruction();
-  EXPECT_EQ(0xFFFF, dcpu.stack_pointer());
-  EXPECT_EQ(13, dcpu.register_a());
+  std::ostringstream out;
+  disassembler.Disassemble(program, program_end, out);
+  EXPECT_EQ(
+      "set push, 0xd\n"
+      "set a, peek\n", out.str());
 }
 
-TEST(DcpuTest, ExecuteInstruction_set_register_with_push) {
-  Dcpu dcpu;
+TEST(DisassemblerTest, Disassemble_set_register_with_push) {
+  Disassembler disassembler;
   const Dcpu::Word program[] = {
     // set a, 13
     Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterA, Dcpu::k13),
@@ -226,16 +208,15 @@ TEST(DcpuTest, ExecuteInstruction_set_register_with_push) {
   };
   const Dcpu::Word *const program_end =
       program + sizeof(program)/sizeof(Dcpu::Word);
-  std::copy(program, program_end, dcpu.memory_begin());
-  dcpu.ExecuteInstruction();
-  EXPECT_EQ(0, dcpu.stack_pointer());
-  dcpu.ExecuteInstruction();
-  EXPECT_EQ(0xFFFF, dcpu.stack_pointer());
-  EXPECT_EQ(0, dcpu.register_a());
+  std::ostringstream out;
+  disassembler.Disassemble(program, program_end, out);
+  EXPECT_EQ(
+      "set a, 0xd\n"
+      "set a, push\n", out.str());
 }
 
-TEST(DcpuTest, ExecuteInstruction_set_register_with_stack_pointer) {
-  Dcpu dcpu;
+TEST(DisassemblerTest, Disassemble_set_register_with_stack_pointer) {
+  Disassembler disassembler;
   const Dcpu::Word program[] = {
     // set push, 13
     Dcpu::Instruct(Dcpu::kSet, Dcpu::kPush, Dcpu::k13),
@@ -244,15 +225,15 @@ TEST(DcpuTest, ExecuteInstruction_set_register_with_stack_pointer) {
   };
   const Dcpu::Word *const program_end =
       program + sizeof(program)/sizeof(Dcpu::Word);
-  std::copy(program, program_end, dcpu.memory_begin());
-  dcpu.ExecuteInstruction();
-  EXPECT_EQ(0xFFFF, dcpu.stack_pointer());
-  dcpu.ExecuteInstruction();
-  EXPECT_EQ(0xFFFF, dcpu.register_a());
+  std::ostringstream out;
+  disassembler.Disassemble(program, program_end, out);
+  EXPECT_EQ(
+      "set push, 0xd\n"
+      "set a, sp\n", out.str());
 }
 
-TEST(DcpuTest, ExecuteInstruction_set_register_with_program_counter) {
-  Dcpu dcpu;
+TEST(DisassemblerTest, Disassemble_set_register_with_program_counter) {
+  Disassembler disassembler;
   const Dcpu::Word program[] = {
     // reserved 0, 0
     Dcpu::Instruct(Dcpu::kBasicReserved, Dcpu::k0, Dcpu::k0),
@@ -261,13 +242,15 @@ TEST(DcpuTest, ExecuteInstruction_set_register_with_program_counter) {
   };
   const Dcpu::Word *const program_end =
       program + sizeof(program)/sizeof(Dcpu::Word);
-  std::copy(program, program_end, dcpu.memory_begin());
-  dcpu.ExecuteInstructions(2);
-  EXPECT_EQ(2, dcpu.register_a());
+  std::ostringstream out;
+  disassembler.Disassemble(program, program_end, out);
+  EXPECT_EQ(
+      "set 0, 0\n"
+      "set a, pc\n", out.str());
 }
 
-TEST(DcpuTest, ExecuteInstruction_set_register_with_overflow) {
-  Dcpu dcpu;
+TEST(DisassemblerTest, Disassemble_set_register_with_overflow) {
+  Disassembler disassembler;
   const Dcpu::Word program[] = {
     // set o, 13
     Dcpu::Instruct(Dcpu::kSet, Dcpu::kOverflow, Dcpu::k13),
@@ -276,13 +259,15 @@ TEST(DcpuTest, ExecuteInstruction_set_register_with_overflow) {
   };
   const Dcpu::Word *const program_end =
       program + sizeof(program)/sizeof(Dcpu::Word);
-  std::copy(program, program_end, dcpu.memory_begin());
-  dcpu.ExecuteInstructions(2);
-  EXPECT_EQ(13, dcpu.register_a());
+  std::ostringstream out;
+  disassembler.Disassemble(program, program_end, out);
+  EXPECT_EQ(
+      "set o, 0xd\n"
+      "set a, o\n", out.str());
 }
 
-TEST(DcpuTest, ExecuteInstruction_set_register_with_location) {
-  Dcpu dcpu;
+TEST(DisassemblerTest, Disassemble_set_register_with_location) {
+  Disassembler disassembler;
   const Dcpu::Word program[] = {
     // set [0x1000], 13
     Dcpu::Instruct(Dcpu::kSet, Dcpu::kLocation, Dcpu::k13),
@@ -293,13 +278,15 @@ TEST(DcpuTest, ExecuteInstruction_set_register_with_location) {
   };
   const Dcpu::Word *const program_end =
       program + sizeof(program)/sizeof(Dcpu::Word);
-  std::copy(program, program_end, dcpu.memory_begin());
-  dcpu.ExecuteInstructions(2);
-  EXPECT_EQ(13, dcpu.register_a());
+  std::ostringstream out;
+  disassembler.Disassemble(program, program_end, out);
+  EXPECT_EQ(
+      "set [0x1000], 0xd\n"
+      "set a, [0x1000]\n", out.str());
 }
 
-TEST(DcpuTest, ExecuteInstruction_set_register_with_high_literal) {
-  Dcpu dcpu;
+TEST(DisassemblerTest, Disassemble_set_register_with_high_literal) {
+  Disassembler disassembler;
   const Dcpu::Word program[] = {
     // set a, 0x1001
     Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterA, Dcpu::kLiteral),
@@ -307,40 +294,42 @@ TEST(DcpuTest, ExecuteInstruction_set_register_with_high_literal) {
   };
   const Dcpu::Word *const program_end =
       program + sizeof(program)/sizeof(Dcpu::Word);
-  std::copy(program, program_end, dcpu.memory_begin());
-  dcpu.ExecuteInstruction();
-  EXPECT_EQ(0x1001, dcpu.register_a());
+  std::ostringstream out;
+  disassembler.Disassemble(program, program_end, out);
+  EXPECT_EQ(
+      "set a, 0x1001\n", out.str());
 }
 
-TEST(DcpuTest, ExecuteInstruction_set_register_with_low_literal) {
-  Dcpu dcpu;
+TEST(DisassemblerTest, Disassemble_set_register_with_low_literal) {
+  Disassembler disassembler;
   const Dcpu::Word program[] = {
     // set a, 1
     Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterA, Dcpu::k1),
   };
   const Dcpu::Word *const program_end =
       program + sizeof(program)/sizeof(Dcpu::Word);
-  std::copy(program, program_end, dcpu.memory_begin());
-  dcpu.ExecuteInstruction();
-  EXPECT_EQ(1, dcpu.register_a());
+  std::ostringstream out;
+  disassembler.Disassemble(program, program_end, out);
+  EXPECT_EQ(
+      "set a, 0x1\n", out.str());
 }
 
-TEST(DcpuTest, ExecuteInstruction_set_last_register_with_low_literal) {
-  Dcpu dcpu;
+TEST(DisassemblerTest, Disassemble_set_last_register_with_low_literal) {
+  Disassembler disassembler;
   const Dcpu::Word program[] = {
     // set j, 1
     Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterJ, Dcpu::k1),
   };
   const Dcpu::Word *const program_end =
       program + sizeof(program)/sizeof(Dcpu::Word);
-  std::copy(program, program_end, dcpu.memory_begin());
-  // dcpu.register_a() == 0 by DcpuTest.DefaultConstructor
-  dcpu.ExecuteInstructions(2);
-  EXPECT_EQ(1, dcpu.register_j());
+  std::ostringstream out;
+  disassembler.Disassemble(program, program_end, out);
+  EXPECT_EQ(
+      "set j, 0x1\n", out.str());
 }
 
-TEST(DcpuTest, ExecuteInstruction_set_location_in_register_with_low_literal) {
-  Dcpu dcpu;
+TEST(DisassemblerTest, Disassemble_set_location_in_register_with_low_literal) {
+  Disassembler disassembler;
   const Dcpu::Word program[] = {
     // set a, 0x1000
     Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterA, Dcpu::kLiteral),
@@ -350,14 +339,16 @@ TEST(DcpuTest, ExecuteInstruction_set_location_in_register_with_low_literal) {
   };
   const Dcpu::Word *const program_end =
       program + sizeof(program)/sizeof(Dcpu::Word);
-  std::copy(program, program_end, dcpu.memory_begin());
-  dcpu.ExecuteInstructions(2);
-  EXPECT_EQ(13, *dcpu.address(0x1000));
+  std::ostringstream out;
+  disassembler.Disassemble(program, program_end, out);
+  EXPECT_EQ(
+      "set a, 0x1000\n"
+      "set [a], 0xd\n", out.str());
 }
 
-TEST(DcpuTest,
-    ExecuteInstruction_set_location_in_last_register_with_low_literal) {
-  Dcpu dcpu;
+TEST(DisassemblerTest,
+    Disassemble_set_location_in_last_register_with_low_literal) {
+  Disassembler disassembler;
   const Dcpu::Word program[] = {
     // set j, 0x1000
     Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterJ, Dcpu::kLiteral),
@@ -367,14 +358,16 @@ TEST(DcpuTest,
   };
   const Dcpu::Word *const program_end =
       program + sizeof(program)/sizeof(Dcpu::Word);
-  std::copy(program, program_end, dcpu.memory_begin());
-  dcpu.ExecuteInstructions(2);
-  EXPECT_EQ(13, *dcpu.address(0x1000));
+  std::ostringstream out;
+  disassembler.Disassemble(program, program_end, out);
+  EXPECT_EQ(
+      "set j, 0x1000\n"
+      "set [j], 0xd\n", out.str());
 }
 
-TEST(DcpuTest,
-    ExecuteInstruction_set_location_offset_by_register_with_low_literal) {
-  Dcpu dcpu;
+TEST(DisassemblerTest,
+    Disassemble_set_location_offset_by_register_with_low_literal) {
+  Disassembler disassembler;
   const Dcpu::Word program[] = {
     // set a, 10
     Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterA, Dcpu::k10),
@@ -385,14 +378,16 @@ TEST(DcpuTest,
   };
   const Dcpu::Word *const program_end =
       program + sizeof(program)/sizeof(Dcpu::Word);
-  std::copy(program, program_end, dcpu.memory_begin());
-  dcpu.ExecuteInstructions(2);
-  EXPECT_EQ(13, *dcpu.address(0x100A));
+  std::ostringstream out;
+  disassembler.Disassemble(program, program_end, out);
+  EXPECT_EQ(
+      "set a, 0xa\n"
+      "set [0x1000+a], 0xd\n", out.str());
 }
 
-TEST(DcpuTest,
-    ExecuteInstruction_set_location_offset_by_last_register_with_low_literal) {
-  Dcpu dcpu;
+TEST(DisassemblerTest,
+    Disassemble_set_location_offset_by_last_register_with_low_literal) {
+  Disassembler disassembler;
   const Dcpu::Word program[] = {
     // set j, 10
     Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterJ, Dcpu::k10),
@@ -403,13 +398,15 @@ TEST(DcpuTest,
   };
   const Dcpu::Word *const program_end =
       program + sizeof(program)/sizeof(Dcpu::Word);
-  std::copy(program, program_end, dcpu.memory_begin());
-  dcpu.ExecuteInstructions(2);
-  EXPECT_EQ(13, *dcpu.address(0x100A));
+  std::ostringstream out;
+  disassembler.Disassemble(program, program_end, out);
+  EXPECT_EQ(
+      "set j, 0xa\n"
+      "set [0x1000+j], 0xd\n", out.str());
 }
 
-TEST(DcpuTest, ExecuteInstruction_set_pop_with_low_literal) {
-  Dcpu dcpu;
+TEST(DisassemblerTest, Disassemble_set_pop_with_low_literal) {
+  Disassembler disassembler;
   const Dcpu::Word program[] = {
     // set push, 13
     Dcpu::Instruct(Dcpu::kSet, Dcpu::kPush, Dcpu::k13),
@@ -418,13 +415,15 @@ TEST(DcpuTest, ExecuteInstruction_set_pop_with_low_literal) {
   };
   const Dcpu::Word *const program_end =
       program + sizeof(program)/sizeof(Dcpu::Word);
-  std::copy(program, program_end, dcpu.memory_begin());
-  dcpu.ExecuteInstructions(2);
-  EXPECT_EQ(14, *dcpu.address(dcpu.stack_pointer() - 1));
+  std::ostringstream out;
+  disassembler.Disassemble(program, program_end, out);
+  EXPECT_EQ(
+      "set push, 0xd\n"
+      "set pop, 0xe\n", out.str());
 }
 
-TEST(DcpuTest, ExecuteInstruction_set_peek_with_low_literal) {
-  Dcpu dcpu;
+TEST(DisassemblerTest, Disassemble_set_peek_with_low_literal) {
+  Disassembler disassembler;
   const Dcpu::Word program[] = {
     // set push, 13
     Dcpu::Instruct(Dcpu::kSet, Dcpu::kPush, Dcpu::k13),
@@ -433,65 +432,71 @@ TEST(DcpuTest, ExecuteInstruction_set_peek_with_low_literal) {
   };
   const Dcpu::Word *const program_end =
       program + sizeof(program)/sizeof(Dcpu::Word);
-  std::copy(program, program_end, dcpu.memory_begin());
-  dcpu.ExecuteInstructions(2);
-  EXPECT_EQ(14, *dcpu.address(dcpu.stack_pointer()));
+  std::ostringstream out;
+  disassembler.Disassemble(program, program_end, out);
+  EXPECT_EQ(
+      "set push, 0xd\n"
+      "set peek, 0xe\n", out.str());
 }
 
-TEST(DcpuTest, ExecuteInstruction_set_push_with_low_literal) {
-  Dcpu dcpu;
+TEST(DisassemblerTest, Disassemble_set_push_with_low_literal) {
+  Disassembler disassembler;
   const Dcpu::Word program[] = {
     // set push, 13
     Dcpu::Instruct(Dcpu::kSet, Dcpu::kPush, Dcpu::k13)
   };
   const Dcpu::Word *const program_end =
       program + sizeof(program)/sizeof(Dcpu::Word);
-  std::copy(program, program_end, dcpu.memory_begin());
-  dcpu.ExecuteInstruction();
-  EXPECT_EQ(13, *dcpu.address(dcpu.stack_pointer()));
+  std::ostringstream out;
+  disassembler.Disassemble(program, program_end, out);
+  EXPECT_EQ(
+      "set push, 0xd\n", out.str());
 }
 
-TEST(DcpuTest, ExecuteInstruction_set_stack_pointer_with_low_literal) {
-  Dcpu dcpu;
+TEST(DisassemblerTest, Disassemble_set_stack_pointer_with_low_literal) {
+  Disassembler disassembler;
   const Dcpu::Word program[] = {
     // set sp, 13
     Dcpu::Instruct(Dcpu::kSet, Dcpu::kStackPointer, Dcpu::k13)
   };
   const Dcpu::Word *const program_end =
       program + sizeof(program)/sizeof(Dcpu::Word);
-  std::copy(program, program_end, dcpu.memory_begin());
-  dcpu.ExecuteInstruction();
-  EXPECT_EQ(13, dcpu.stack_pointer());
+  std::ostringstream out;
+  disassembler.Disassemble(program, program_end, out);
+  EXPECT_EQ(
+      "set sp, 0xd\n", out.str());
 }
 
-TEST(DcpuTest, ExecuteInstruction_set_program_counter_with_low_literal) {
-  Dcpu dcpu;
+TEST(DisassemblerTest, Disassemble_set_program_counter_with_low_literal) {
+  Disassembler disassembler;
   const Dcpu::Word program[] = {
     // set pc, 13
     Dcpu::Instruct(Dcpu::kSet, Dcpu::kProgramCounter, Dcpu::k13)
   };
   const Dcpu::Word *const program_end =
       program + sizeof(program)/sizeof(Dcpu::Word);
-  std::copy(program, program_end, dcpu.memory_begin());
-  dcpu.ExecuteInstruction();
-  EXPECT_EQ(13, dcpu.program_counter());
+  std::ostringstream out;
+  disassembler.Disassemble(program, program_end, out);
+  EXPECT_EQ(
+      "set pc, 0xd\n", out.str());
 }
 
-TEST(DcpuTest, ExecuteInstruction_set_overflow_with_low_literal) {
-  Dcpu dcpu;
+TEST(DisassemblerTest, Disassemble_set_overflow_with_low_literal) {
+  Disassembler disassembler;
   const Dcpu::Word program[] = {
     // set o, 13
     Dcpu::Instruct(Dcpu::kSet, Dcpu::kOverflow, Dcpu::k13)
   };
   const Dcpu::Word *const program_end =
       program + sizeof(program)/sizeof(Dcpu::Word);
-  std::copy(program, program_end, dcpu.memory_begin());
-  dcpu.ExecuteInstruction();
-  EXPECT_EQ(13, dcpu.overflow());
+  std::ostringstream out;
+  disassembler.Disassemble(program, program_end, out);
+  EXPECT_EQ(
+      "set o, 0xd\n", out.str());
 }
 
-TEST(DcpuTest, ExecuteInstruction_set_location_with_low_literal) {
-  Dcpu dcpu;
+TEST(DisassemblerTest, Disassemble_set_location_with_low_literal) {
+  Disassembler disassembler;
   const Dcpu::Word program[] = {
     // set [0x1000], 13
     Dcpu::Instruct(Dcpu::kSet, Dcpu::kLocation, Dcpu::k13),
@@ -499,13 +504,14 @@ TEST(DcpuTest, ExecuteInstruction_set_location_with_low_literal) {
   };
   const Dcpu::Word *const program_end =
       program + sizeof(program)/sizeof(Dcpu::Word);
-  std::copy(program, program_end, dcpu.memory_begin());
-  dcpu.ExecuteInstruction();
-  EXPECT_EQ(13, *dcpu.address(0x1000));
+  std::ostringstream out;
+  disassembler.Disassemble(program, program_end, out);
+  EXPECT_EQ(
+      "set [0x1000], 0xd\n", out.str());
 }
 
-TEST(DcpuTest, ExecuteInstruction_set_literal_with_low_literal) {
-  Dcpu dcpu;
+TEST(DisassemblerTest, Disassemble_set_literal_with_low_literal) {
+  Disassembler disassembler;
   const Dcpu::Word program[] = {
     // set 0x1000, 13
     Dcpu::Instruct(Dcpu::kSet, Dcpu::kLiteral, Dcpu::k13),
@@ -513,28 +519,28 @@ TEST(DcpuTest, ExecuteInstruction_set_literal_with_low_literal) {
   };
   const Dcpu::Word *const program_end =
       program + sizeof(program)/sizeof(Dcpu::Word);
-  std::copy(program, program_end, dcpu.memory_begin());
-  dcpu.ExecuteInstruction();
-  // set 0x1000, 13 should be a noop.
-  EXPECT_EQ(0, *dcpu.address(0x1000));
+  std::ostringstream out;
+  disassembler.Disassemble(program, program_end, out);
+  EXPECT_EQ(
+      "set 0x1000, 0xd\n", out.str());
 }
 
-TEST(DcpuTest, ExecuteInstruction_set_low_literal_with_low_literal) {
-  Dcpu dcpu;
+TEST(DisassemblerTest, Disassemble_set_low_literal_with_low_literal) {
+  Disassembler disassembler;
   const Dcpu::Word program[] = {
     // set 10, 13
     Dcpu::Instruct(Dcpu::kSet, Dcpu::k10, Dcpu::k13)
   };
   const Dcpu::Word *const program_end =
       program + sizeof(program)/sizeof(Dcpu::Word);
-  std::copy(program, program_end, dcpu.memory_begin());
-  dcpu.ExecuteInstruction();
-  // set 10, 13 should be a noop.
-  EXPECT_EQ(0, *dcpu.address(0xA));
+  std::ostringstream out;
+  disassembler.Disassemble(program, program_end, out);
+  EXPECT_EQ(
+      "set 0xa, 0xd\n", out.str());
 }
 
-TEST(DcpuTest, ExecuteInstruction_add_register_with_low_literal) {
-  Dcpu dcpu;
+TEST(DisassemblerTest, Disassemble_add_register_with_low_literal) {
+  Disassembler disassembler;
   const Dcpu::Word program[] = {
     // set a, 0x0D
     Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterA, Dcpu::k13),
@@ -543,14 +549,15 @@ TEST(DcpuTest, ExecuteInstruction_add_register_with_low_literal) {
   };
   const Dcpu::Word *const program_end =
       program + sizeof(program)/sizeof(Dcpu::Word);
-  std::copy(program, program_end, dcpu.memory_begin());
-  dcpu.ExecuteInstructions(2);
-  EXPECT_EQ(0x1B, dcpu.register_a());
-  EXPECT_EQ(0, dcpu.overflow());
+  std::ostringstream out;
+  disassembler.Disassemble(program, program_end, out);
+  EXPECT_EQ(
+      "set a, 0xd\n"
+      "add a, 0xe\n", out.str());
 }
 
-TEST(DcpuTest, ExecuteInstruction_add_register_with_overflow) {
-  Dcpu dcpu;
+TEST(DisassemblerTest, Disassemble_add_register_with_overflow) {
+  Disassembler disassembler;
   const Dcpu::Word program[] = {
     // set a, 0xFFFF
     Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterA, Dcpu::kLiteral),
@@ -561,14 +568,15 @@ TEST(DcpuTest, ExecuteInstruction_add_register_with_overflow) {
   };
   const Dcpu::Word *const program_end =
       program + sizeof(program)/sizeof(Dcpu::Word);
-  std::copy(program, program_end, dcpu.memory_begin());
-  dcpu.ExecuteInstructions(2);
-  EXPECT_EQ(0xFFFE, dcpu.register_a());
-  EXPECT_EQ(1, dcpu.overflow());
+  std::ostringstream out;
+  disassembler.Disassemble(program, program_end, out);
+  EXPECT_EQ(
+      "set a, 0xffff\n"
+      "add a, 0xffff\n", out.str());
 }
 
-TEST(DcpuTest, ExecuteInstruction_subtract_register_with_low_literal) {
-  Dcpu dcpu;
+TEST(DisassemblerTest, Disassemble_subtract_register_with_low_literal) {
+  Disassembler disassembler;
   const Dcpu::Word program[] = {
     // set a, 0x1F
     Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterA, Dcpu::k31),
@@ -577,14 +585,15 @@ TEST(DcpuTest, ExecuteInstruction_subtract_register_with_low_literal) {
   };
   const Dcpu::Word *const program_end =
       program + sizeof(program)/sizeof(Dcpu::Word);
-  std::copy(program, program_end, dcpu.memory_begin());
-  dcpu.ExecuteInstructions(2);
-  EXPECT_EQ(0xF, dcpu.register_a());
-  EXPECT_EQ(0, dcpu.overflow());
+  std::ostringstream out;
+  disassembler.Disassemble(program, program_end, out);
+  EXPECT_EQ(
+      "set a, 0x1f\n"
+      "sub a, 0x10\n", out.str());
 }
 
-TEST(DcpuTest, ExecuteInstruction_subtract_register_with_underflow) {
-  Dcpu dcpu;
+TEST(DisassemblerTest, Disassemble_subtract_register_with_underflow) {
+  Disassembler disassembler;
   const Dcpu::Word program[] = {
     // set a, 0x10
     Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterA, Dcpu::k16),
@@ -593,14 +602,15 @@ TEST(DcpuTest, ExecuteInstruction_subtract_register_with_underflow) {
   };
   const Dcpu::Word *const program_end =
       program + sizeof(program)/sizeof(Dcpu::Word);
-  std::copy(program, program_end, dcpu.memory_begin());
-  dcpu.ExecuteInstructions(2);
-  EXPECT_EQ(0xFFF1, dcpu.register_a());
-  EXPECT_EQ(1, dcpu.overflow());
+  std::ostringstream out;
+  disassembler.Disassemble(program, program_end, out);
+  EXPECT_EQ(
+      "set a, 0x10\n"
+      "sub a, 0x1f\n", out.str());
 }
 
-TEST(DcpuTest, ExecuteInstruction_multiply_register_with_low_literal) {
-  Dcpu dcpu;
+TEST(DisassemblerTest, Disassemble_multiply_register_with_low_literal) {
+  Disassembler disassembler;
   const Dcpu::Word program[] = {
     // set a, 0x10
     Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterA, Dcpu::k16),
@@ -609,14 +619,15 @@ TEST(DcpuTest, ExecuteInstruction_multiply_register_with_low_literal) {
   };
   const Dcpu::Word *const program_end =
       program + sizeof(program)/sizeof(Dcpu::Word);
-  std::copy(program, program_end, dcpu.memory_begin());
-  dcpu.ExecuteInstructions(2);
-  EXPECT_EQ(0x01F0, dcpu.register_a());
-  EXPECT_EQ(0, dcpu.overflow());
+  std::ostringstream out;
+  disassembler.Disassemble(program, program_end, out);
+  EXPECT_EQ(
+      "set a, 0x10\n"
+      "mul a, 0x1f\n", out.str());
 }
 
-TEST(DcpuTest, ExecuteInstruction_multiply_register_with_overflow) {
-  Dcpu dcpu;
+TEST(DisassemblerTest, Disassemble_multiply_register_with_overflow) {
+  Disassembler disassembler;
   const Dcpu::Word program[] = {
     // set a, 0xFFFF
     Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterA, Dcpu::kLiteral),
@@ -627,14 +638,15 @@ TEST(DcpuTest, ExecuteInstruction_multiply_register_with_overflow) {
   };
   const Dcpu::Word *const program_end =
       program + sizeof(program)/sizeof(Dcpu::Word);
-  std::copy(program, program_end, dcpu.memory_begin());
-  dcpu.ExecuteInstructions(2);
-  EXPECT_EQ(0x0001, dcpu.register_a());
-  EXPECT_EQ(0xFFFE, dcpu.overflow());
+  std::ostringstream out;
+  disassembler.Disassemble(program, program_end, out);
+  EXPECT_EQ(
+      "set a, 0xffff\n"
+      "mul a, 0xffff\n", out.str());
 }
 
-TEST(DcpuTest, ExecuteInstruction_divide_register_with_low_literal) {
-  Dcpu dcpu;
+TEST(DisassemblerTest, Disassemble_divide_register_with_low_literal) {
+  Disassembler disassembler;
   const Dcpu::Word program[] = {
     // set a, 0x1F
     Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterA, Dcpu::k31),
@@ -643,14 +655,15 @@ TEST(DcpuTest, ExecuteInstruction_divide_register_with_low_literal) {
   };
   const Dcpu::Word *const program_end =
       program + sizeof(program)/sizeof(Dcpu::Word);
-  std::copy(program, program_end, dcpu.memory_begin());
-  dcpu.ExecuteInstructions(2);
-  EXPECT_EQ(1, dcpu.register_a());
-  EXPECT_EQ(0, dcpu.overflow());
+  std::ostringstream out;
+  disassembler.Disassemble(program, program_end, out);
+  EXPECT_EQ(
+      "set a, 0x1f\n"
+      "div a, 0x10\n", out.str());
 }
 
-TEST(DcpuTest, ExecuteInstruction_divide_register_by_zero) {
-  Dcpu dcpu;
+TEST(DisassemblerTest, Disassemble_divide_register_by_zero) {
+  Disassembler disassembler;
   const Dcpu::Word program[] = {
     // set a, 0x1F
     Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterA, Dcpu::k31),
@@ -659,14 +672,15 @@ TEST(DcpuTest, ExecuteInstruction_divide_register_by_zero) {
   };
   const Dcpu::Word *const program_end =
       program + sizeof(program)/sizeof(Dcpu::Word);
-  std::copy(program, program_end, dcpu.memory_begin());
-  dcpu.ExecuteInstructions(2);
-  EXPECT_EQ(0, dcpu.register_a());
-  EXPECT_EQ(1, dcpu.overflow());
+  std::ostringstream out;
+  disassembler.Disassemble(program, program_end, out);
+  EXPECT_EQ(
+      "set a, 0x1f\n"
+      "div a, 0\n", out.str());
 }
 
-TEST(DcpuTest, ExecuteInstruction_modulo_register_with_low_literal) {
-  Dcpu dcpu;
+TEST(DisassemblerTest, Disassemble_modulo_register_with_low_literal) {
+  Disassembler disassembler;
   const Dcpu::Word program[] = {
     // set a, 0x1F
     Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterA, Dcpu::k31),
@@ -675,13 +689,15 @@ TEST(DcpuTest, ExecuteInstruction_modulo_register_with_low_literal) {
   };
   const Dcpu::Word *const program_end =
       program + sizeof(program)/sizeof(Dcpu::Word);
-  std::copy(program, program_end, dcpu.memory_begin());
-  dcpu.ExecuteInstructions(2);
-  EXPECT_EQ(0x9, dcpu.register_a());
+  std::ostringstream out;
+  disassembler.Disassemble(program, program_end, out);
+  EXPECT_EQ(
+      "set a, 0x1f\n"
+      "mod a, 0xb\n", out.str());
 }
 
-TEST(DcpuTest, ExecuteInstruction_shift_left_register_with_low_literal) {
-  Dcpu dcpu;
+TEST(DisassemblerTest, Disassemble_shift_left_register_with_low_literal) {
+  Disassembler disassembler;
   const Dcpu::Word program[] = {
     // set a, 0x1F
     Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterA, Dcpu::k31),
@@ -690,14 +706,15 @@ TEST(DcpuTest, ExecuteInstruction_shift_left_register_with_low_literal) {
   };
   const Dcpu::Word *const program_end =
       program + sizeof(program)/sizeof(Dcpu::Word);
-  std::copy(program, program_end, dcpu.memory_begin());
-  dcpu.ExecuteInstructions(2);
-  EXPECT_EQ(0x7C, dcpu.register_a());
-  EXPECT_EQ(0, dcpu.overflow());
+  std::ostringstream out;
+  disassembler.Disassemble(program, program_end, out);
+  EXPECT_EQ(
+      "set a, 0x1f\n"
+      "shl a, 0x2\n", out.str());
 }
 
-TEST(DcpuTest, ExecuteInstruction_shift_left_register_with_overflow) {
-  Dcpu dcpu;
+TEST(DisassemblerTest, Disassemble_shift_left_register_with_overflow) {
+  Disassembler disassembler;
   const Dcpu::Word program[] = {
     // set a, 0xFFFF
     Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterA, Dcpu::kLiteral),
@@ -707,14 +724,15 @@ TEST(DcpuTest, ExecuteInstruction_shift_left_register_with_overflow) {
   };
   const Dcpu::Word *const program_end =
       program + sizeof(program)/sizeof(Dcpu::Word);
-  std::copy(program, program_end, dcpu.memory_begin());
-  dcpu.ExecuteInstructions(2);
-  EXPECT_EQ(0xFFFC, dcpu.register_a());
-  EXPECT_EQ(0x0003, dcpu.overflow());
+  std::ostringstream out;
+  disassembler.Disassemble(program, program_end, out);
+  EXPECT_EQ(
+      "set a, 0xffff\n"
+      "shl a, 0x2\n", out.str());
 }
 
-TEST(DcpuTest, ExecuteInstruction_shift_right_register_with_low_literal) {
-  Dcpu dcpu;
+TEST(DisassemblerTest, Disassemble_shift_right_register_with_low_literal) {
+  Disassembler disassembler;
   const Dcpu::Word program[] = {
     // set a, 0xFFF0
     Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterA, Dcpu::kLiteral),
@@ -724,14 +742,15 @@ TEST(DcpuTest, ExecuteInstruction_shift_right_register_with_low_literal) {
   };
   const Dcpu::Word *const program_end =
       program + sizeof(program)/sizeof(Dcpu::Word);
-  std::copy(program, program_end, dcpu.memory_begin());
-  dcpu.ExecuteInstructions(2);
-  EXPECT_EQ(0x3FFC, dcpu.register_a());
-  EXPECT_EQ(0, dcpu.overflow());
+  std::ostringstream out;
+  disassembler.Disassemble(program, program_end, out);
+  EXPECT_EQ(
+      "set a, 0xfff0\n"
+      "shr a, 0x2\n", out.str());
 }
 
-TEST(DcpuTest, ExecuteInstruction_shift_right_register_with_underflow) {
-  Dcpu dcpu;
+TEST(DisassemblerTest, Disassemble_shift_right_register_with_underflow) {
+  Disassembler disassembler;
   const Dcpu::Word program[] = {
     // set a, 0xFFFF
     Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterA, Dcpu::kLiteral),
@@ -741,14 +760,15 @@ TEST(DcpuTest, ExecuteInstruction_shift_right_register_with_underflow) {
   };
   const Dcpu::Word *const program_end =
       program + sizeof(program)/sizeof(Dcpu::Word);
-  std::copy(program, program_end, dcpu.memory_begin());
-  dcpu.ExecuteInstructions(2);
-  EXPECT_EQ(0x3FFF, dcpu.register_a());
-  EXPECT_EQ(0xC000, dcpu.overflow());
+  std::ostringstream out;
+  disassembler.Disassemble(program, program_end, out);
+  EXPECT_EQ(
+      "set a, 0xffff\n"
+      "shr a, 0x2\n", out.str());
 }
 
-TEST(DcpuTest, ExecuteInstruction_and_register_with_low_literal) {
-  Dcpu dcpu;
+TEST(DisassemblerTest, Disassemble_and_register_with_low_literal) {
+  Disassembler disassembler;
   const Dcpu::Word program[] = {
     // set a, 0xF0F0
     Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterA, Dcpu::kLiteral),
@@ -759,13 +779,15 @@ TEST(DcpuTest, ExecuteInstruction_and_register_with_low_literal) {
   };
   const Dcpu::Word *const program_end =
       program + sizeof(program)/sizeof(Dcpu::Word);
-  std::copy(program, program_end, dcpu.memory_begin());
-  dcpu.ExecuteInstructions(2);
-  EXPECT_EQ(0x00F0, dcpu.register_a());
+  std::ostringstream out;
+  disassembler.Disassemble(program, program_end, out);
+  EXPECT_EQ(
+      "set a, 0xf0f0\n"
+      "and a, 0xff\n", out.str());
 }
 
-TEST(DcpuTest, ExecuteInstruction_or_register_with_low_literal) {
-  Dcpu dcpu;
+TEST(DisassemblerTest, Disassemble_or_register_with_low_literal) {
+  Disassembler disassembler;
   const Dcpu::Word program[] = {
     // set a, 0xF0F0
     Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterA, Dcpu::kLiteral),
@@ -776,13 +798,15 @@ TEST(DcpuTest, ExecuteInstruction_or_register_with_low_literal) {
   };
   const Dcpu::Word *const program_end =
       program + sizeof(program)/sizeof(Dcpu::Word);
-  std::copy(program, program_end, dcpu.memory_begin());
-  dcpu.ExecuteInstructions(2);
-  EXPECT_EQ(0xF0FF, dcpu.register_a());
+  std::ostringstream out;
+  disassembler.Disassemble(program, program_end, out);
+  EXPECT_EQ(
+      "set a, 0xf0f0\n"
+      "bor a, 0xff\n", out.str());
 }
 
-TEST(DcpuTest, ExecuteInstruction_xor_register_with_low_literal) {
-  Dcpu dcpu;
+TEST(DisassemblerTest, Disassemble_xor_register_with_low_literal) {
+  Disassembler disassembler;
   const Dcpu::Word program[] = {
     // set a, 0xF0F0
     Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterA, Dcpu::kLiteral),
@@ -793,13 +817,15 @@ TEST(DcpuTest, ExecuteInstruction_xor_register_with_low_literal) {
   };
   const Dcpu::Word *const program_end =
       program + sizeof(program)/sizeof(Dcpu::Word);
-  std::copy(program, program_end, dcpu.memory_begin());
-  dcpu.ExecuteInstructions(2);
-  EXPECT_EQ(0xF00F, dcpu.register_a());
+  std::ostringstream out;
+  disassembler.Disassemble(program, program_end, out);
+  EXPECT_EQ(
+      "set a, 0xf0f0\n"
+      "xor a, 0xff\n", out.str());
 }
 
-TEST(DcpuTest, ExecuteInstruction_if_equal_register_with_equal_low_literal) {
-  Dcpu dcpu;
+TEST(DisassemblerTest, Disassemble_if_equal_register_with_equal_low_literal) {
+  Disassembler disassembler;
   const Dcpu::Word program[] = {
     // set a, 0x0F
     Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterA, Dcpu::k15),
@@ -812,13 +838,17 @@ TEST(DcpuTest, ExecuteInstruction_if_equal_register_with_equal_low_literal) {
   };
   const Dcpu::Word *const program_end =
       program + sizeof(program)/sizeof(Dcpu::Word);
-  std::copy(program, program_end, dcpu.memory_begin());
-  dcpu.ExecuteInstructions(3);
-  EXPECT_EQ(13, *dcpu.address(dcpu.stack_pointer()));
+  std::ostringstream out;
+  disassembler.Disassemble(program, program_end, out);
+  EXPECT_EQ(
+      "set a, 0xf\n"
+      "ife a, 0xf\n"
+      "set push, 0xd\n"
+      "set push, 0xe\n", out.str());
 }
 
-TEST(DcpuTest, ExecuteInstruction_if_equal_register_with_unequal_low_literal) {
-  Dcpu dcpu;
+TEST(DisassemblerTest, Disassemble_if_equal_register_with_unequal_low_literal) {
+  Disassembler disassembler;
   const Dcpu::Word program[] = {
     // set a, 0x0F
     Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterA, Dcpu::k15),
@@ -831,14 +861,18 @@ TEST(DcpuTest, ExecuteInstruction_if_equal_register_with_unequal_low_literal) {
   };
   const Dcpu::Word *const program_end =
       program + sizeof(program)/sizeof(Dcpu::Word);
-  std::copy(program, program_end, dcpu.memory_begin());
-  dcpu.ExecuteInstructions(3);
-  EXPECT_EQ(14, *dcpu.address(dcpu.stack_pointer()));
+  std::ostringstream out;
+  disassembler.Disassemble(program, program_end, out);
+  EXPECT_EQ(
+      "set a, 0xf\n"
+      "ife a, 0\n"
+      "set push, 0xd\n"
+      "set push, 0xe\n", out.str());
 }
 
-TEST(DcpuTest,
-    ExecuteInstruction_if_not_equal_register_with_unequal_low_literal) {
-  Dcpu dcpu;
+TEST(DisassemblerTest,
+    Disassemble_if_not_equal_register_with_unequal_low_literal) {
+  Disassembler disassembler;
   const Dcpu::Word program[] = {
     // set a, 0x0F
     Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterA, Dcpu::k15),
@@ -851,18 +885,22 @@ TEST(DcpuTest,
   };
   const Dcpu::Word *const program_end =
       program + sizeof(program)/sizeof(Dcpu::Word);
-  std::copy(program, program_end, dcpu.memory_begin());
-  dcpu.ExecuteInstructions(3);
-  EXPECT_EQ(13, *dcpu.address(dcpu.stack_pointer()));
+  std::ostringstream out;
+  disassembler.Disassemble(program, program_end, out);
+  EXPECT_EQ(
+      "set a, 0xf\n"
+      "ifn a, 0\n"
+      "set push, 0xd\n"
+      "set push, 0xe\n", out.str());
 }
 
-TEST(DcpuTest,
-    ExecuteInstruction_if_not_equal_register_with_equal_low_literal) {
-  Dcpu dcpu;
+TEST(DisassemblerTest,
+    Disassemble_if_not_equal_register_with_equal_low_literal) {
+  Disassembler disassembler;
   const Dcpu::Word program[] = {
     // set a, 0x0F
     Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterA, Dcpu::k15),
-    // ifn a, 0x0F
+    // ife a, 0x0F
     Dcpu::Instruct(Dcpu::kIfNotEqual, Dcpu::kRegisterA, Dcpu::k15),
     // set push, 13
     Dcpu::Instruct(Dcpu::kSet, Dcpu::kPush, Dcpu::k13),
@@ -871,14 +909,18 @@ TEST(DcpuTest,
   };
   const Dcpu::Word *const program_end =
       program + sizeof(program)/sizeof(Dcpu::Word);
-  std::copy(program, program_end, dcpu.memory_begin());
-  dcpu.ExecuteInstructions(3);
-  EXPECT_EQ(14, *dcpu.address(dcpu.stack_pointer()));
+  std::ostringstream out;
+  disassembler.Disassemble(program, program_end, out);
+  EXPECT_EQ(
+      "set a, 0xf\n"
+      "ifn a, 0xf\n"
+      "set push, 0xd\n"
+      "set push, 0xe\n", out.str());
 }
 
-TEST(DcpuTest,
-    ExecuteInstruction_if_greater_than_register_with_lesser_low_literal) {
-  Dcpu dcpu;
+TEST(DisassemblerTest,
+    Disassemble_if_greater_than_register_with_lesser_low_literal) {
+  Disassembler disassembler;
   const Dcpu::Word program[] = {
     // set a, 0x1F
     Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterA, Dcpu::k31),
@@ -891,14 +933,18 @@ TEST(DcpuTest,
   };
   const Dcpu::Word *const program_end =
       program + sizeof(program)/sizeof(Dcpu::Word);
-  std::copy(program, program_end, dcpu.memory_begin());
-  dcpu.ExecuteInstructions(3);
-  EXPECT_EQ(13, *dcpu.address(dcpu.stack_pointer()));
+  std::ostringstream out;
+  disassembler.Disassemble(program, program_end, out);
+  EXPECT_EQ(
+      "set a, 0x1f\n"
+      "ifg a, 0xf\n"
+      "set push, 0xd\n"
+      "set push, 0xe\n", out.str());
 }
 
-TEST(DcpuTest,
-    ExecuteInstruction_if_greater_than_register_with_greater_low_literal) {
-  Dcpu dcpu;
+TEST(DisassemblerTest,
+    Disassemble_if_greater_than_register_with_greater_low_literal) {
+  Disassembler disassembler;
   const Dcpu::Word program[] = {
     // set a, 0x0F
     Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterA, Dcpu::k15),
@@ -911,14 +957,18 @@ TEST(DcpuTest,
   };
   const Dcpu::Word *const program_end =
       program + sizeof(program)/sizeof(Dcpu::Word);
-  std::copy(program, program_end, dcpu.memory_begin());
-  dcpu.ExecuteInstructions(3);
-  EXPECT_EQ(14, *dcpu.address(dcpu.stack_pointer()));
+  std::ostringstream out;
+  disassembler.Disassemble(program, program_end, out);
+  EXPECT_EQ(
+      "set a, 0xf\n"
+      "ifg a, 0x1f\n"
+      "set push, 0xd\n"
+      "set push, 0xe\n", out.str());
 }
 
-TEST(DcpuTest,
-    ExecuteInstruction_if_both_register_with_common_bits_low_literal) {
-  Dcpu dcpu;
+TEST(DisassemblerTest,
+    Disassemble_if_both_register_with_common_bits_low_literal) {
+  Disassembler disassembler;
   const Dcpu::Word program[] = {
     // set a, 0x1F
     Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterA, Dcpu::k31),
@@ -931,18 +981,22 @@ TEST(DcpuTest,
   };
   const Dcpu::Word *const program_end =
       program + sizeof(program)/sizeof(Dcpu::Word);
-  std::copy(program, program_end, dcpu.memory_begin());
-  dcpu.ExecuteInstructions(3);
-  EXPECT_EQ(13, *dcpu.address(dcpu.stack_pointer()));
+  std::ostringstream out;
+  disassembler.Disassemble(program, program_end, out);
+  EXPECT_EQ(
+      "set a, 0x1f\n"
+      "ifb a, 0x10\n"
+      "set push, 0xd\n"
+      "set push, 0xe\n", out.str());
 }
 
-TEST(DcpuTest,
-    ExecuteInstruction_if_both_register_with_uncommon_bits_low_literal) {
-  Dcpu dcpu;
+TEST(DisassemblerTest,
+    Disassemble_if_both_register_with_uncommon_bits_low_literal) {
+  Disassembler disassembler;
   const Dcpu::Word program[] = {
     // set a, 0x0F
     Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterA, Dcpu::k15),
-    // ifb a, 0x10
+    // ife a, 0x10
     Dcpu::Instruct(Dcpu::kIfBoth, Dcpu::kRegisterA, Dcpu::k16),
     // set push, 13
     Dcpu::Instruct(Dcpu::kSet, Dcpu::kPush, Dcpu::k13),
@@ -951,13 +1005,17 @@ TEST(DcpuTest,
   };
   const Dcpu::Word *const program_end =
       program + sizeof(program)/sizeof(Dcpu::Word);
-  std::copy(program, program_end, dcpu.memory_begin());
-  dcpu.ExecuteInstructions(3);
-  EXPECT_EQ(14, *dcpu.address(dcpu.stack_pointer()));
+  std::ostringstream out;
+  disassembler.Disassemble(program, program_end, out);
+  EXPECT_EQ(
+      "set a, 0xf\n"
+      "ifb a, 0x10\n"
+      "set push, 0xd\n"
+      "set push, 0xe\n", out.str());
 }
 
-TEST(DcpuTest, ExecuteInstruction_jump_sub_routine) {
-  Dcpu dcpu;
+TEST(DisassemblerTest, Disassemble_jump_sub_routine) {
+  Disassembler disassembler;
   const Dcpu::Word program[] = {
     // jsr subroutine
     Dcpu::Instruct(Dcpu::kJumpSubRoutine, Dcpu::k3),
@@ -972,12 +1030,12 @@ TEST(DcpuTest, ExecuteInstruction_jump_sub_routine) {
   };
   const Dcpu::Word *const program_end =
       program + sizeof(program)/sizeof(Dcpu::Word);
-  std::copy(program, program_end, dcpu.memory_begin());
-  dcpu.ExecuteInstruction();
-  EXPECT_EQ(0xFFFF, dcpu.stack_pointer());
-  dcpu.ExecuteInstructions(4);
-  EXPECT_EQ(13, dcpu.register_a());
-  EXPECT_EQ(14, dcpu.register_b());
-  EXPECT_EQ(2, dcpu.program_counter());
-  EXPECT_EQ(0, dcpu.stack_pointer());
+  std::ostringstream out;
+  disassembler.Disassemble(program, program_end, out);
+  EXPECT_EQ(
+      "jsr 0x3\n"
+      "set a, 0xd\n"
+      "sub pc, 0x1\n"
+      "set b, 0xe\n"
+      "set pc, pop\n", out.str());
 }

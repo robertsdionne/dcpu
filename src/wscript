@@ -5,6 +5,7 @@ def build(ctx):
   ctx.stlib(
       source = [
         'dcpu.cc',
+        'disassembler.cc',
         ],
       target = 'dcpu',
       includes = [
@@ -19,6 +20,7 @@ def build(ctx):
   ctx.objects(
       source = [
         'dcpu_test.cc',
+        'disassembler_test.cc',
         ],
       target = 'dcpu_tests',
       includes = [
