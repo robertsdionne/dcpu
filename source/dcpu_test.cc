@@ -258,8 +258,8 @@ TEST(DcpuTest, ExecuteInstruction_set_register_with_stack_pointer) {
 TEST(DcpuTest, ExecuteInstruction_set_register_with_program_counter) {
   Dcpu dcpu;
   const Dcpu::Word program[] = {
-    // reserved 0, 0
-    Dcpu::Instruct(Dcpu::kBasicReserved, Dcpu::k0, Dcpu::k0),
+    // noop
+    Dcpu::Noop(),
     // set a, pc
     Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterA, Dcpu::kProgramCounter)
   };
@@ -582,8 +582,8 @@ TEST(DcpuTest, ExecuteInstruction_add_register_with_overflow) {
 TEST(DcpuTest, ExecuteInstruction_subtract_register_with_low_literal) {
   Dcpu dcpu;
   const Dcpu::Word program[] = {
-    // set a, 0x1F
-    Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterA, Dcpu::k31),
+    // set a, 0x1E
+    Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterA, Dcpu::k30),
     // sub a, 0x10
     Dcpu::Instruct(Dcpu::kSubtract, Dcpu::kRegisterA, Dcpu::k16)
   };
@@ -591,7 +591,7 @@ TEST(DcpuTest, ExecuteInstruction_subtract_register_with_low_literal) {
       program + sizeof(program)/sizeof(Dcpu::Word);
   std::copy(program, program_end, dcpu.memory_begin());
   dcpu.ExecuteInstructions(2);
-  EXPECT_EQ(0xF, dcpu.register_a());
+  EXPECT_EQ(0xE, dcpu.register_a());
   EXPECT_EQ(0, dcpu.extra());
 }
 
@@ -600,14 +600,14 @@ TEST(DcpuTest, ExecuteInstruction_subtract_register_with_underflow) {
   const Dcpu::Word program[] = {
     // set a, 0x10
     Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterA, Dcpu::k16),
-    // sub a, 0x1F
-    Dcpu::Instruct(Dcpu::kSubtract, Dcpu::kRegisterA, Dcpu::k31)
+    // sub a, 0x1E
+    Dcpu::Instruct(Dcpu::kSubtract, Dcpu::kRegisterA, Dcpu::k30)
   };
   const Dcpu::Word *const program_end =
       program + sizeof(program)/sizeof(Dcpu::Word);
   std::copy(program, program_end, dcpu.memory_begin());
   dcpu.ExecuteInstructions(2);
-  EXPECT_EQ(0xFFF1, dcpu.register_a());
+  EXPECT_EQ(0xFFF2, dcpu.register_a());
   EXPECT_EQ(1, dcpu.extra());
 }
 
@@ -616,14 +616,14 @@ TEST(DcpuTest, ExecuteInstruction_multiply_register_with_low_literal) {
   const Dcpu::Word program[] = {
     // set a, 0x10
     Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterA, Dcpu::k16),
-    // mul a, 0x1F
-    Dcpu::Instruct(Dcpu::kMultiply, Dcpu::kRegisterA, Dcpu::k31)
+    // mul a, 0x1E
+    Dcpu::Instruct(Dcpu::kMultiply, Dcpu::kRegisterA, Dcpu::k30)
   };
   const Dcpu::Word *const program_end =
       program + sizeof(program)/sizeof(Dcpu::Word);
   std::copy(program, program_end, dcpu.memory_begin());
   dcpu.ExecuteInstructions(2);
-  EXPECT_EQ(0x01F0, dcpu.register_a());
+  EXPECT_EQ(0x01E0, dcpu.register_a());
   EXPECT_EQ(0, dcpu.extra());
 }
 
@@ -648,8 +648,8 @@ TEST(DcpuTest, ExecuteInstruction_multiply_register_with_overflow) {
 TEST(DcpuTest, ExecuteInstruction_divide_register_with_low_literal) {
   Dcpu dcpu;
   const Dcpu::Word program[] = {
-    // set a, 0x1F
-    Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterA, Dcpu::k31),
+    // set a, 0x1E
+    Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterA, Dcpu::k30),
     // div a, 0x10
     Dcpu::Instruct(Dcpu::kDivide, Dcpu::kRegisterA, Dcpu::k16)
   };
@@ -664,8 +664,8 @@ TEST(DcpuTest, ExecuteInstruction_divide_register_with_low_literal) {
 TEST(DcpuTest, ExecuteInstruction_divide_register_by_zero) {
   Dcpu dcpu;
   const Dcpu::Word program[] = {
-    // set a, 0x1F
-    Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterA, Dcpu::k31),
+    // set a, 0x1E
+    Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterA, Dcpu::k30),
     // div a, 0x00
     Dcpu::Instruct(Dcpu::kDivide, Dcpu::kRegisterA, Dcpu::k0)
   };
@@ -680,8 +680,8 @@ TEST(DcpuTest, ExecuteInstruction_divide_register_by_zero) {
 TEST(DcpuTest, ExecuteInstruction_modulo_register_with_low_literal) {
   Dcpu dcpu;
   const Dcpu::Word program[] = {
-    // set a, 0x1F
-    Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterA, Dcpu::k31),
+    // set a, 0x1E
+    Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterA, Dcpu::k30),
     // mod a, 0x0B
     Dcpu::Instruct(Dcpu::kModulo, Dcpu::kRegisterA, Dcpu::k11)
   };
@@ -689,14 +689,14 @@ TEST(DcpuTest, ExecuteInstruction_modulo_register_with_low_literal) {
       program + sizeof(program)/sizeof(Dcpu::Word);
   std::copy(program, program_end, dcpu.memory_begin());
   dcpu.ExecuteInstructions(2);
-  EXPECT_EQ(0x9, dcpu.register_a());
+  EXPECT_EQ(0x8, dcpu.register_a());
 }
 
 TEST(DcpuTest, ExecuteInstruction_shift_left_register_with_low_literal) {
   Dcpu dcpu;
   const Dcpu::Word program[] = {
-    // set a, 0x1F
-    Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterA, Dcpu::k31),
+    // set a, 0x1E
+    Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterA, Dcpu::k30),
     // shl a, 0x02
     Dcpu::Instruct(Dcpu::kShiftLeft, Dcpu::kRegisterA, Dcpu::k2)
   };
@@ -704,7 +704,7 @@ TEST(DcpuTest, ExecuteInstruction_shift_left_register_with_low_literal) {
       program + sizeof(program)/sizeof(Dcpu::Word);
   std::copy(program, program_end, dcpu.memory_begin());
   dcpu.ExecuteInstructions(2);
-  EXPECT_EQ(0x7C, dcpu.register_a());
+  EXPECT_EQ(0x78, dcpu.register_a());
   EXPECT_EQ(0, dcpu.extra());
 }
 
@@ -892,8 +892,8 @@ TEST(DcpuTest,
     ExecuteInstruction_if_greater_than_register_with_lesser_low_literal) {
   Dcpu dcpu;
   const Dcpu::Word program[] = {
-    // set a, 0x1F
-    Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterA, Dcpu::k31),
+    // set a, 0x1E
+    Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterA, Dcpu::k30),
     // ifg a, 0x0F
     Dcpu::Instruct(Dcpu::kIfGreaterThan, Dcpu::kRegisterA, Dcpu::k15),
     // set push, 13
@@ -914,8 +914,8 @@ TEST(DcpuTest,
   const Dcpu::Word program[] = {
     // set a, 0x0F
     Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterA, Dcpu::k15),
-    // ifg a, 0x1F
-    Dcpu::Instruct(Dcpu::kIfGreaterThan, Dcpu::kRegisterA, Dcpu::k31),
+    // ifg a, 0x1E
+    Dcpu::Instruct(Dcpu::kIfGreaterThan, Dcpu::kRegisterA, Dcpu::k30),
     // set push, 13
     Dcpu::Instruct(Dcpu::kSet, Dcpu::kPush, Dcpu::k13),
     // set push, 14
@@ -932,8 +932,8 @@ TEST(DcpuTest,
     ExecuteInstruction_if_both_register_with_common_bits_low_literal) {
   Dcpu dcpu;
   const Dcpu::Word program[] = {
-    // set a, 0x1F
-    Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterA, Dcpu::k31),
+    // set a, 0x1E
+    Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterA, Dcpu::k30),
     // ifb a, 0x10
     Dcpu::Instruct(Dcpu::kIfBoth, Dcpu::kRegisterA, Dcpu::k16),
     // set push, 13

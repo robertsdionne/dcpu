@@ -13,6 +13,10 @@ const Dcpu::Word Dcpu::kBasicOperandShiftB;
 const Dcpu::Word Dcpu::kAdvancedOperandMaskA;
 const Dcpu::Word Dcpu::kAdvancedOperandShiftA;
 
+Dcpu::Word Dcpu::Noop() {
+  return Dcpu::Instruct(kSet, kRegisterA, kRegisterA);
+}
+
 Dcpu::Word Dcpu::Instruct(const Dcpu::BasicOpcode basic_opcode,
     const Dcpu::Operand operand_b, const Dcpu::Operand operand_a) {
   return basic_opcode | (

@@ -25,16 +25,16 @@ TEST(DisassemblerTest, Disassemble) {
   std::ostringstream out;
   disassembler.Disassemble(program, program_end, out);
   EXPECT_EQ(
-      "set 0, 0\n"
-      "set 0, 0\n"
-      "set 0, 0\n"
-      "set 0, 0\n"
-      "set 0, 0\n"
-      "set 0, 0\n"
-      "set 0, 0\n"
-      "set 0, 0\n"
-      "set 0, 0\n"
-      "set 0, 0\n", out.str());
+      "set a, a\n"
+      "set a, a\n"
+      "set a, a\n"
+      "set a, a\n"
+      "set a, a\n"
+      "set a, a\n"
+      "set a, a\n"
+      "set a, a\n"
+      "set a, a\n"
+      "set a, a\n", out.str());
 }
 
 TEST(DisassemblerTest, Disassemble_set_register_with_register) {
@@ -235,8 +235,8 @@ TEST(DisassemblerTest, Disassemble_set_register_with_stack_pointer) {
 TEST(DisassemblerTest, Disassemble_set_register_with_program_counter) {
   Disassembler disassembler;
   const Dcpu::Word program[] = {
-    // reserved 0, 0
-    Dcpu::Instruct(Dcpu::kBasicReserved, Dcpu::k0, Dcpu::k0),
+    // noop
+    Dcpu::Noop(),
     // set a, pc
     Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterA, Dcpu::kProgramCounter)
   };
@@ -245,7 +245,7 @@ TEST(DisassemblerTest, Disassemble_set_register_with_program_counter) {
   std::ostringstream out;
   disassembler.Disassemble(program, program_end, out);
   EXPECT_EQ(
-      "set 0, 0\n"
+      "set a, a\n"
       "set a, pc\n", out.str());
 }
 
@@ -591,8 +591,8 @@ TEST(DisassemblerTest, Disassemble_add_register_with_overflow) {
 TEST(DisassemblerTest, Disassemble_subtract_register_with_low_literal) {
   Disassembler disassembler;
   const Dcpu::Word program[] = {
-    // set a, 0x1F
-    Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterA, Dcpu::k31),
+    // set a, 0x1E
+    Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterA, Dcpu::k30),
     // sub a, 0x10
     Dcpu::Instruct(Dcpu::kSubtract, Dcpu::kRegisterA, Dcpu::k16)
   };
@@ -601,7 +601,7 @@ TEST(DisassemblerTest, Disassemble_subtract_register_with_low_literal) {
   std::ostringstream out;
   disassembler.Disassemble(program, program_end, out);
   EXPECT_EQ(
-      "set a, 0x1f\n"
+      "set a, 0x1e\n"
       "sub a, 0x10\n", out.str());
 }
 
@@ -610,8 +610,8 @@ TEST(DisassemblerTest, Disassemble_subtract_register_with_underflow) {
   const Dcpu::Word program[] = {
     // set a, 0x10
     Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterA, Dcpu::k16),
-    // sub a, 0x1F
-    Dcpu::Instruct(Dcpu::kSubtract, Dcpu::kRegisterA, Dcpu::k31)
+    // sub a, 0x1E
+    Dcpu::Instruct(Dcpu::kSubtract, Dcpu::kRegisterA, Dcpu::k30)
   };
   const Dcpu::Word *const program_end =
       program + sizeof(program)/sizeof(Dcpu::Word);
@@ -619,7 +619,7 @@ TEST(DisassemblerTest, Disassemble_subtract_register_with_underflow) {
   disassembler.Disassemble(program, program_end, out);
   EXPECT_EQ(
       "set a, 0x10\n"
-      "sub a, 0x1f\n", out.str());
+      "sub a, 0x1e\n", out.str());
 }
 
 TEST(DisassemblerTest, Disassemble_multiply_register_with_low_literal) {
@@ -627,8 +627,8 @@ TEST(DisassemblerTest, Disassemble_multiply_register_with_low_literal) {
   const Dcpu::Word program[] = {
     // set a, 0x10
     Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterA, Dcpu::k16),
-    // mul a, 0x1F
-    Dcpu::Instruct(Dcpu::kMultiply, Dcpu::kRegisterA, Dcpu::k31)
+    // mul a, 0x1E
+    Dcpu::Instruct(Dcpu::kMultiply, Dcpu::kRegisterA, Dcpu::k30)
   };
   const Dcpu::Word *const program_end =
       program + sizeof(program)/sizeof(Dcpu::Word);
@@ -636,7 +636,7 @@ TEST(DisassemblerTest, Disassemble_multiply_register_with_low_literal) {
   disassembler.Disassemble(program, program_end, out);
   EXPECT_EQ(
       "set a, 0x10\n"
-      "mul a, 0x1f\n", out.str());
+      "mul a, 0x1e\n", out.str());
 }
 
 TEST(DisassemblerTest, Disassemble_multiply_register_with_overflow) {
@@ -661,8 +661,8 @@ TEST(DisassemblerTest, Disassemble_multiply_register_with_overflow) {
 TEST(DisassemblerTest, Disassemble_divide_register_with_low_literal) {
   Disassembler disassembler;
   const Dcpu::Word program[] = {
-    // set a, 0x1F
-    Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterA, Dcpu::k31),
+    // set a, 0x1E
+    Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterA, Dcpu::k30),
     // div a, 0x10
     Dcpu::Instruct(Dcpu::kDivide, Dcpu::kRegisterA, Dcpu::k16)
   };
@@ -671,15 +671,15 @@ TEST(DisassemblerTest, Disassemble_divide_register_with_low_literal) {
   std::ostringstream out;
   disassembler.Disassemble(program, program_end, out);
   EXPECT_EQ(
-      "set a, 0x1f\n"
+      "set a, 0x1e\n"
       "div a, 0x10\n", out.str());
 }
 
 TEST(DisassemblerTest, Disassemble_divide_register_by_zero) {
   Disassembler disassembler;
   const Dcpu::Word program[] = {
-    // set a, 0x1F
-    Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterA, Dcpu::k31),
+    // set a, 0x1E
+    Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterA, Dcpu::k30),
     // div a, 0x00
     Dcpu::Instruct(Dcpu::kDivide, Dcpu::kRegisterA, Dcpu::k0)
   };
@@ -688,15 +688,15 @@ TEST(DisassemblerTest, Disassemble_divide_register_by_zero) {
   std::ostringstream out;
   disassembler.Disassemble(program, program_end, out);
   EXPECT_EQ(
-      "set a, 0x1f\n"
+      "set a, 0x1e\n"
       "div a, 0\n", out.str());
 }
 
 TEST(DisassemblerTest, Disassemble_modulo_register_with_low_literal) {
   Disassembler disassembler;
   const Dcpu::Word program[] = {
-    // set a, 0x1F
-    Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterA, Dcpu::k31),
+    // set a, 0x1E
+    Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterA, Dcpu::k30),
     // mod a, 0x0B
     Dcpu::Instruct(Dcpu::kModulo, Dcpu::kRegisterA, Dcpu::k11)
   };
@@ -705,15 +705,15 @@ TEST(DisassemblerTest, Disassemble_modulo_register_with_low_literal) {
   std::ostringstream out;
   disassembler.Disassemble(program, program_end, out);
   EXPECT_EQ(
-      "set a, 0x1f\n"
+      "set a, 0x1e\n"
       "mod a, 0xb\n", out.str());
 }
 
 TEST(DisassemblerTest, Disassemble_shift_left_register_with_low_literal) {
   Disassembler disassembler;
   const Dcpu::Word program[] = {
-    // set a, 0x1F
-    Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterA, Dcpu::k31),
+    // set a, 0x1E
+    Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterA, Dcpu::k30),
     // shl a, 0x02
     Dcpu::Instruct(Dcpu::kShiftLeft, Dcpu::kRegisterA, Dcpu::k2)
   };
@@ -722,7 +722,7 @@ TEST(DisassemblerTest, Disassemble_shift_left_register_with_low_literal) {
   std::ostringstream out;
   disassembler.Disassemble(program, program_end, out);
   EXPECT_EQ(
-      "set a, 0x1f\n"
+      "set a, 0x1e\n"
       "shl a, 0x2\n", out.str());
 }
 
@@ -935,8 +935,8 @@ TEST(DisassemblerTest,
     Disassemble_if_greater_than_register_with_lesser_low_literal) {
   Disassembler disassembler;
   const Dcpu::Word program[] = {
-    // set a, 0x1F
-    Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterA, Dcpu::k31),
+    // set a, 0x1E
+    Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterA, Dcpu::k30),
     // ifg a, 0x0F
     Dcpu::Instruct(Dcpu::kIfGreaterThan, Dcpu::kRegisterA, Dcpu::k15),
     // set push, 13
@@ -949,7 +949,7 @@ TEST(DisassemblerTest,
   std::ostringstream out;
   disassembler.Disassemble(program, program_end, out);
   EXPECT_EQ(
-      "set a, 0x1f\n"
+      "set a, 0x1e\n"
       "ifg a, 0xf\n"
       "set push, 0xd\n"
       "set push, 0xe\n", out.str());
@@ -961,8 +961,8 @@ TEST(DisassemblerTest,
   const Dcpu::Word program[] = {
     // set a, 0x0F
     Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterA, Dcpu::k15),
-    // ifg a, 0x1F
-    Dcpu::Instruct(Dcpu::kIfGreaterThan, Dcpu::kRegisterA, Dcpu::k31),
+    // ifg a, 0x1E
+    Dcpu::Instruct(Dcpu::kIfGreaterThan, Dcpu::kRegisterA, Dcpu::k30),
     // set push, 13
     Dcpu::Instruct(Dcpu::kSet, Dcpu::kPush, Dcpu::k13),
     // set push, 14
@@ -974,7 +974,7 @@ TEST(DisassemblerTest,
   disassembler.Disassemble(program, program_end, out);
   EXPECT_EQ(
       "set a, 0xf\n"
-      "ifg a, 0x1f\n"
+      "ifg a, 0x1e\n"
       "set push, 0xd\n"
       "set push, 0xe\n", out.str());
 }
@@ -983,8 +983,8 @@ TEST(DisassemblerTest,
     Disassemble_if_both_register_with_common_bits_low_literal) {
   Disassembler disassembler;
   const Dcpu::Word program[] = {
-    // set a, 0x1F
-    Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterA, Dcpu::k31),
+    // set a, 0x1E
+    Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterA, Dcpu::k30),
     // ifb a, 0x10
     Dcpu::Instruct(Dcpu::kIfBoth, Dcpu::kRegisterA, Dcpu::k16),
     // set push, 13
@@ -997,7 +997,7 @@ TEST(DisassemblerTest,
   std::ostringstream out;
   disassembler.Disassemble(program, program_end, out);
   EXPECT_EQ(
-      "set a, 0x1f\n"
+      "set a, 0x1e\n"
       "ifb a, 0x10\n"
       "set push, 0xd\n"
       "set push, 0xe\n", out.str());

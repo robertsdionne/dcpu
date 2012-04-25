@@ -19,7 +19,7 @@ void Disassembler::Disassemble(const Dcpu::Word *const program_begin,
               Dcpu::kAdvancedOperandShiftA);
       switch (advanced_opcode) {
         case Dcpu::kAdvancedReserved:
-          out << "set 0, 0" << std::endl;
+          out << "set a, a" << std::endl;
           break;
         case Dcpu::kJumpSubRoutine:
           out << "jsr ";
@@ -27,7 +27,7 @@ void Disassembler::Disassemble(const Dcpu::Word *const program_begin,
           out << std::endl;
           break;
         default:
-          out << "set 0, 0" << std::endl;
+          out << "set a, a" << std::endl;
           break;
       }
     } else {
@@ -39,7 +39,7 @@ void Disassembler::Disassemble(const Dcpu::Word *const program_begin,
               Dcpu::kBasicOperandShiftB);
       switch (basic_opcode) {
         case Dcpu::kBasicReserved:
-          out << "set 0, 0" << std::endl;
+          out << "set a, a" << std::endl;
           break;
         case Dcpu::kSet:
           out << "set ";
@@ -117,7 +117,7 @@ void Disassembler::Disassemble(const Dcpu::Word *const program_begin,
           out << std::endl;
           break;
         default:
-          out << "set 0, 0" << std::endl;
+          out << "set a, a" << std::endl;
           break;
       }
     }
