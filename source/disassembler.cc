@@ -111,7 +111,7 @@ void Disassembler::Disassemble(const Dcpu::Word *const program_begin,
           OutputOperands(i, operand_b, operand_a, out);
           out << std::endl;
           break;
-        case Dcpu::kIfBoth:
+        case Dcpu::kIfBitSet:
           out << "ifb ";
           OutputOperands(i, operand_b, operand_a, out);
           out << std::endl;

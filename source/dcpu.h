@@ -6,6 +6,7 @@
 class Dcpu {
   public:
     typedef unsigned short Word;
+    typedef signed short SignedWord;
 
     /**
      * Memory landmarks.
@@ -20,22 +21,29 @@ class Dcpu {
     static const Word kAdvancedOpcodeShift = 0x5;
 
     enum BasicOpcode {
-      kBasicReserved = 0x0,
-      kSet = 0x1,
-      kAdd = 0x2,
-      kSubtract = 0x3,
-      kMultiply = 0x4,
-      kDivide = 0x5,
-      kModulo = 0x6,
-      kShiftLeft = 0x7,
-      kShiftRight = 0x8,
-      kBinaryAnd = 0x9,
-      kBinaryOr = 0xA,
-      kBinaryExclusiveOr = 0xB,
-      kIfEqual = 0xC,
-      kIfNotEqual = 0xD,
-      kIfGreaterThan = 0xE,
-      kIfBoth = 0xF
+      kBasicReserved = 0x00,
+      kSet = 0x01,
+      kAdd = 0x02,
+      kSubtract = 0x03,
+      kMultiply = 0x04,
+      kMultiplySigned = 0x05,
+      kDivide = 0x06,
+      kDivideSigned = 0x07,
+      kModulo = 0x08,
+      kBinaryAnd = 0x09,
+      kBinaryOr = 0x0A,
+      kBinaryExclusiveOr = 0x0B,
+      kShiftRight = 0x0C,
+      kArithmeticShiftRight = 0x0D,
+      kShiftLeft = 0x0E,
+      kIfBitSet = 0x10,
+      kIfClear = 0x11,
+      kIfEqual = 0x12,
+      kIfNotEqual = 0x13,
+      kIfGreaterThan = 0x14,
+      kIfAbove = 0x15,
+      kIfLessThan = 0x16,
+      kIfUnder = 0x17
     };
 
     enum AdvancedOpcode {

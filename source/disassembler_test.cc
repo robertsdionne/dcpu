@@ -1011,7 +1011,7 @@ TEST(DisassemblerTest,
     // set a, 0x1E
     Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterA, Dcpu::k30),
     // ifb a, 0x10
-    Dcpu::Instruct(Dcpu::kIfBoth, Dcpu::kRegisterA, Dcpu::k16),
+    Dcpu::Instruct(Dcpu::kIfBitSet, Dcpu::kRegisterA, Dcpu::k16),
     // set push, 13
     Dcpu::Instruct(Dcpu::kSet, Dcpu::kPush, Dcpu::k13),
     // set push, 14
@@ -1035,7 +1035,7 @@ TEST(DisassemblerTest,
     // set a, 0x0F
     Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterA, Dcpu::k15),
     // ife a, 0x10
-    Dcpu::Instruct(Dcpu::kIfBoth, Dcpu::kRegisterA, Dcpu::k16),
+    Dcpu::Instruct(Dcpu::kIfBitSet, Dcpu::kRegisterA, Dcpu::k16),
     // set push, 13
     Dcpu::Instruct(Dcpu::kSet, Dcpu::kPush, Dcpu::k13),
     // set push, 14
