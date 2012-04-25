@@ -14,13 +14,13 @@ const Dcpu::Word Dcpu::kAdvancedOperandMaskA;
 const Dcpu::Word Dcpu::kAdvancedOperandShiftA;
 
 Dcpu::Word Dcpu::Instruct(const Dcpu::BasicOpcode basic_opcode,
-    const Dcpu::Word operand_b, const Dcpu::Word operand_a) {
+    const Dcpu::Operand operand_b, const Dcpu::Operand operand_a) {
   return basic_opcode | (
       operand_a << kBasicOperandShiftA) | (operand_b << kBasicOperandShiftB);
 }
 
 Dcpu::Word Dcpu::Instruct(
-    const Dcpu::AdvancedOpcode advanced_opcode, const Dcpu::Word operand_a) {
+    const Dcpu::AdvancedOpcode advanced_opcode, const Dcpu::Operand operand_a) {
   return (advanced_opcode << kAdvancedOpcodeShift) | (
       operand_a << kAdvancedOperandShiftA);
 }
@@ -154,8 +154,8 @@ void Dcpu::ExecuteInstruction(const bool skip) {
   if (basic_opcode == kBasicReserved) {
     const Word advanced_opcode = (
         instruction & kAdvancedOpcodeMask) >> kAdvancedOpcodeShift;
-    const Word operand_a = (
-        instruction & kAdvancedOperandMaskA) >> kAdvancedOperandShiftA;
+    const Operand operand_a = static_cast<Operand>(
+        (instruction & kAdvancedOperandMaskA) >> kAdvancedOperandShiftA);
     Word operand_a_literal = 0;
     Word *const operand_a_address = GetOperandAddressOrLiteral(
         operand_a, operand_a_literal);
@@ -177,10 +177,10 @@ void Dcpu::ExecuteInstruction(const bool skip) {
         break;
     }
   } else {
-    const Word operand_a = (
-        instruction & kBasicOperandMaskA) >> kBasicOperandShiftA;
-    const Word operand_b = (
-        instruction & kBasicOperandMaskB) >> kBasicOperandShiftB;
+    const Operand operand_a = static_cast<Operand>(
+        (instruction & kBasicOperandMaskA) >> kBasicOperandShiftA);
+    const Operand operand_b = static_cast<Operand>(
+        (instruction & kBasicOperandMaskB) >> kBasicOperandShiftB);
     Word operand_a_literal = 0;
     const Word *const operand_a_address = GetOperandAddressOrLiteral(
         operand_a, operand_a_literal);
@@ -299,7 +299,7 @@ Dcpu::Word Dcpu::register_value(const Word register_index) {
 }
 
 Dcpu::Word *Dcpu::GetOperandAddressOrLiteral(
-    const Word operand, Word &literal) {
+    const Operand operand, Word &literal) {
   if (operand < kLocationInRegisterA) {
     return register_address(operand);
   } else if (kLocationInRegisterA <= operand

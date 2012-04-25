@@ -122,9 +122,9 @@ class Dcpu {
 
   public:
     static Word Instruct(const BasicOpcode basic_opcode,
-        const Word operand_a, const Word operand_b);
+        const Operand operand_a, const Operand operand_b);
     static Word Instruct(
-        const AdvancedOpcode advanced_opcode, const Word operand_a);
+        const AdvancedOpcode advanced_opcode, const Operand operand_a);
 
     Dcpu();
     virtual ~Dcpu() {}
@@ -179,7 +179,7 @@ class Dcpu {
     Word *register_address(const Word register_index);
     Word register_value(const Word register_index);
 
-    Word *GetOperandAddressOrLiteral(const Word operand, Word &literal);
+    Word *GetOperandAddressOrLiteral(const Operand operand, Word &literal);
     void MaybeAssignResult(Word *const slot, const unsigned int result);
 
   private:
