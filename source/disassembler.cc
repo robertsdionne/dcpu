@@ -181,8 +181,8 @@ void Disassembler::OutputOperand(const Dcpu::Word *&i,
       case Dcpu::kProgramCounter:
         out << "pc";
         break;
-      case Dcpu::kOverflow:
-        out << "o";
+      case Dcpu::kExtra:
+        out << "ex";
         break;
       case Dcpu::kLocation:
         i += 1;

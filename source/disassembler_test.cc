@@ -252,18 +252,18 @@ TEST(DisassemblerTest, Disassemble_set_register_with_program_counter) {
 TEST(DisassemblerTest, Disassemble_set_register_with_overflow) {
   Disassembler disassembler;
   const Dcpu::Word program[] = {
-    // set o, 13
-    Dcpu::Instruct(Dcpu::kSet, Dcpu::kOverflow, Dcpu::k13),
-    // set a, o
-    Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterA, Dcpu::kOverflow)
+    // set ex, 13
+    Dcpu::Instruct(Dcpu::kSet, Dcpu::kExtra, Dcpu::k13),
+    // set a, ex
+    Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterA, Dcpu::kExtra)
   };
   const Dcpu::Word *const program_end =
       program + sizeof(program)/sizeof(Dcpu::Word);
   std::ostringstream out;
   disassembler.Disassemble(program, program_end, out);
   EXPECT_EQ(
-      "set o, 0xd\n"
-      "set a, o\n", out.str());
+      "set ex, 0xd\n"
+      "set a, ex\n", out.str());
 }
 
 TEST(DisassemblerTest, Disassemble_set_register_with_location) {
@@ -511,15 +511,15 @@ TEST(DisassemblerTest, Disassemble_set_program_counter_with_low_literal) {
 TEST(DisassemblerTest, Disassemble_set_overflow_with_low_literal) {
   Disassembler disassembler;
   const Dcpu::Word program[] = {
-    // set o, 13
-    Dcpu::Instruct(Dcpu::kSet, Dcpu::kOverflow, Dcpu::k13)
+    // set ex, 13
+    Dcpu::Instruct(Dcpu::kSet, Dcpu::kExtra, Dcpu::k13)
   };
   const Dcpu::Word *const program_end =
       program + sizeof(program)/sizeof(Dcpu::Word);
   std::ostringstream out;
   disassembler.Disassemble(program, program_end, out);
   EXPECT_EQ(
-      "set o, 0xd\n", out.str());
+      "set ex, 0xd\n", out.str());
 }
 
 TEST(DisassemblerTest, Disassemble_set_location_with_low_literal) {

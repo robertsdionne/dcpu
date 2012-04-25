@@ -28,7 +28,7 @@ Dcpu::Word Dcpu::Instruct(
 Dcpu::Dcpu()
   : register_a_(0), register_b_(0), register_c_(0), register_x_(0),
     register_y_(0), register_z_(0), register_i_(0), register_j_(0),
-    program_counter_(0), stack_pointer_(0), overflow_(0)
+    program_counter_(0), stack_pointer_(0), extra_(0), interrupt_address_(0)
 {
   std::fill(memory_begin(), memory_end(), 0);
 }
@@ -137,12 +137,20 @@ Dcpu::Word Dcpu::stack_pointer() const {
   return stack_pointer_;
 }
 
-Dcpu::Word &Dcpu::overflow() {
-  return overflow_;
+Dcpu::Word &Dcpu::extra() {
+  return extra_;
 }
 
-Dcpu::Word Dcpu::overflow() const {
-  return overflow_;
+Dcpu::Word Dcpu::extra() const {
+  return extra_;
+}
+
+Dcpu::Word &Dcpu::interrupt_address() {
+  return interrupt_address_;
+}
+
+Dcpu::Word Dcpu::interrupt_address() const {
+  return interrupt_address_;
 }
 
 void Dcpu::ExecuteInstruction(const bool skip) {
@@ -204,25 +212,25 @@ void Dcpu::ExecuteInstruction(const bool skip) {
         break;
       case kAdd:
         result = operand_b_value + operand_a_value;
-        overflow_ = result >> 16;
+        extra_ = result >> 16;
         MaybeAssignResult(operand_b_address, result);
         break;
       case kSubtract:
-        overflow_ = operand_b_value < operand_a_value;
+        extra_ = operand_b_value < operand_a_value;
         MaybeAssignResult(operand_b_address, operand_b_value - operand_a_value);
         break;
       case kMultiply:
         result = operand_b_value * operand_a_value;
-        overflow_ = result >> 16;
+        extra_ = result >> 16;
         MaybeAssignResult(operand_b_address, result);
         break;
       case kDivide:
         if (operand_a_value) {
-          overflow_ = 0;
+          extra_ = 0;
           MaybeAssignResult(
               operand_b_address, operand_b_value / operand_a_value);
         } else {
-          overflow_ = 1;
+          extra_ = 1;
           MaybeAssignResult(operand_b_address, 0);
         }
         break;
@@ -231,12 +239,12 @@ void Dcpu::ExecuteInstruction(const bool skip) {
         break;
       case kShiftLeft:
         result = operand_b_value << operand_a_value;
-        overflow_ = result >> 16;
+        extra_ = result >> 16;
         MaybeAssignResult(operand_b_address, result);
         break;
       case kShiftRight:
         result = operand_b_value >> operand_a_value;
-        overflow_ = operand_b_value << (0x10 - operand_a_value);
+        extra_ = operand_b_value << (0x10 - operand_a_value);
         MaybeAssignResult(operand_b_address, result);
         break;
       case kBinaryAnd:
@@ -287,7 +295,8 @@ void Dcpu::Reset() {
   register_i_ = register_j_ = 0;
   program_counter_ = 0;
   stack_pointer_ = 0;
-  overflow_ = 0;
+  extra_ = 0;
+  interrupt_address_ = 0;
 }
 
 Dcpu::Word *Dcpu::register_address(const Word register_index) {
@@ -323,8 +332,8 @@ Dcpu::Word *Dcpu::GetOperandAddressOrLiteral(
     return &stack_pointer_;
   } else if (operand == kProgramCounter) {
     return &program_counter_;
-  } else if (operand == kOverflow) {
-    return &overflow_;
+  } else if (operand == kExtra) {
+    return &extra_;
   } else if (operand == kLocation) {
     Word *const result = address(*address(program_counter_));
     program_counter_ += 1;

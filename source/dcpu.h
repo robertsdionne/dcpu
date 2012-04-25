@@ -83,7 +83,7 @@ class Dcpu {
       kPush = 0x1A,
       kStackPointer = 0x1B,
       kProgramCounter = 0x1C,
-      kOverflow = 0x1D,
+      kExtra = 0x1D,
       kLocation = 0x1E,
       kLiteral = 0x1F,
       k0 = 0x20,
@@ -167,8 +167,11 @@ class Dcpu {
     Word &stack_pointer();
     Word stack_pointer() const;
 
-    Word &overflow();
-    Word overflow() const;
+    Word &extra();
+    Word extra() const;
+
+    Word &interrupt_address();
+    Word interrupt_address() const;
 
     void ExecuteInstruction(const bool skip = false);
     void ExecuteInstructions(const unsigned long int count);
@@ -194,7 +197,8 @@ class Dcpu {
     Word register_j_;
     Word program_counter_;
     Word stack_pointer_;
-    Word overflow_;
+    Word extra_;
+    Word interrupt_address_;
 };
 
 #endif  // DCPU_DCPU_H_

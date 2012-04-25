@@ -17,7 +17,8 @@ TEST(DcpuTest, DefaultConstructor) {
   EXPECT_EQ(0, dcpu.register_j());
   EXPECT_EQ(0, dcpu.program_counter());
   EXPECT_EQ(0, dcpu.stack_pointer());
-  EXPECT_EQ(0, dcpu.overflow());
+  EXPECT_EQ(0, dcpu.extra());
+  EXPECT_EQ(0, dcpu.interrupt_address());
 }
 
 TEST(DcpuTest, Reset) {
@@ -33,7 +34,8 @@ TEST(DcpuTest, Reset) {
   dcpu.register_j() = 9;
   dcpu.program_counter() = 10;
   dcpu.stack_pointer() = 11;
-  dcpu.overflow() = 12;
+  dcpu.extra() = 12;
+  dcpu.interrupt_address() = 13;
   EXPECT_EQ(1, *dcpu.address(0x1000));
   EXPECT_EQ(2, dcpu.register_a());
   EXPECT_EQ(3, dcpu.register_b());
@@ -45,7 +47,8 @@ TEST(DcpuTest, Reset) {
   EXPECT_EQ(9, dcpu.register_j());
   EXPECT_EQ(10, dcpu.program_counter());
   EXPECT_EQ(11, dcpu.stack_pointer());
-  EXPECT_EQ(12, dcpu.overflow());
+  EXPECT_EQ(12, dcpu.extra());
+  EXPECT_EQ(13, dcpu.interrupt_address());
   dcpu.Reset();
   EXPECT_EQ(0, *dcpu.address(0x1000));
   EXPECT_EQ(0, dcpu.register_a());
@@ -58,7 +61,8 @@ TEST(DcpuTest, Reset) {
   EXPECT_EQ(0, dcpu.register_j());
   EXPECT_EQ(0, dcpu.program_counter());
   EXPECT_EQ(0, dcpu.stack_pointer());
-  EXPECT_EQ(0, dcpu.overflow());
+  EXPECT_EQ(0, dcpu.extra());
+  EXPECT_EQ(0, dcpu.interrupt_address());
 }
 
 TEST(DcpuTest, ExecuteInstructions) {
@@ -269,10 +273,10 @@ TEST(DcpuTest, ExecuteInstruction_set_register_with_program_counter) {
 TEST(DcpuTest, ExecuteInstruction_set_register_with_overflow) {
   Dcpu dcpu;
   const Dcpu::Word program[] = {
-    // set o, 13
-    Dcpu::Instruct(Dcpu::kSet, Dcpu::kOverflow, Dcpu::k13),
-    // set a, o
-    Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterA, Dcpu::kOverflow)
+    // set ex, 13
+    Dcpu::Instruct(Dcpu::kSet, Dcpu::kExtra, Dcpu::k13),
+    // set a, ex
+    Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterA, Dcpu::kExtra)
   };
   const Dcpu::Word *const program_end =
       program + sizeof(program)/sizeof(Dcpu::Word);
@@ -502,14 +506,14 @@ TEST(DcpuTest, ExecuteInstruction_set_program_counter_with_low_literal) {
 TEST(DcpuTest, ExecuteInstruction_set_overflow_with_low_literal) {
   Dcpu dcpu;
   const Dcpu::Word program[] = {
-    // set o, 13
-    Dcpu::Instruct(Dcpu::kSet, Dcpu::kOverflow, Dcpu::k13)
+    // set ex, 13
+    Dcpu::Instruct(Dcpu::kSet, Dcpu::kExtra, Dcpu::k13)
   };
   const Dcpu::Word *const program_end =
       program + sizeof(program)/sizeof(Dcpu::Word);
   std::copy(program, program_end, dcpu.memory_begin());
   dcpu.ExecuteInstruction();
-  EXPECT_EQ(13, dcpu.overflow());
+  EXPECT_EQ(13, dcpu.extra());
 }
 
 TEST(DcpuTest, ExecuteInstruction_set_location_with_low_literal) {
@@ -554,7 +558,7 @@ TEST(DcpuTest, ExecuteInstruction_add_register_with_low_literal) {
   std::copy(program, program_end, dcpu.memory_begin());
   dcpu.ExecuteInstructions(2);
   EXPECT_EQ(0x1B, dcpu.register_a());
-  EXPECT_EQ(0, dcpu.overflow());
+  EXPECT_EQ(0, dcpu.extra());
 }
 
 TEST(DcpuTest, ExecuteInstruction_add_register_with_overflow) {
@@ -572,7 +576,7 @@ TEST(DcpuTest, ExecuteInstruction_add_register_with_overflow) {
   std::copy(program, program_end, dcpu.memory_begin());
   dcpu.ExecuteInstructions(2);
   EXPECT_EQ(0xFFFE, dcpu.register_a());
-  EXPECT_EQ(1, dcpu.overflow());
+  EXPECT_EQ(1, dcpu.extra());
 }
 
 TEST(DcpuTest, ExecuteInstruction_subtract_register_with_low_literal) {
@@ -588,7 +592,7 @@ TEST(DcpuTest, ExecuteInstruction_subtract_register_with_low_literal) {
   std::copy(program, program_end, dcpu.memory_begin());
   dcpu.ExecuteInstructions(2);
   EXPECT_EQ(0xF, dcpu.register_a());
-  EXPECT_EQ(0, dcpu.overflow());
+  EXPECT_EQ(0, dcpu.extra());
 }
 
 TEST(DcpuTest, ExecuteInstruction_subtract_register_with_underflow) {
@@ -604,7 +608,7 @@ TEST(DcpuTest, ExecuteInstruction_subtract_register_with_underflow) {
   std::copy(program, program_end, dcpu.memory_begin());
   dcpu.ExecuteInstructions(2);
   EXPECT_EQ(0xFFF1, dcpu.register_a());
-  EXPECT_EQ(1, dcpu.overflow());
+  EXPECT_EQ(1, dcpu.extra());
 }
 
 TEST(DcpuTest, ExecuteInstruction_multiply_register_with_low_literal) {
@@ -620,7 +624,7 @@ TEST(DcpuTest, ExecuteInstruction_multiply_register_with_low_literal) {
   std::copy(program, program_end, dcpu.memory_begin());
   dcpu.ExecuteInstructions(2);
   EXPECT_EQ(0x01F0, dcpu.register_a());
-  EXPECT_EQ(0, dcpu.overflow());
+  EXPECT_EQ(0, dcpu.extra());
 }
 
 TEST(DcpuTest, ExecuteInstruction_multiply_register_with_overflow) {
@@ -638,7 +642,7 @@ TEST(DcpuTest, ExecuteInstruction_multiply_register_with_overflow) {
   std::copy(program, program_end, dcpu.memory_begin());
   dcpu.ExecuteInstructions(2);
   EXPECT_EQ(0x0001, dcpu.register_a());
-  EXPECT_EQ(0xFFFE, dcpu.overflow());
+  EXPECT_EQ(0xFFFE, dcpu.extra());
 }
 
 TEST(DcpuTest, ExecuteInstruction_divide_register_with_low_literal) {
@@ -654,7 +658,7 @@ TEST(DcpuTest, ExecuteInstruction_divide_register_with_low_literal) {
   std::copy(program, program_end, dcpu.memory_begin());
   dcpu.ExecuteInstructions(2);
   EXPECT_EQ(1, dcpu.register_a());
-  EXPECT_EQ(0, dcpu.overflow());
+  EXPECT_EQ(0, dcpu.extra());
 }
 
 TEST(DcpuTest, ExecuteInstruction_divide_register_by_zero) {
@@ -670,7 +674,7 @@ TEST(DcpuTest, ExecuteInstruction_divide_register_by_zero) {
   std::copy(program, program_end, dcpu.memory_begin());
   dcpu.ExecuteInstructions(2);
   EXPECT_EQ(0, dcpu.register_a());
-  EXPECT_EQ(1, dcpu.overflow());
+  EXPECT_EQ(1, dcpu.extra());
 }
 
 TEST(DcpuTest, ExecuteInstruction_modulo_register_with_low_literal) {
@@ -701,7 +705,7 @@ TEST(DcpuTest, ExecuteInstruction_shift_left_register_with_low_literal) {
   std::copy(program, program_end, dcpu.memory_begin());
   dcpu.ExecuteInstructions(2);
   EXPECT_EQ(0x7C, dcpu.register_a());
-  EXPECT_EQ(0, dcpu.overflow());
+  EXPECT_EQ(0, dcpu.extra());
 }
 
 TEST(DcpuTest, ExecuteInstruction_shift_left_register_with_overflow) {
@@ -718,7 +722,7 @@ TEST(DcpuTest, ExecuteInstruction_shift_left_register_with_overflow) {
   std::copy(program, program_end, dcpu.memory_begin());
   dcpu.ExecuteInstructions(2);
   EXPECT_EQ(0xFFFC, dcpu.register_a());
-  EXPECT_EQ(0x0003, dcpu.overflow());
+  EXPECT_EQ(0x0003, dcpu.extra());
 }
 
 TEST(DcpuTest, ExecuteInstruction_shift_right_register_with_low_literal) {
@@ -735,7 +739,7 @@ TEST(DcpuTest, ExecuteInstruction_shift_right_register_with_low_literal) {
   std::copy(program, program_end, dcpu.memory_begin());
   dcpu.ExecuteInstructions(2);
   EXPECT_EQ(0x3FFC, dcpu.register_a());
-  EXPECT_EQ(0, dcpu.overflow());
+  EXPECT_EQ(0, dcpu.extra());
 }
 
 TEST(DcpuTest, ExecuteInstruction_shift_right_register_with_underflow) {
@@ -752,7 +756,7 @@ TEST(DcpuTest, ExecuteInstruction_shift_right_register_with_underflow) {
   std::copy(program, program_end, dcpu.memory_begin());
   dcpu.ExecuteInstructions(2);
   EXPECT_EQ(0x3FFF, dcpu.register_a());
-  EXPECT_EQ(0xC000, dcpu.overflow());
+  EXPECT_EQ(0xC000, dcpu.extra());
 }
 
 TEST(DcpuTest, ExecuteInstruction_and_register_with_low_literal) {

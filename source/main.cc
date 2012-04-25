@@ -55,8 +55,9 @@ int main(int argc, char *argv[]) {
     printw("X: %X Y: %X Z: %X ",
         dcpu.register_x(), dcpu.register_y(), dcpu.register_z());
     printw("I: %X J: %X\n", dcpu.register_i(), dcpu.register_j());
-    printw("PC: %X SP: %X O: %X\n\n",
-        dcpu.program_counter(), dcpu.stack_pointer(), dcpu.overflow());
+    printw("PC: %X SP: %X EX: %X IA: %X\n\n",
+        dcpu.program_counter(), dcpu.stack_pointer(),
+        dcpu.extra(), dcpu.interrupt_address());
     printw("Instruction(s): %X %X %X\n\n",
         *dcpu.address(dcpu.program_counter()),
         *dcpu.address(dcpu.program_counter() + 1),
