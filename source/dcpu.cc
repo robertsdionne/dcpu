@@ -168,9 +168,11 @@ void Dcpu::ExecuteInstruction(const bool skip) {
         instruction & kAdvancedOpcodeMask) >> kAdvancedOpcodeShift;
     const Operand operand_a = static_cast<Operand>(
         (instruction & kAdvancedOperandMaskA) >> kAdvancedOperandShiftA);
+    const bool is_lhs = advanced_opcode == kInterruptGet
+        || advanced_opcode == kHardwareNumberConnected;
     Word operand_a_literal = 0;
     Word *const operand_a_address = GetOperandAddressOrLiteral(
-        operand_a, /* is_lhs */ false, operand_a_literal);
+        operand_a, is_lhs, operand_a_literal);
     const Word operand_a_value = operand_a_address ?
       *operand_a_address : operand_a_literal;
     if (skip) {
@@ -184,6 +186,34 @@ void Dcpu::ExecuteInstruction(const bool skip) {
         stack_pointer_ -= 1;
         *address(stack_pointer_) = program_counter_;
         program_counter_ = operand_a_value;
+        break;
+      case kInterruptTrigger:
+        if (interrupt_address_) {
+          stack_pointer_ -= 1;
+          *address(stack_pointer_) = program_counter_;
+          stack_pointer_ -= 1;
+          *address(stack_pointer_) = register_a_;
+          program_counter_ = interrupt_address_;
+          register_a_ = operand_a_value;
+        }
+        break;
+      case kInterruptGet:
+        MaybeAssignResult(operand_a_address, interrupt_address_);
+        break;
+      case kInterruptSet:
+        interrupt_address_ = operand_a_value;
+        break;
+      case kHardwareNumberConnected:
+        MaybeAssignResult(operand_a_address, 0);
+        break;
+      case kHardwareQuery:
+        register_a_ = 0;
+        register_b_ = 0;
+        register_c_ = 0;
+        register_x_ = 0;
+        register_y_ = 0;
+        break;
+      case kHardwareInterrupt:
         break;
       default:
         break;

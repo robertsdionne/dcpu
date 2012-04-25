@@ -40,7 +40,13 @@ class Dcpu {
 
     enum AdvancedOpcode {
       kAdvancedReserved = 0x00,
-      kJumpSubRoutine = 0x01
+      kJumpSubRoutine = 0x01,
+      kInterruptTrigger = 0x08,
+      kInterruptGet = 0x09,
+      kInterruptSet = 0x0A,
+      kHardwareNumberConnected = 0x10,
+      kHardwareQuery = 0x11,
+      kHardwareInterrupt = 0x12
     };
 
     /**
