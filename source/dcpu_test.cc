@@ -450,6 +450,22 @@ TEST(DcpuTest, ExecuteInstruction_set_push_with_low_literal) {
   EXPECT_EQ(13, *dcpu.address(dcpu.stack_pointer()));
 }
 
+TEST(DcpuTest, ExecuteInstruction_set_push_with_pop) {
+  Dcpu dcpu;
+  const Dcpu::Word program[] = {
+    // set push, 13
+    Dcpu::Instruct(Dcpu::kSet, Dcpu::kPush, Dcpu::k13),
+    // set push, pop
+    Dcpu::Instruct(Dcpu::kSet, Dcpu::kPush, Dcpu::kPop)
+  };
+  const Dcpu::Word *const program_end =
+      program + sizeof(program)/sizeof(Dcpu::Word);
+  std::copy(program, program_end, dcpu.memory_begin());
+  dcpu.ExecuteInstructions(2);
+  EXPECT_EQ(0xFFFF, dcpu.stack_pointer());
+  EXPECT_EQ(13, *dcpu.address(dcpu.stack_pointer()));
+}
+
 TEST(DcpuTest, ExecuteInstruction_set_peek_with_low_literal) {
   Dcpu dcpu;
   const Dcpu::Word program[] = {

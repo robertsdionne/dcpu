@@ -450,6 +450,23 @@ TEST(DisassemblerTest, Disassemble_set_push_with_low_literal) {
       "set push, 0xd\n", out.str());
 }
 
+TEST(DisassemblerTest, Disassemble_set_push_with_pop) {
+  Disassembler disassembler;
+  const Dcpu::Word program[] = {
+    // set push, 13
+    Dcpu::Instruct(Dcpu::kSet, Dcpu::kPush, Dcpu::k13),
+    // set push, pop
+    Dcpu::Instruct(Dcpu::kSet, Dcpu::kPush, Dcpu::kPop)
+  };
+  const Dcpu::Word *const program_end =
+      program + sizeof(program)/sizeof(Dcpu::Word);
+  std::ostringstream out;
+  disassembler.Disassemble(program, program_end, out);
+  EXPECT_EQ(
+      "set push, 0xd\n"
+      "set push, pop\n", out.str());
+}
+
 TEST(DisassemblerTest, Disassemble_set_peek_with_low_literal) {
   Disassembler disassembler;
   const Dcpu::Word program[] = {
