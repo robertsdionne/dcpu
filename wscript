@@ -21,30 +21,30 @@ def configure(ctx):
 def build(ctx):
   ctx.stlib(
       source = [
-        'lib/gtest-1.6.0/src/gtest-all.cc',
+        'libraries/gtest-1.6.0/src/gtest-all.cc',
         ],
       target = 'gtest',
       includes = [
-        'lib/gtest-1.6.0/include',
-        'lib/gtest-1.6.0',
+        'libraries/gtest-1.6.0/include',
+        'libraries/gtest-1.6.0',
         ],
       use = [
         'PTHREAD',
         ])
   ctx.program(
       source = [
-        'lib/gtest-1.6.0/src/gtest_main.cc',
+        'libraries/gtest-1.6.0/src/gtest_main.cc',
         ],
       target = 'tests',
       includes = [
-        'lib/gtest-1.6.0/include',
-        'src',
+        'libraries/gtest-1.6.0/include',
+        'source',
         ],
       use = [
         'dcpu_tests',
         'gtest',
         ])
-  ctx.recurse('src')
+  ctx.recurse('source')
   ctx.add_post_fun(test)
 
 def run(ctx):

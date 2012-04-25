@@ -24,7 +24,7 @@ def build(ctx):
         ],
       target = 'dcpu_tests',
       includes = [
-        '../lib/gtest-1.6.0/include',
+        '../libraries/gtest-1.6.0/include',
         '.',
         ],
       use = [
