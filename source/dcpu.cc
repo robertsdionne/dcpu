@@ -242,6 +242,7 @@ void Dcpu::ExecuteInstruction(const bool skip) {
       return;
     }
     unsigned int result;
+    signed int signed_result;
     switch (basic_opcode) {
       case kBasicReserved:
         break;
@@ -262,6 +263,12 @@ void Dcpu::ExecuteInstruction(const bool skip) {
         extra_ = result >> 16;
         MaybeAssignResult(operand_b_address, result);
         break;
+      case kMultiplySigned:
+        signed_result = static_cast<SignedWord>(operand_b_value) *
+            static_cast<SignedWord>(operand_a_value);
+        extra_ = signed_result >> 16;
+        MaybeAssignResult(operand_b_address, static_cast<Word>(signed_result));
+        break;
       case kDivide:
         if (operand_a_value) {
           extra_ = 0;
@@ -272,18 +279,19 @@ void Dcpu::ExecuteInstruction(const bool skip) {
           MaybeAssignResult(operand_b_address, 0);
         }
         break;
+      case kDivideSigned:
+        if (operand_a_value) {
+          extra_ = 0;
+          MaybeAssignResult(
+              operand_b_address, static_cast<Word>(
+                  static_cast<SignedWord>(operand_b_value) /
+                      static_cast<SignedWord>(operand_a_value)));
+        } else {
+          extra_ = 1;
+          MaybeAssignResult(operand_b_address, 0);
+        }
       case kModulo:
         MaybeAssignResult(operand_b_address, operand_b_value % operand_a_value);
-        break;
-      case kShiftLeft:
-        result = operand_b_value << operand_a_value;
-        extra_ = result >> 16;
-        MaybeAssignResult(operand_b_address, result);
-        break;
-      case kShiftRight:
-        result = operand_b_value >> operand_a_value;
-        extra_ = operand_b_value << (0x10 - operand_a_value);
-        MaybeAssignResult(operand_b_address, result);
         break;
       case kBinaryAnd:
         MaybeAssignResult(operand_b_address, operand_b_value & operand_a_value);
@@ -293,6 +301,32 @@ void Dcpu::ExecuteInstruction(const bool skip) {
         break;
       case kBinaryExclusiveOr:
         MaybeAssignResult(operand_b_address, operand_b_value ^ operand_a_value);
+        break;
+      case kShiftRight:
+        result = operand_b_value >> operand_a_value;
+        extra_ = operand_b_value << (0x10 - operand_a_value);
+        MaybeAssignResult(operand_b_address, result);
+        break;
+      case kArithmeticShiftRight:
+        signed_result = static_cast<SignedWord>(operand_b_value)
+            >> operand_a_value;
+        extra_ = operand_b_value << (0x10 - operand_a_value);
+        MaybeAssignResult(operand_b_address, static_cast<Word>(signed_result));
+        break;
+      case kShiftLeft:
+        result = operand_b_value << operand_a_value;
+        extra_ = result >> 16;
+        MaybeAssignResult(operand_b_address, result);
+        break;
+      case kIfBitSet:
+        if ((operand_b_value & operand_a_value) == 0) {
+          ExecuteInstruction(/* skip */ true);
+        }
+        break;
+      case kIfClear:
+        if ((operand_b_value & operand_a_value) != 0) {
+          ExecuteInstruction(/* skip */ true);
+        }
         break;
       case kIfEqual:
         if (operand_b_value != operand_a_value) {
@@ -309,8 +343,20 @@ void Dcpu::ExecuteInstruction(const bool skip) {
           ExecuteInstruction(/* skip */ true);
         }
         break;
-      case kIfBitSet:
-        if ((operand_b_value & operand_a_value) == 0) {
+      case kIfAbove:
+        if (static_cast<SignedWord>(operand_b_value)
+            <= static_cast<SignedWord>(operand_a_value)) {
+          ExecuteInstruction(/* skip */ true);
+        }
+        break;
+      case kIfLessThan:
+        if (operand_b_value >= operand_a_value) {
+          ExecuteInstruction(/* skip */ true);
+        }
+        break;
+      case kIfUnder:
+        if (static_cast<SignedWord>(operand_b_value)
+            >= static_cast<SignedWord>(operand_a_value)) {
           ExecuteInstruction(/* skip */ true);
         }
         break;
