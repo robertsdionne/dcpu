@@ -220,22 +220,25 @@ TEST(DcpuTest, ExecuteInstruction_set_register_with_peek) {
   EXPECT_EQ(13, dcpu.register_a());
 }
 
-TEST(DcpuTest, ExecuteInstruction_set_register_with_push) {
+TEST(DcpuTest, ExecuteInstruction_set_register_with_pick) {
   Dcpu dcpu;
   const Dcpu::Word program[] = {
-    // set a, 13
-    Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterA, Dcpu::k13),
-    // set a, push
-    Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterA, Dcpu::kPush)
+    // set push, 13
+    Dcpu::Instruct(Dcpu::kSet, Dcpu::kPush, Dcpu::k13),
+    // set push, 14
+    Dcpu::Instruct(Dcpu::kSet, Dcpu::kPush, Dcpu::k14),
+    // set a, [sp+1]
+    Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterA, Dcpu::kPick),
+    0x1
   };
   const Dcpu::Word *const program_end =
       program + sizeof(program)/sizeof(Dcpu::Word);
   std::copy(program, program_end, dcpu.memory_begin());
-  dcpu.ExecuteInstruction();
   EXPECT_EQ(0, dcpu.stack_pointer());
-  dcpu.ExecuteInstruction();
-  EXPECT_EQ(0xFFFF, dcpu.stack_pointer());
-  EXPECT_EQ(0, dcpu.register_a());
+  dcpu.ExecuteInstructions(3);
+  EXPECT_EQ(0xFFFE, dcpu.stack_pointer());
+  EXPECT_EQ(13, *dcpu.address(dcpu.stack_pointer() + 1));
+  EXPECT_EQ(13, dcpu.register_a());
 }
 
 TEST(DcpuTest, ExecuteInstruction_set_register_with_stack_pointer) {
@@ -434,19 +437,17 @@ TEST(DcpuTest,
   EXPECT_EQ(13, *dcpu.address(0x100A));
 }
 
-TEST(DcpuTest, ExecuteInstruction_set_pop_with_low_literal) {
+TEST(DcpuTest, ExecuteInstruction_set_push_with_low_literal) {
   Dcpu dcpu;
   const Dcpu::Word program[] = {
     // set push, 13
-    Dcpu::Instruct(Dcpu::kSet, Dcpu::kPush, Dcpu::k13),
-    // set pop, 14
-    Dcpu::Instruct(Dcpu::kSet, Dcpu::kPop, Dcpu::k14)
+    Dcpu::Instruct(Dcpu::kSet, Dcpu::kPush, Dcpu::k13)
   };
   const Dcpu::Word *const program_end =
       program + sizeof(program)/sizeof(Dcpu::Word);
   std::copy(program, program_end, dcpu.memory_begin());
-  dcpu.ExecuteInstructions(2);
-  EXPECT_EQ(14, *dcpu.address(dcpu.stack_pointer() - 1));
+  dcpu.ExecuteInstruction();
+  EXPECT_EQ(13, *dcpu.address(dcpu.stack_pointer()));
 }
 
 TEST(DcpuTest, ExecuteInstruction_set_peek_with_low_literal) {
@@ -464,17 +465,23 @@ TEST(DcpuTest, ExecuteInstruction_set_peek_with_low_literal) {
   EXPECT_EQ(14, *dcpu.address(dcpu.stack_pointer()));
 }
 
-TEST(DcpuTest, ExecuteInstruction_set_push_with_low_literal) {
+TEST(DcpuTest, ExecuteInstruction_set_pick_with_low_literal) {
   Dcpu dcpu;
   const Dcpu::Word program[] = {
     // set push, 13
-    Dcpu::Instruct(Dcpu::kSet, Dcpu::kPush, Dcpu::k13)
+    Dcpu::Instruct(Dcpu::kSet, Dcpu::kPush, Dcpu::k12),
+    // set push, 14
+    Dcpu::Instruct(Dcpu::kSet, Dcpu::kPush, Dcpu::k13),
+    // set [SP+0x1], 14
+    Dcpu::Instruct(Dcpu::kSet, Dcpu::kPick, Dcpu::k14),
+    0x1
   };
   const Dcpu::Word *const program_end =
       program + sizeof(program)/sizeof(Dcpu::Word);
   std::copy(program, program_end, dcpu.memory_begin());
-  dcpu.ExecuteInstruction();
+  dcpu.ExecuteInstructions(3);
   EXPECT_EQ(13, *dcpu.address(dcpu.stack_pointer()));
+  EXPECT_EQ(14, *dcpu.address(dcpu.stack_pointer() + 1));
 }
 
 TEST(DcpuTest, ExecuteInstruction_set_stack_pointer_with_low_literal) {

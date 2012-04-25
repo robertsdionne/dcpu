@@ -16,8 +16,8 @@ class Disassembler {
 
   private:
     char DetermineRegisterName(const Dcpu::Operand operand) const;
-    void OutputOperand(const Dcpu::Word *&i,
-        const Dcpu::Operand operand, std::ostream &out) const;
+    void OutputOperand(const Dcpu::Word *&i, const Dcpu::Operand operand,
+        const bool is_lhs, std::ostream &out) const;
     void OutputOperands(
         const Dcpu::Word *&i, const Dcpu::Operand operand_a,
         const Dcpu::Operand operand_b, std::ostream &out) const;

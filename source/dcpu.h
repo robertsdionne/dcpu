@@ -78,9 +78,11 @@ class Dcpu {
       kLocationOffsetByRegisterZ = 0x15,
       kLocationOffsetByRegisterI = 0x16,
       kLocationOffsetByRegisterJ = 0x17,
+      kPush = 0x18,
       kPop = 0x18,
+      kPushPop = 0x18,
       kPeek = 0x19,
-      kPush = 0x1A,
+      kPick = 0x1A,
       kStackPointer = 0x1B,
       kProgramCounter = 0x1C,
       kExtra = 0x1D,
@@ -183,7 +185,8 @@ class Dcpu {
     Word *register_address(const Word register_index);
     Word register_value(const Word register_index);
 
-    Word *GetOperandAddressOrLiteral(const Operand operand, Word &literal);
+    Word *GetOperandAddressOrLiteral(
+        const Operand operand, const bool is_lhs, Word &literal);
     void MaybeAssignResult(Word *const slot, const unsigned int result);
 
   private:

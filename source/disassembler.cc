@@ -23,7 +23,7 @@ void Disassembler::Disassemble(const Dcpu::Word *const program_begin,
           break;
         case Dcpu::kJumpSubRoutine:
           out << "jsr ";
-          OutputOperand(i, operand_a, out);
+          OutputOperand(i, operand_a, /* is_lhs */ false, out);
           out << std::endl;
           break;
         default:
@@ -146,7 +146,7 @@ char Disassembler::DetermineRegisterName(const Dcpu::Operand operand) const {
 }
 
 void Disassembler::OutputOperand(const Dcpu::Word *&i,
-    const Dcpu::Operand operand, std::ostream &out) const {
+    const Dcpu::Operand operand, const bool is_lhs, std::ostream &out) const {
   if (operand < Dcpu::kLocationInRegisterA) {
     const char register_name = DetermineRegisterName(operand);
     out << register_name;
@@ -166,14 +166,23 @@ void Disassembler::OutputOperand(const Dcpu::Word *&i,
   } else {
     std::ios_base::fmtflags flags;
     switch (operand) {
-      case Dcpu::kPop:
-        out << "pop";
+      case Dcpu::kPushPop:
+        if (is_lhs) {
+          out << "push";
+        } else {
+          out << "pop";
+        }
         break;
       case Dcpu::kPeek:
         out << "peek";
         break;
-      case Dcpu::kPush:
-        out << "push";
+      case Dcpu::kPick:
+        i += 1;
+        out << "[sp+";
+        flags = out.flags();
+        out << std::showbase << std::hex << *i;
+        out.flags(flags);
+        out << ']';
         break;
       case Dcpu::kStackPointer:
         out << "sp";
@@ -211,7 +220,7 @@ void Disassembler::OutputOperands(
     const Dcpu::Word *&i, const Dcpu::Operand operand_b,
     const Dcpu::Operand operand_a, std::ostream &out) const {
   std::ostringstream string_out;
-  OutputOperand(i, operand_a, string_out);
-  OutputOperand(i, operand_b, out);
+  OutputOperand(i, operand_a, /* is_lhs */ false, string_out);
+  OutputOperand(i, operand_b, /* is_lhs */ true, out);
   out << ", " << string_out.str();
 }

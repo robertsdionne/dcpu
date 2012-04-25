@@ -198,21 +198,25 @@ TEST(DisassemblerTest, Disassemble_set_register_with_peek) {
       "set a, peek\n", out.str());
 }
 
-TEST(DisassemblerTest, Disassemble_set_register_with_push) {
+TEST(DisassemblerTest, Disassemble_set_register_with_pick) {
   Disassembler disassembler;
   const Dcpu::Word program[] = {
-    // set a, 13
-    Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterA, Dcpu::k13),
-    // set a, push
-    Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterA, Dcpu::kPush)
+    // set push, 13
+    Dcpu::Instruct(Dcpu::kSet, Dcpu::kPush, Dcpu::k13),
+    // set push, 14
+    Dcpu::Instruct(Dcpu::kSet, Dcpu::kPush, Dcpu::k14),
+    // set a, [sp+1]
+    Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterA, Dcpu::kPick),
+    0x1
   };
   const Dcpu::Word *const program_end =
       program + sizeof(program)/sizeof(Dcpu::Word);
   std::ostringstream out;
   disassembler.Disassemble(program, program_end, out);
   EXPECT_EQ(
-      "set a, 0xd\n"
-      "set a, push\n", out.str());
+      "set push, 0xd\n"
+      "set push, 0xe\n"
+      "set a, [sp+0x1]\n", out.str());
 }
 
 TEST(DisassemblerTest, Disassemble_set_register_with_stack_pointer) {
@@ -432,21 +436,18 @@ TEST(DisassemblerTest,
       "set [0x1000+j], 0xd\n", out.str());
 }
 
-TEST(DisassemblerTest, Disassemble_set_pop_with_low_literal) {
+TEST(DisassemblerTest, Disassemble_set_push_with_low_literal) {
   Disassembler disassembler;
   const Dcpu::Word program[] = {
     // set push, 13
-    Dcpu::Instruct(Dcpu::kSet, Dcpu::kPush, Dcpu::k13),
-    // set pop, 14
-    Dcpu::Instruct(Dcpu::kSet, Dcpu::kPop, Dcpu::k14)
+    Dcpu::Instruct(Dcpu::kSet, Dcpu::kPush, Dcpu::k13)
   };
   const Dcpu::Word *const program_end =
       program + sizeof(program)/sizeof(Dcpu::Word);
   std::ostringstream out;
   disassembler.Disassemble(program, program_end, out);
   EXPECT_EQ(
-      "set push, 0xd\n"
-      "set pop, 0xe\n", out.str());
+      "set push, 0xd\n", out.str());
 }
 
 TEST(DisassemblerTest, Disassemble_set_peek_with_low_literal) {
@@ -466,18 +467,25 @@ TEST(DisassemblerTest, Disassemble_set_peek_with_low_literal) {
       "set peek, 0xe\n", out.str());
 }
 
-TEST(DisassemblerTest, Disassemble_set_push_with_low_literal) {
+TEST(DisassemblerTest, Disassemble_set_pick_with_low_literal) {
   Disassembler disassembler;
   const Dcpu::Word program[] = {
+    // set push, 12
+    Dcpu::Instruct(Dcpu::kSet, Dcpu::kPush, Dcpu::k12),
     // set push, 13
-    Dcpu::Instruct(Dcpu::kSet, Dcpu::kPush, Dcpu::k13)
+    Dcpu::Instruct(Dcpu::kSet, Dcpu::kPush, Dcpu::k13),
+    // set [sp+1], 14
+    Dcpu::Instruct(Dcpu::kSet, Dcpu::kPick, Dcpu::k14),
+    0x1
   };
   const Dcpu::Word *const program_end =
       program + sizeof(program)/sizeof(Dcpu::Word);
   std::ostringstream out;
   disassembler.Disassemble(program, program_end, out);
   EXPECT_EQ(
-      "set push, 0xd\n", out.str());
+      "set push, 0xc\n"
+      "set push, 0xd\n"
+      "set [sp+0x1], 0xe\n", out.str());
 }
 
 TEST(DisassemblerTest, Disassemble_set_stack_pointer_with_low_literal) {

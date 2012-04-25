@@ -170,7 +170,7 @@ void Dcpu::ExecuteInstruction(const bool skip) {
         (instruction & kAdvancedOperandMaskA) >> kAdvancedOperandShiftA);
     Word operand_a_literal = 0;
     Word *const operand_a_address = GetOperandAddressOrLiteral(
-        operand_a, operand_a_literal);
+        operand_a, /* is_lhs */ false, operand_a_literal);
     const Word operand_a_value = operand_a_address ?
       *operand_a_address : operand_a_literal;
     if (skip) {
@@ -195,10 +195,10 @@ void Dcpu::ExecuteInstruction(const bool skip) {
         (instruction & kBasicOperandMaskB) >> kBasicOperandShiftB);
     Word operand_a_literal = 0;
     const Word *const operand_a_address = GetOperandAddressOrLiteral(
-        operand_a, operand_a_literal);
+        operand_a, /* is_lhs */ false, operand_a_literal);
     Word operand_b_literal = 0;
     Word *const operand_b_address = GetOperandAddressOrLiteral(
-        operand_b, operand_b_literal);
+        operand_b, /* is_lhs */ true, operand_b_literal);
     const Word operand_a_value = operand_a_address ?
         *operand_a_address : operand_a_literal;
     const Word operand_b_value = operand_b_address ?
@@ -312,26 +312,32 @@ Dcpu::Word Dcpu::register_value(const Word register_index) {
 }
 
 Dcpu::Word *Dcpu::GetOperandAddressOrLiteral(
-    const Operand operand, Word &literal) {
+    const Operand operand, const bool is_lhs, Word &literal) {
   if (operand < kLocationInRegisterA) {
     return register_address(operand);
   } else if (kLocationInRegisterA <= operand
       && operand < kLocationOffsetByRegisterA) {
     return address(register_value(operand));
-  } else if (kLocationOffsetByRegisterA <= operand && operand < kPop) {
+  } else if (kLocationOffsetByRegisterA <= operand && operand < kPushPop) {
     Word *const result =
         address(*address(program_counter_)) + register_value(operand);
     program_counter_ += 1;
     return result;
-  } else if (operand == kPop) {
-    Word *result = address(stack_pointer_);
-    stack_pointer_ += 1;
-    return result;
+  } else if (operand == kPushPop) {
+    if (is_lhs) { // Push
+      stack_pointer_ -= 1;
+      return address(stack_pointer_);
+    } else { // Pop
+      Word *const result = address(stack_pointer_);
+      stack_pointer_ += 1;
+      return result;
+    }
   } else if (operand == kPeek) {
     return address(stack_pointer_);
-  } else if (operand == kPush) {
-    stack_pointer_ -= 1;
-    return address(stack_pointer_);
+  } else if (operand == kPick) {
+    const Word offset = *address(program_counter_);
+    program_counter_ += 1;
+    return address(stack_pointer_ + offset);
   } else if (operand == kStackPointer) {
     return &stack_pointer_;
   } else if (operand == kProgramCounter) {
