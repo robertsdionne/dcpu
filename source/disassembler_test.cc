@@ -386,6 +386,33 @@ TEST(DisassemblerTest,
 }
 
 TEST(DisassemblerTest,
+    Disassemble_set_location_offset_by_register_with_location_offset_by_register) {
+  Disassembler disassembler;
+  const Dcpu::Word program[] = {
+    // set a, 10
+    Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterA, Dcpu::k10),
+    // set [0x1000+a], 13
+    Dcpu::Instruct(
+        Dcpu::kSet, Dcpu::kLocationOffsetByRegisterA, Dcpu::k13),
+    0x1000,
+    // set [0x2000+a], [0x1000+a]
+    Dcpu::Instruct(Dcpu::kSet,
+        Dcpu::kLocationOffsetByRegisterA, Dcpu::kLocationOffsetByRegisterA),
+    0x1000,
+    0x2000
+  };
+  const Dcpu::Word *const program_end =
+      program + sizeof(program)/sizeof(Dcpu::Word);
+  std::ostringstream out;
+  disassembler.Disassemble(program, program_end, out);
+  EXPECT_EQ(
+      "set a, 0xa\n"
+      "set [0x1000+a], 0xd\n"
+      "set [0x2000+a], [0x1000+a]\n", out.str());
+}
+
+
+TEST(DisassemblerTest,
     Disassemble_set_location_offset_by_last_register_with_low_literal) {
   Disassembler disassembler;
   const Dcpu::Word program[] = {
@@ -523,20 +550,6 @@ TEST(DisassemblerTest, Disassemble_set_literal_with_low_literal) {
   disassembler.Disassemble(program, program_end, out);
   EXPECT_EQ(
       "set 0x1000, 0xd\n", out.str());
-}
-
-TEST(DisassemblerTest, Disassemble_set_low_literal_with_low_literal) {
-  Disassembler disassembler;
-  const Dcpu::Word program[] = {
-    // set 10, 13
-    Dcpu::Instruct(Dcpu::kSet, Dcpu::k10, Dcpu::k13)
-  };
-  const Dcpu::Word *const program_end =
-      program + sizeof(program)/sizeof(Dcpu::Word);
-  std::ostringstream out;
-  disassembler.Disassemble(program, program_end, out);
-  EXPECT_EQ(
-      "set 0xa, 0xd\n", out.str());
 }
 
 TEST(DisassemblerTest, Disassemble_add_register_with_low_literal) {

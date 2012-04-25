@@ -391,6 +391,28 @@ TEST(DcpuTest,
 }
 
 TEST(DcpuTest,
+    ExecuteInstruction_set_location_offset_by_register_with_location_offset_by_register) {
+  Dcpu dcpu;
+  const Dcpu::Word program[] = {
+    // set a, 10
+    Dcpu::Instruct(Dcpu::kSet, Dcpu::kRegisterA, Dcpu::k10),
+    // set [0x1000+a], 13
+    Dcpu::Instruct(Dcpu::kSet, Dcpu::kLocationOffsetByRegisterA, Dcpu::k13),
+    0x1000,
+    // set [0x2000+a], [0x1000+a]
+    Dcpu::Instruct(Dcpu::kSet,
+        Dcpu::kLocationOffsetByRegisterA, Dcpu::kLocationOffsetByRegisterA),
+    0x1000,
+    0x2000
+  };
+  const Dcpu::Word *const program_end =
+      program + sizeof(program)/sizeof(Dcpu::Word);
+  std::copy(program, program_end, dcpu.memory_begin());
+  dcpu.ExecuteInstructions(3);
+  EXPECT_EQ(13, *dcpu.address(0x200A));
+}
+
+TEST(DcpuTest,
     ExecuteInstruction_set_location_offset_by_last_register_with_low_literal) {
   Dcpu dcpu;
   const Dcpu::Word program[] = {
@@ -517,20 +539,6 @@ TEST(DcpuTest, ExecuteInstruction_set_literal_with_low_literal) {
   dcpu.ExecuteInstruction();
   // set 0x1000, 13 should be a noop.
   EXPECT_EQ(0, *dcpu.address(0x1000));
-}
-
-TEST(DcpuTest, ExecuteInstruction_set_low_literal_with_low_literal) {
-  Dcpu dcpu;
-  const Dcpu::Word program[] = {
-    // set 10, 13
-    Dcpu::Instruct(Dcpu::kSet, Dcpu::k10, Dcpu::k13)
-  };
-  const Dcpu::Word *const program_end =
-      program + sizeof(program)/sizeof(Dcpu::Word);
-  std::copy(program, program_end, dcpu.memory_begin());
-  dcpu.ExecuteInstruction();
-  // set 10, 13 should be a noop.
-  EXPECT_EQ(0, *dcpu.address(0xA));
 }
 
 TEST(DcpuTest, ExecuteInstruction_add_register_with_low_literal) {

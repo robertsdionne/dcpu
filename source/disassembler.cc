@@ -1,6 +1,7 @@
 // Copyright 2012 Robert Scott Dionne. All rights reserved.
 
 #include <iostream>
+#include <sstream>
 #include "dcpu.h"
 #include "disassembler.h"
 
@@ -42,77 +43,77 @@ void Disassembler::Disassemble(const Dcpu::Word *const program_begin,
           break;
         case Dcpu::kSet:
           out << "set ";
-          OutputOperands(i, operand_a, operand_b, out);
+          OutputOperands(i, operand_b, operand_a, out);
           out << std::endl;
           break;
         case Dcpu::kAdd:
           out << "add ";
-          OutputOperands(i, operand_a, operand_b, out);
+          OutputOperands(i, operand_b, operand_a, out);
           out << std::endl;
           break;
         case Dcpu::kSubtract:
           out << "sub ";
-          OutputOperands(i, operand_a, operand_b, out);
+          OutputOperands(i, operand_b, operand_a, out);
           out << std::endl;
           break;
         case Dcpu::kMultiply:
           out << "mul ";
-          OutputOperands(i, operand_a, operand_b, out);
+          OutputOperands(i, operand_b, operand_a, out);
           out << std::endl;
           break;
         case Dcpu::kDivide:
           out << "div ";
-          OutputOperands(i, operand_a, operand_b, out);
+          OutputOperands(i, operand_b, operand_a, out);
           out << std::endl;
           break;
         case Dcpu::kModulo:
           out << "mod ";
-          OutputOperands(i, operand_a, operand_b, out);
+          OutputOperands(i, operand_b, operand_a, out);
           out << std::endl;
           break;
         case Dcpu::kShiftLeft:
           out << "shl ";
-          OutputOperands(i, operand_a, operand_b, out);
+          OutputOperands(i, operand_b, operand_a, out);
           out << std::endl;
           break;
         case Dcpu::kShiftRight:
           out << "shr ";
-          OutputOperands(i, operand_a, operand_b, out);
+          OutputOperands(i, operand_b, operand_a, out);
           out << std::endl;
           break;
         case Dcpu::kBinaryAnd:
           out << "and ";
-          OutputOperands(i, operand_a, operand_b, out);
+          OutputOperands(i, operand_b, operand_a, out);
           out << std::endl;
           break;
         case Dcpu::kBinaryOr:
           out << "bor ";
-          OutputOperands(i, operand_a, operand_b, out);
+          OutputOperands(i, operand_b, operand_a, out);
           out << std::endl;
           break;
         case Dcpu::kBinaryExclusiveOr:
           out << "xor ";
-          OutputOperands(i, operand_a, operand_b, out);
+          OutputOperands(i, operand_b, operand_a, out);
           out << std::endl;
           break;
         case Dcpu::kIfEqual:
           out << "ife ";
-          OutputOperands(i, operand_a, operand_b, out);
+          OutputOperands(i, operand_b, operand_a, out);
           out << std::endl;
           break;
         case Dcpu::kIfNotEqual:
           out << "ifn ";
-          OutputOperands(i, operand_a, operand_b, out);
+          OutputOperands(i, operand_b, operand_a, out);
           out << std::endl;
           break;
         case Dcpu::kIfGreaterThan:
           out << "ifg ";
-          OutputOperands(i, operand_a, operand_b, out);
+          OutputOperands(i, operand_b, operand_a, out);
           out << std::endl;
           break;
         case Dcpu::kIfBoth:
           out << "ifb ";
-          OutputOperands(i, operand_a, operand_b, out);
+          OutputOperands(i, operand_b, operand_a, out);
           out << std::endl;
           break;
         default:
@@ -207,9 +208,10 @@ void Disassembler::OutputOperand(const Dcpu::Word *&i,
 }
 
 void Disassembler::OutputOperands(
-    const Dcpu::Word *&i, const Dcpu::Operand operand_a,
-    const Dcpu::Operand operand_b, std::ostream &out) const {
-  OutputOperand(i, operand_a, out);
-  out << ", ";
+    const Dcpu::Word *&i, const Dcpu::Operand operand_b,
+    const Dcpu::Operand operand_a, std::ostream &out) const {
+  std::ostringstream string_out;
+  OutputOperand(i, operand_a, string_out);
   OutputOperand(i, operand_b, out);
+  out << ", " << string_out.str();
 }

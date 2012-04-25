@@ -15,9 +15,9 @@ class Dcpu {
     /**
      * Opcodes.
      */
-    static const Word kBasicOpcodeMask = 0x000F;
-    static const Word kAdvancedOpcodeMask = 0x03F0;
-    static const Word kAdvancedOpcodeShift = 0x4;
+    static const Word kBasicOpcodeMask = 0x001F;
+    static const Word kAdvancedOpcodeMask = 0x03E0;
+    static const Word kAdvancedOpcodeShift = 0x5;
 
     enum BasicOpcode {
       kBasicReserved = 0x0,
@@ -46,10 +46,10 @@ class Dcpu {
     /**
      * Operands.
      */
-    static const Word kBasicOperandMaskA = 0x03F0;
-    static const Word kBasicOperandMaskB = 0xFC00;
-    static const Word kBasicOperandShiftA = 0x4;
-    static const Word kBasicOperandShiftB = 0xA;
+    static const Word kBasicOperandMaskA = 0xFC00;
+    static const Word kBasicOperandMaskB = 0x03E0;
+    static const Word kBasicOperandShiftA = 0xA;
+    static const Word kBasicOperandShiftB = 0x5;
     static const Word kAdvancedOperandMaskA = 0xFC00;
     static const Word kAdvancedOperandShiftA = 0xA;
 

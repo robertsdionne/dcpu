@@ -32,8 +32,8 @@ int main(int argc, char *argv[]) {
     // set [0x8000+i], [data+i]
     Dcpu::Instruct(Dcpu::kSet,
         Dcpu::kLocationOffsetByRegisterI, Dcpu::kLocationOffsetByRegisterI),
-    kVideoMemoryBegin,
     0x0010,
+    kVideoMemoryBegin,
     // add i, 1
     Dcpu::Instruct(Dcpu::kAdd, Dcpu::kRegisterI, Dcpu::k1),
     // set pc, nextchar
