@@ -5,6 +5,8 @@
 #include <string>
 #include "dcpu.h"
 
+const Dcpu::Word kVideoMemoryBegin = 0x8000;
+
 int main(int argc, char *argv[]) {
   Dcpu dcpu;
   initscr();
@@ -30,7 +32,7 @@ int main(int argc, char *argv[]) {
     // set [0x8000+i], [data+i]
     Dcpu::Instruct(Dcpu::kSet,
         Dcpu::kLocationOffsetByRegisterI, Dcpu::kLocationOffsetByRegisterI),
-    Dcpu::kVideoMemoryBegin,
+    kVideoMemoryBegin,
     0x0010,
     // add i, 1
     Dcpu::Instruct(Dcpu::kAdd, Dcpu::kRegisterI, Dcpu::k1),
@@ -63,25 +65,25 @@ int main(int argc, char *argv[]) {
     printw("0x1000: %X\n", *dcpu.address(0x1000));
     printw("Video Memory:\n");
     printw("0x8000: %X %X %X %X %X %X %X %X %X %X %X %X %X %X %X %X\n\n",
-        *(dcpu.video_memory_begin() + 0x0),
-        *(dcpu.video_memory_begin() + 0x1),
-        *(dcpu.video_memory_begin() + 0x2),
-        *(dcpu.video_memory_begin() + 0x3),
-        *(dcpu.video_memory_begin() + 0x4),
-        *(dcpu.video_memory_begin() + 0x5),
-        *(dcpu.video_memory_begin() + 0x6),
-        *(dcpu.video_memory_begin() + 0x7),
-        *(dcpu.video_memory_begin() + 0x8),
-        *(dcpu.video_memory_begin() + 0x9),
-        *(dcpu.video_memory_begin() + 0xA),
-        *(dcpu.video_memory_begin() + 0xB),
-        *(dcpu.video_memory_begin() + 0xC),
-        *(dcpu.video_memory_begin() + 0xD),
-        *(dcpu.video_memory_begin() + 0xE),
-        *(dcpu.video_memory_begin() + 0xF));
+        *(dcpu.address(kVideoMemoryBegin) + 0x0),
+        *(dcpu.address(kVideoMemoryBegin) + 0x1),
+        *(dcpu.address(kVideoMemoryBegin) + 0x2),
+        *(dcpu.address(kVideoMemoryBegin) + 0x3),
+        *(dcpu.address(kVideoMemoryBegin) + 0x4),
+        *(dcpu.address(kVideoMemoryBegin) + 0x5),
+        *(dcpu.address(kVideoMemoryBegin) + 0x6),
+        *(dcpu.address(kVideoMemoryBegin) + 0x7),
+        *(dcpu.address(kVideoMemoryBegin) + 0x8),
+        *(dcpu.address(kVideoMemoryBegin) + 0x9),
+        *(dcpu.address(kVideoMemoryBegin) + 0xA),
+        *(dcpu.address(kVideoMemoryBegin) + 0xB),
+        *(dcpu.address(kVideoMemoryBegin) + 0xC),
+        *(dcpu.address(kVideoMemoryBegin) + 0xD),
+        *(dcpu.address(kVideoMemoryBegin) + 0xE),
+        *(dcpu.address(kVideoMemoryBegin) + 0xF));
     printw("Display:\n");
     for (int i = 0; i < 160; ++i) {
-      char character = *(dcpu.video_memory_begin() + i);
+      char character = *(dcpu.address(kVideoMemoryBegin) + i);
       if (character) {
         addch(character);
       } else {
