@@ -182,6 +182,8 @@ class Dcpu {
     Word &interrupt_address();
     Word interrupt_address() const;
 
+    void Interrupt(const Word message);
+
     void ExecuteInstruction(const bool skip = false);
     void ExecuteInstructions(const unsigned long int count);
 

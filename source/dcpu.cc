@@ -157,6 +157,17 @@ Dcpu::Word Dcpu::interrupt_address() const {
   return interrupt_address_;
 }
 
+void Dcpu::Interrupt(const Word message) {
+  if (interrupt_address_) {
+    stack_pointer_ -= 1;
+    *address(stack_pointer_) = program_counter_;
+    stack_pointer_ -= 1;
+    *address(stack_pointer_) = register_a_;
+    program_counter_ = interrupt_address_;
+    register_a_ = message;
+  }
+}
+
 void Dcpu::ExecuteInstruction(const bool skip) {
   const Word stack_pointer_backup = stack_pointer_;
   const Word instruction = *address(program_counter_);
@@ -188,14 +199,7 @@ void Dcpu::ExecuteInstruction(const bool skip) {
         program_counter_ = operand_a_value;
         break;
       case kInterruptTrigger:
-        if (interrupt_address_) {
-          stack_pointer_ -= 1;
-          *address(stack_pointer_) = program_counter_;
-          stack_pointer_ -= 1;
-          *address(stack_pointer_) = register_a_;
-          program_counter_ = interrupt_address_;
-          register_a_ = operand_a_value;
-        }
+        Interrupt(operand_a_value);
         break;
       case kInterruptGet:
         MaybeAssignResult(operand_a_address, interrupt_address_);
