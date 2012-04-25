@@ -11,8 +11,6 @@ class Dcpu {
      * Memory landmarks.
      */
     static const unsigned int kMemorySize = 0x10000;
-    static const Word kVideoMemoryBegin = 0x8000;
-    static const Word kVideoMemoryEnd = 0x87D0;
 
     /**
      * Opcodes.
@@ -138,11 +136,6 @@ class Dcpu {
     const Word *memory_begin() const;
     Word *memory_end();
     const Word *memory_end() const;
-
-    Word *video_memory_begin();
-    const Word *video_memory_begin() const;
-    Word *video_memory_end();
-    const Word *video_memory_end() const;
 
     Word &register_a();
     Word register_a() const;

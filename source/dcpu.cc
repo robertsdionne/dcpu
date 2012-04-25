@@ -4,8 +4,6 @@
 #include "dcpu.h"
 
 const unsigned int Dcpu::kMemorySize;
-const Dcpu::Word Dcpu::kVideoMemoryBegin;
-const Dcpu::Word Dcpu::kVideoMemoryEnd;
 const Dcpu::Word Dcpu::kBasicOpcodeMask;
 const Dcpu::Word Dcpu::kAdvancedOpcodeMask;
 const Dcpu::Word Dcpu::kBasicOperandMaskA;
@@ -57,22 +55,6 @@ Dcpu::Word *Dcpu::memory_end() {
 
 const Dcpu::Word *Dcpu::memory_end() const {
   return memory_begin() + kMemorySize;
-}
-
-Dcpu::Word *Dcpu::video_memory_begin() {
-  return address(kVideoMemoryBegin);
-}
-
-const Dcpu::Word *Dcpu::video_memory_begin() const {
-  return address(kVideoMemoryBegin);
-}
-
-Dcpu::Word *Dcpu::video_memory_end() {
-  return address(kVideoMemoryEnd);
-}
-
-const Dcpu::Word *Dcpu::video_memory_end() const {
-  return address(kVideoMemoryEnd);
 }
 
 Dcpu::Word &Dcpu::register_a() {
