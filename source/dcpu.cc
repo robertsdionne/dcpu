@@ -168,11 +168,11 @@ void Dcpu::ExecuteInstruction(const bool skip) {
         instruction & kAdvancedOpcodeMask) >> kAdvancedOpcodeShift;
     const Operand operand_a = static_cast<Operand>(
         (instruction & kAdvancedOperandMaskA) >> kAdvancedOperandShiftA);
-    const bool is_lhs = advanced_opcode == kInterruptGet
+    const bool assignable = advanced_opcode == kInterruptGet
         || advanced_opcode == kHardwareNumberConnected;
     Word operand_a_literal = 0;
     Word *const operand_a_address = GetOperandAddressOrLiteral(
-        operand_a, is_lhs, operand_a_literal);
+        operand_a, assignable, operand_a_literal);
     const Word operand_a_value = operand_a_address ?
       *operand_a_address : operand_a_literal;
     if (skip) {
@@ -225,10 +225,10 @@ void Dcpu::ExecuteInstruction(const bool skip) {
         (instruction & kBasicOperandMaskB) >> kBasicOperandShiftB);
     Word operand_a_literal = 0;
     const Word *const operand_a_address = GetOperandAddressOrLiteral(
-        operand_a, /* is_lhs */ false, operand_a_literal);
+        operand_a, /* assignable */ false, operand_a_literal);
     Word operand_b_literal = 0;
     Word *const operand_b_address = GetOperandAddressOrLiteral(
-        operand_b, /* is_lhs */ true, operand_b_literal);
+        operand_b, /* assignable */ true, operand_b_literal);
     const Word operand_a_value = operand_a_address ?
         *operand_a_address : operand_a_literal;
     const Word operand_b_value = operand_b_address ?
@@ -342,7 +342,7 @@ Dcpu::Word Dcpu::register_value(const Word register_index) {
 }
 
 Dcpu::Word *Dcpu::GetOperandAddressOrLiteral(
-    const Operand operand, const bool is_lhs, Word &literal) {
+    const Operand operand, const bool assignable, Word &literal) {
   if (operand < kLocationInRegisterA) {
     return register_address(operand);
   } else if (kLocationInRegisterA <= operand
@@ -354,7 +354,7 @@ Dcpu::Word *Dcpu::GetOperandAddressOrLiteral(
     program_counter_ += 1;
     return result;
   } else if (operand == kPushPop) {
-    if (is_lhs) { // Push
+    if (assignable) { // Push
       stack_pointer_ -= 1;
       return address(stack_pointer_);
     } else { // Pop

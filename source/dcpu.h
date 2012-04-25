@@ -192,7 +192,7 @@ class Dcpu {
     Word register_value(const Word register_index);
 
     Word *GetOperandAddressOrLiteral(
-        const Operand operand, const bool is_lhs, Word &literal);
+        const Operand operand, const bool assignable, Word &literal);
     void MaybeAssignResult(Word *const slot, const unsigned int result);
 
   private:

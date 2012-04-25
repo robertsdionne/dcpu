@@ -23,7 +23,7 @@ void Disassembler::Disassemble(const Dcpu::Word *const program_begin,
           break;
         case Dcpu::kJumpSubRoutine:
           out << "jsr ";
-          OutputOperand(i, operand_a, /* is_lhs */ false, out);
+          OutputOperand(i, operand_a, /* assignable */ false, out);
           out << std::endl;
           break;
         default:
@@ -145,8 +145,9 @@ char Disassembler::DetermineRegisterName(const Dcpu::Operand operand) const {
   }
 }
 
-void Disassembler::OutputOperand(const Dcpu::Word *&i,
-    const Dcpu::Operand operand, const bool is_lhs, std::ostream &out) const {
+void Disassembler::OutputOperand(
+    const Dcpu::Word *&i, const Dcpu::Operand operand,
+    const bool assignable, std::ostream &out) const {
   if (operand < Dcpu::kLocationInRegisterA) {
     const char register_name = DetermineRegisterName(operand);
     out << register_name;
@@ -167,7 +168,7 @@ void Disassembler::OutputOperand(const Dcpu::Word *&i,
     std::ios_base::fmtflags flags;
     switch (operand) {
       case Dcpu::kPushPop:
-        if (is_lhs) {
+        if (assignable) {
           out << "push";
         } else {
           out << "pop";
@@ -220,7 +221,7 @@ void Disassembler::OutputOperands(
     const Dcpu::Word *&i, const Dcpu::Operand operand_b,
     const Dcpu::Operand operand_a, std::ostream &out) const {
   std::ostringstream string_out;
-  OutputOperand(i, operand_a, /* is_lhs */ false, string_out);
-  OutputOperand(i, operand_b, /* is_lhs */ true, out);
+  OutputOperand(i, operand_a, /* assignable */ false, string_out);
+  OutputOperand(i, operand_b, /* assignable */ true, out);
   out << ", " << string_out.str();
 }
