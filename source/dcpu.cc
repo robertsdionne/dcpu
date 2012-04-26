@@ -290,6 +290,7 @@ void Dcpu::ExecuteInstruction(const bool skip) {
           extra_ = 1;
           MaybeAssignResult(operand_b_address, 0);
         }
+        break;
       case kModulo:
         MaybeAssignResult(operand_b_address, operand_b_value % operand_a_value);
         break;
