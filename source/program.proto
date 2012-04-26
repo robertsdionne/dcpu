@@ -1,0 +1,9 @@
+// Copyright 2012 Robert Scott Dionne. All rights reserved.
+
+message Program {
+  repeated Statement statement = 1;
+}
+
+message Statement {
+
+}
