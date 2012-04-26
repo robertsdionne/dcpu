@@ -36,6 +36,7 @@ class Dcpu {
       kShiftRight = 0x0C,
       kArithmeticShiftRight = 0x0D,
       kShiftLeft = 0x0E,
+      kMoveAndIncrement = 0x0F,
       kIfBitSet = 0x10,
       kIfClear = 0x11,
       kIfEqual = 0x12,
@@ -43,7 +44,9 @@ class Dcpu {
       kIfGreaterThan = 0x14,
       kIfAbove = 0x15,
       kIfLessThan = 0x16,
-      kIfUnder = 0x17
+      kIfUnder = 0x17,
+      kAddWithCarry = 0x1A,
+      kSubtractWithCarry = 0x1B
     };
 
     enum AdvancedOpcode {
