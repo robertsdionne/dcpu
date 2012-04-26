@@ -3,3 +3,7 @@ build/
 .lock-waf_linux2_build
 *.swp
 .waf*
+/Tests
+/Debug
+/.cproject
+/.project
