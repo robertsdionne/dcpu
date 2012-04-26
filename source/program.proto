@@ -9,20 +9,22 @@ message Statement {
   enum Type {
     INSTRUCTION = 0;
     LABEL = 1;
-    COMMENT = 2;
-    BLANK_SPACE = 3;
+    DATA = 2;
+    COMMENT = 3;
+    BLANK_SPACE = 4;
   }
   optional Type type = 1;
   optional Instruction instruction = 2;
   optional string label = 3;
-  optional string comment = 4;
-  optional uint32 space = 5;
+  optional Data data = 4;
+  optional string comment = 5;
+  optional uint32 space = 6;
 }
 
 message Instruction {
   optional Opcode opcode = 1;
-  optional Operand operand_a = 2;
-  optional Operand operand_b = 3;
+  optional Operand operand_b = 2;
+  optional Operand operand_a = 3;
 }
 
 message Opcode {
@@ -97,5 +99,15 @@ message Operand {
   }
   optional Type type = 1;
   optional Register register = 2;
-  optional sint32 next_word = 3;
+  optional sint32 value = 3;
+  optional string label = 4;
+}
+
+message Data {
+  enum Type {
+    STRING = 0;
+    BYTES = 1;
+  }
+  optional string string = 1;
+  optional bytes bytes = 2;
 }

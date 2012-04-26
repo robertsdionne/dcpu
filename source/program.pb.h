@@ -35,12 +35,14 @@ class Statement;
 class Instruction;
 class Opcode;
 class Operand;
+class Data;
 
 enum Statement_Type {
   Statement_Type_INSTRUCTION = 0,
   Statement_Type_LABEL = 1,
-  Statement_Type_COMMENT = 2,
-  Statement_Type_BLANK_SPACE = 3
+  Statement_Type_DATA = 2,
+  Statement_Type_COMMENT = 3,
+  Statement_Type_BLANK_SPACE = 4
 };
 bool Statement_Type_IsValid(int value);
 const Statement_Type Statement_Type_Type_MIN = Statement_Type_INSTRUCTION;
@@ -194,6 +196,25 @@ inline bool Operand_Register_Parse(
     const ::std::string& name, Operand_Register* value) {
   return ::google::protobuf::internal::ParseNamedEnum<Operand_Register>(
     Operand_Register_descriptor(), name, value);
+}
+enum Data_Type {
+  Data_Type_STRING = 0,
+  Data_Type_BYTES = 1
+};
+bool Data_Type_IsValid(int value);
+const Data_Type Data_Type_Type_MIN = Data_Type_STRING;
+const Data_Type Data_Type_Type_MAX = Data_Type_BYTES;
+const int Data_Type_Type_ARRAYSIZE = Data_Type_Type_MAX + 1;
+
+const ::google::protobuf::EnumDescriptor* Data_Type_descriptor();
+inline const ::std::string& Data_Type_Name(Data_Type value) {
+  return ::google::protobuf::internal::NameOfEnum(
+    Data_Type_descriptor(), value);
+}
+inline bool Data_Type_Parse(
+    const ::std::string& name, Data_Type* value) {
+  return ::google::protobuf::internal::ParseNamedEnum<Data_Type>(
+    Data_Type_descriptor(), name, value);
 }
 // ===================================================================
 
@@ -351,6 +372,7 @@ class Statement : public ::google::protobuf::Message {
   typedef Statement_Type Type;
   static const Type INSTRUCTION = Statement_Type_INSTRUCTION;
   static const Type LABEL = Statement_Type_LABEL;
+  static const Type DATA = Statement_Type_DATA;
   static const Type COMMENT = Statement_Type_COMMENT;
   static const Type BLANK_SPACE = Statement_Type_BLANK_SPACE;
   static inline bool Type_IsValid(int value) {
@@ -402,10 +424,18 @@ class Statement : public ::google::protobuf::Message {
   inline ::std::string* mutable_label();
   inline ::std::string* release_label();
   
-  // optional string comment = 4;
+  // optional .Data data = 4;
+  inline bool has_data() const;
+  inline void clear_data();
+  static const int kDataFieldNumber = 4;
+  inline const ::Data& data() const;
+  inline ::Data* mutable_data();
+  inline ::Data* release_data();
+  
+  // optional string comment = 5;
   inline bool has_comment() const;
   inline void clear_comment();
-  static const int kCommentFieldNumber = 4;
+  static const int kCommentFieldNumber = 5;
   inline const ::std::string& comment() const;
   inline void set_comment(const ::std::string& value);
   inline void set_comment(const char* value);
@@ -413,10 +443,10 @@ class Statement : public ::google::protobuf::Message {
   inline ::std::string* mutable_comment();
   inline ::std::string* release_comment();
   
-  // optional uint32 space = 5;
+  // optional uint32 space = 6;
   inline bool has_space() const;
   inline void clear_space();
-  static const int kSpaceFieldNumber = 5;
+  static const int kSpaceFieldNumber = 6;
   inline ::google::protobuf::uint32 space() const;
   inline void set_space(::google::protobuf::uint32 value);
   
@@ -428,6 +458,8 @@ class Statement : public ::google::protobuf::Message {
   inline void clear_has_instruction();
   inline void set_has_label();
   inline void clear_has_label();
+  inline void set_has_data();
+  inline void clear_has_data();
   inline void set_has_comment();
   inline void clear_has_comment();
   inline void set_has_space();
@@ -439,10 +471,11 @@ class Statement : public ::google::protobuf::Message {
   ::std::string* label_;
   int type_;
   ::google::protobuf::uint32 space_;
+  ::Data* data_;
   ::std::string* comment_;
   
   mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(5 + 31) / 32];
+  ::google::protobuf::uint32 _has_bits_[(6 + 31) / 32];
   
   friend void  protobuf_AddDesc_program_2eproto();
   friend void protobuf_AssignDesc_program_2eproto();
@@ -515,36 +548,36 @@ class Instruction : public ::google::protobuf::Message {
   inline ::Opcode* mutable_opcode();
   inline ::Opcode* release_opcode();
   
-  // optional .Operand operand_a = 2;
-  inline bool has_operand_a() const;
-  inline void clear_operand_a();
-  static const int kOperandAFieldNumber = 2;
-  inline const ::Operand& operand_a() const;
-  inline ::Operand* mutable_operand_a();
-  inline ::Operand* release_operand_a();
-  
-  // optional .Operand operand_b = 3;
+  // optional .Operand operand_b = 2;
   inline bool has_operand_b() const;
   inline void clear_operand_b();
-  static const int kOperandBFieldNumber = 3;
+  static const int kOperandBFieldNumber = 2;
   inline const ::Operand& operand_b() const;
   inline ::Operand* mutable_operand_b();
   inline ::Operand* release_operand_b();
+  
+  // optional .Operand operand_a = 3;
+  inline bool has_operand_a() const;
+  inline void clear_operand_a();
+  static const int kOperandAFieldNumber = 3;
+  inline const ::Operand& operand_a() const;
+  inline ::Operand* mutable_operand_a();
+  inline ::Operand* release_operand_a();
   
   // @@protoc_insertion_point(class_scope:Instruction)
  private:
   inline void set_has_opcode();
   inline void clear_has_opcode();
-  inline void set_has_operand_a();
-  inline void clear_has_operand_a();
   inline void set_has_operand_b();
   inline void clear_has_operand_b();
+  inline void set_has_operand_a();
+  inline void clear_has_operand_a();
   
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
   
   ::Opcode* opcode_;
-  ::Operand* operand_a_;
   ::Operand* operand_b_;
+  ::Operand* operand_a_;
   
   mutable int _cached_size_;
   ::google::protobuf::uint32 _has_bits_[(3 + 31) / 32];
@@ -891,12 +924,23 @@ class Operand : public ::google::protobuf::Message {
   inline ::Operand_Register register_() const;
   inline void set_register_(::Operand_Register value);
   
-  // optional sint32 next_word = 3;
-  inline bool has_next_word() const;
-  inline void clear_next_word();
-  static const int kNextWordFieldNumber = 3;
-  inline ::google::protobuf::int32 next_word() const;
-  inline void set_next_word(::google::protobuf::int32 value);
+  // optional sint32 value = 3;
+  inline bool has_value() const;
+  inline void clear_value();
+  static const int kValueFieldNumber = 3;
+  inline ::google::protobuf::int32 value() const;
+  inline void set_value(::google::protobuf::int32 value);
+  
+  // optional string label = 4;
+  inline bool has_label() const;
+  inline void clear_label();
+  static const int kLabelFieldNumber = 4;
+  inline const ::std::string& label() const;
+  inline void set_label(const ::std::string& value);
+  inline void set_label(const char* value);
+  inline void set_label(const char* value, size_t size);
+  inline ::std::string* mutable_label();
+  inline ::std::string* release_label();
   
   // @@protoc_insertion_point(class_scope:Operand)
  private:
@@ -904,17 +948,20 @@ class Operand : public ::google::protobuf::Message {
   inline void clear_has_type();
   inline void set_has_register_();
   inline void clear_has_register_();
-  inline void set_has_next_word();
-  inline void clear_has_next_word();
+  inline void set_has_value();
+  inline void clear_has_value();
+  inline void set_has_label();
+  inline void clear_has_label();
   
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
   
   int type_;
   int register__;
-  ::google::protobuf::int32 next_word_;
+  ::std::string* label_;
+  ::google::protobuf::int32 value_;
   
   mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(3 + 31) / 32];
+  ::google::protobuf::uint32 _has_bits_[(4 + 31) / 32];
   
   friend void  protobuf_AddDesc_program_2eproto();
   friend void protobuf_AssignDesc_program_2eproto();
@@ -922,6 +969,130 @@ class Operand : public ::google::protobuf::Message {
   
   void InitAsDefaultInstance();
   static Operand* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class Data : public ::google::protobuf::Message {
+ public:
+  Data();
+  virtual ~Data();
+  
+  Data(const Data& from);
+  
+  inline Data& operator=(const Data& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+  
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+  
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const Data& default_instance();
+  
+  void Swap(Data* other);
+  
+  // implements Message ----------------------------------------------
+  
+  Data* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const Data& from);
+  void MergeFrom(const Data& from);
+  void Clear();
+  bool IsInitialized() const;
+  
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+  
+  ::google::protobuf::Metadata GetMetadata() const;
+  
+  // nested types ----------------------------------------------------
+  
+  typedef Data_Type Type;
+  static const Type STRING = Data_Type_STRING;
+  static const Type BYTES = Data_Type_BYTES;
+  static inline bool Type_IsValid(int value) {
+    return Data_Type_IsValid(value);
+  }
+  static const Type Type_MIN =
+    Data_Type_Type_MIN;
+  static const Type Type_MAX =
+    Data_Type_Type_MAX;
+  static const int Type_ARRAYSIZE =
+    Data_Type_Type_ARRAYSIZE;
+  static inline const ::google::protobuf::EnumDescriptor*
+  Type_descriptor() {
+    return Data_Type_descriptor();
+  }
+  static inline const ::std::string& Type_Name(Type value) {
+    return Data_Type_Name(value);
+  }
+  static inline bool Type_Parse(const ::std::string& name,
+      Type* value) {
+    return Data_Type_Parse(name, value);
+  }
+  
+  // accessors -------------------------------------------------------
+  
+  // optional string string = 1;
+  inline bool has_string() const;
+  inline void clear_string();
+  static const int kStringFieldNumber = 1;
+  inline const ::std::string& string() const;
+  inline void set_string(const ::std::string& value);
+  inline void set_string(const char* value);
+  inline void set_string(const char* value, size_t size);
+  inline ::std::string* mutable_string();
+  inline ::std::string* release_string();
+  
+  // optional bytes bytes = 2;
+  inline bool has_bytes() const;
+  inline void clear_bytes();
+  static const int kBytesFieldNumber = 2;
+  inline const ::std::string& bytes() const;
+  inline void set_bytes(const ::std::string& value);
+  inline void set_bytes(const char* value);
+  inline void set_bytes(const void* value, size_t size);
+  inline ::std::string* mutable_bytes();
+  inline ::std::string* release_bytes();
+  
+  // @@protoc_insertion_point(class_scope:Data)
+ private:
+  inline void set_has_string();
+  inline void clear_has_string();
+  inline void set_has_bytes();
+  inline void clear_has_bytes();
+  
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+  
+  ::std::string* string_;
+  ::std::string* bytes_;
+  
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(2 + 31) / 32];
+  
+  friend void  protobuf_AddDesc_program_2eproto();
+  friend void protobuf_AssignDesc_program_2eproto();
+  friend void protobuf_ShutdownFile_program_2eproto();
+  
+  void InitAsDefaultInstance();
+  static Data* default_instance_;
 };
 // ===================================================================
 
@@ -1127,15 +1298,44 @@ inline ::std::string* Statement::release_label() {
   }
 }
 
-// optional string comment = 4;
-inline bool Statement::has_comment() const {
+// optional .Data data = 4;
+inline bool Statement::has_data() const {
   return (_has_bits_[0] & 0x00000008u) != 0;
 }
-inline void Statement::set_has_comment() {
+inline void Statement::set_has_data() {
   _has_bits_[0] |= 0x00000008u;
 }
-inline void Statement::clear_has_comment() {
+inline void Statement::clear_has_data() {
   _has_bits_[0] &= ~0x00000008u;
+}
+inline void Statement::clear_data() {
+  if (data_ != NULL) data_->::Data::Clear();
+  clear_has_data();
+}
+inline const ::Data& Statement::data() const {
+  return data_ != NULL ? *data_ : *default_instance_->data_;
+}
+inline ::Data* Statement::mutable_data() {
+  set_has_data();
+  if (data_ == NULL) data_ = new ::Data;
+  return data_;
+}
+inline ::Data* Statement::release_data() {
+  clear_has_data();
+  ::Data* temp = data_;
+  data_ = NULL;
+  return temp;
+}
+
+// optional string comment = 5;
+inline bool Statement::has_comment() const {
+  return (_has_bits_[0] & 0x00000010u) != 0;
+}
+inline void Statement::set_has_comment() {
+  _has_bits_[0] |= 0x00000010u;
+}
+inline void Statement::clear_has_comment() {
+  _has_bits_[0] &= ~0x00000010u;
 }
 inline void Statement::clear_comment() {
   if (comment_ != &::google::protobuf::internal::kEmptyString) {
@@ -1185,15 +1385,15 @@ inline ::std::string* Statement::release_comment() {
   }
 }
 
-// optional uint32 space = 5;
+// optional uint32 space = 6;
 inline bool Statement::has_space() const {
-  return (_has_bits_[0] & 0x00000010u) != 0;
+  return (_has_bits_[0] & 0x00000020u) != 0;
 }
 inline void Statement::set_has_space() {
-  _has_bits_[0] |= 0x00000010u;
+  _has_bits_[0] |= 0x00000020u;
 }
 inline void Statement::clear_has_space() {
-  _has_bits_[0] &= ~0x00000010u;
+  _has_bits_[0] &= ~0x00000020u;
 }
 inline void Statement::clear_space() {
   space_ = 0u;
@@ -1240,44 +1440,15 @@ inline ::Opcode* Instruction::release_opcode() {
   return temp;
 }
 
-// optional .Operand operand_a = 2;
-inline bool Instruction::has_operand_a() const {
+// optional .Operand operand_b = 2;
+inline bool Instruction::has_operand_b() const {
   return (_has_bits_[0] & 0x00000002u) != 0;
 }
-inline void Instruction::set_has_operand_a() {
+inline void Instruction::set_has_operand_b() {
   _has_bits_[0] |= 0x00000002u;
 }
-inline void Instruction::clear_has_operand_a() {
-  _has_bits_[0] &= ~0x00000002u;
-}
-inline void Instruction::clear_operand_a() {
-  if (operand_a_ != NULL) operand_a_->::Operand::Clear();
-  clear_has_operand_a();
-}
-inline const ::Operand& Instruction::operand_a() const {
-  return operand_a_ != NULL ? *operand_a_ : *default_instance_->operand_a_;
-}
-inline ::Operand* Instruction::mutable_operand_a() {
-  set_has_operand_a();
-  if (operand_a_ == NULL) operand_a_ = new ::Operand;
-  return operand_a_;
-}
-inline ::Operand* Instruction::release_operand_a() {
-  clear_has_operand_a();
-  ::Operand* temp = operand_a_;
-  operand_a_ = NULL;
-  return temp;
-}
-
-// optional .Operand operand_b = 3;
-inline bool Instruction::has_operand_b() const {
-  return (_has_bits_[0] & 0x00000004u) != 0;
-}
-inline void Instruction::set_has_operand_b() {
-  _has_bits_[0] |= 0x00000004u;
-}
 inline void Instruction::clear_has_operand_b() {
-  _has_bits_[0] &= ~0x00000004u;
+  _has_bits_[0] &= ~0x00000002u;
 }
 inline void Instruction::clear_operand_b() {
   if (operand_b_ != NULL) operand_b_->::Operand::Clear();
@@ -1295,6 +1466,35 @@ inline ::Operand* Instruction::release_operand_b() {
   clear_has_operand_b();
   ::Operand* temp = operand_b_;
   operand_b_ = NULL;
+  return temp;
+}
+
+// optional .Operand operand_a = 3;
+inline bool Instruction::has_operand_a() const {
+  return (_has_bits_[0] & 0x00000004u) != 0;
+}
+inline void Instruction::set_has_operand_a() {
+  _has_bits_[0] |= 0x00000004u;
+}
+inline void Instruction::clear_has_operand_a() {
+  _has_bits_[0] &= ~0x00000004u;
+}
+inline void Instruction::clear_operand_a() {
+  if (operand_a_ != NULL) operand_a_->::Operand::Clear();
+  clear_has_operand_a();
+}
+inline const ::Operand& Instruction::operand_a() const {
+  return operand_a_ != NULL ? *operand_a_ : *default_instance_->operand_a_;
+}
+inline ::Operand* Instruction::mutable_operand_a() {
+  set_has_operand_a();
+  if (operand_a_ == NULL) operand_a_ = new ::Operand;
+  return operand_a_;
+}
+inline ::Operand* Instruction::release_operand_a() {
+  clear_has_operand_a();
+  ::Operand* temp = operand_a_;
+  operand_a_ = NULL;
   return temp;
 }
 
@@ -1421,26 +1621,204 @@ inline void Operand::set_register_(::Operand_Register value) {
   register__ = value;
 }
 
-// optional sint32 next_word = 3;
-inline bool Operand::has_next_word() const {
+// optional sint32 value = 3;
+inline bool Operand::has_value() const {
   return (_has_bits_[0] & 0x00000004u) != 0;
 }
-inline void Operand::set_has_next_word() {
+inline void Operand::set_has_value() {
   _has_bits_[0] |= 0x00000004u;
 }
-inline void Operand::clear_has_next_word() {
+inline void Operand::clear_has_value() {
   _has_bits_[0] &= ~0x00000004u;
 }
-inline void Operand::clear_next_word() {
-  next_word_ = 0;
-  clear_has_next_word();
+inline void Operand::clear_value() {
+  value_ = 0;
+  clear_has_value();
 }
-inline ::google::protobuf::int32 Operand::next_word() const {
-  return next_word_;
+inline ::google::protobuf::int32 Operand::value() const {
+  return value_;
 }
-inline void Operand::set_next_word(::google::protobuf::int32 value) {
-  set_has_next_word();
-  next_word_ = value;
+inline void Operand::set_value(::google::protobuf::int32 value) {
+  set_has_value();
+  value_ = value;
+}
+
+// optional string label = 4;
+inline bool Operand::has_label() const {
+  return (_has_bits_[0] & 0x00000008u) != 0;
+}
+inline void Operand::set_has_label() {
+  _has_bits_[0] |= 0x00000008u;
+}
+inline void Operand::clear_has_label() {
+  _has_bits_[0] &= ~0x00000008u;
+}
+inline void Operand::clear_label() {
+  if (label_ != &::google::protobuf::internal::kEmptyString) {
+    label_->clear();
+  }
+  clear_has_label();
+}
+inline const ::std::string& Operand::label() const {
+  return *label_;
+}
+inline void Operand::set_label(const ::std::string& value) {
+  set_has_label();
+  if (label_ == &::google::protobuf::internal::kEmptyString) {
+    label_ = new ::std::string;
+  }
+  label_->assign(value);
+}
+inline void Operand::set_label(const char* value) {
+  set_has_label();
+  if (label_ == &::google::protobuf::internal::kEmptyString) {
+    label_ = new ::std::string;
+  }
+  label_->assign(value);
+}
+inline void Operand::set_label(const char* value, size_t size) {
+  set_has_label();
+  if (label_ == &::google::protobuf::internal::kEmptyString) {
+    label_ = new ::std::string;
+  }
+  label_->assign(reinterpret_cast<const char*>(value), size);
+}
+inline ::std::string* Operand::mutable_label() {
+  set_has_label();
+  if (label_ == &::google::protobuf::internal::kEmptyString) {
+    label_ = new ::std::string;
+  }
+  return label_;
+}
+inline ::std::string* Operand::release_label() {
+  clear_has_label();
+  if (label_ == &::google::protobuf::internal::kEmptyString) {
+    return NULL;
+  } else {
+    ::std::string* temp = label_;
+    label_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+    return temp;
+  }
+}
+
+// -------------------------------------------------------------------
+
+// Data
+
+// optional string string = 1;
+inline bool Data::has_string() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void Data::set_has_string() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void Data::clear_has_string() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void Data::clear_string() {
+  if (string_ != &::google::protobuf::internal::kEmptyString) {
+    string_->clear();
+  }
+  clear_has_string();
+}
+inline const ::std::string& Data::string() const {
+  return *string_;
+}
+inline void Data::set_string(const ::std::string& value) {
+  set_has_string();
+  if (string_ == &::google::protobuf::internal::kEmptyString) {
+    string_ = new ::std::string;
+  }
+  string_->assign(value);
+}
+inline void Data::set_string(const char* value) {
+  set_has_string();
+  if (string_ == &::google::protobuf::internal::kEmptyString) {
+    string_ = new ::std::string;
+  }
+  string_->assign(value);
+}
+inline void Data::set_string(const char* value, size_t size) {
+  set_has_string();
+  if (string_ == &::google::protobuf::internal::kEmptyString) {
+    string_ = new ::std::string;
+  }
+  string_->assign(reinterpret_cast<const char*>(value), size);
+}
+inline ::std::string* Data::mutable_string() {
+  set_has_string();
+  if (string_ == &::google::protobuf::internal::kEmptyString) {
+    string_ = new ::std::string;
+  }
+  return string_;
+}
+inline ::std::string* Data::release_string() {
+  clear_has_string();
+  if (string_ == &::google::protobuf::internal::kEmptyString) {
+    return NULL;
+  } else {
+    ::std::string* temp = string_;
+    string_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+    return temp;
+  }
+}
+
+// optional bytes bytes = 2;
+inline bool Data::has_bytes() const {
+  return (_has_bits_[0] & 0x00000002u) != 0;
+}
+inline void Data::set_has_bytes() {
+  _has_bits_[0] |= 0x00000002u;
+}
+inline void Data::clear_has_bytes() {
+  _has_bits_[0] &= ~0x00000002u;
+}
+inline void Data::clear_bytes() {
+  if (bytes_ != &::google::protobuf::internal::kEmptyString) {
+    bytes_->clear();
+  }
+  clear_has_bytes();
+}
+inline const ::std::string& Data::bytes() const {
+  return *bytes_;
+}
+inline void Data::set_bytes(const ::std::string& value) {
+  set_has_bytes();
+  if (bytes_ == &::google::protobuf::internal::kEmptyString) {
+    bytes_ = new ::std::string;
+  }
+  bytes_->assign(value);
+}
+inline void Data::set_bytes(const char* value) {
+  set_has_bytes();
+  if (bytes_ == &::google::protobuf::internal::kEmptyString) {
+    bytes_ = new ::std::string;
+  }
+  bytes_->assign(value);
+}
+inline void Data::set_bytes(const void* value, size_t size) {
+  set_has_bytes();
+  if (bytes_ == &::google::protobuf::internal::kEmptyString) {
+    bytes_ = new ::std::string;
+  }
+  bytes_->assign(reinterpret_cast<const char*>(value), size);
+}
+inline ::std::string* Data::mutable_bytes() {
+  set_has_bytes();
+  if (bytes_ == &::google::protobuf::internal::kEmptyString) {
+    bytes_ = new ::std::string;
+  }
+  return bytes_;
+}
+inline ::std::string* Data::release_bytes() {
+  clear_has_bytes();
+  if (bytes_ == &::google::protobuf::internal::kEmptyString) {
+    return NULL;
+  } else {
+    ::std::string* temp = bytes_;
+    bytes_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+    return temp;
+  }
 }
 
 
@@ -1473,6 +1851,10 @@ inline const EnumDescriptor* GetEnumDescriptor< ::Operand_Type>() {
 template <>
 inline const EnumDescriptor* GetEnumDescriptor< ::Operand_Register>() {
   return ::Operand_Register_descriptor();
+}
+template <>
+inline const EnumDescriptor* GetEnumDescriptor< ::Data_Type>() {
+  return ::Data_Type_descriptor();
 }
 
 }  // namespace google
