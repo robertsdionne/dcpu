@@ -4,6 +4,7 @@
 def build(ctx):
   ctx.stlib(
       source = [
+        'assembler.cc',
         'dcpu.cc',
         'disassembler.cc',
         ],
