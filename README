@@ -3,11 +3,18 @@ Robert Dionne
 2012.03.30
 
 I'm implementing Notch's DCPU.
-See original specification: http://0x10c.com/highnerd/dcpu16_1_3.txt
-See backup specification: https://github.com/robertsdionne/dcpu/blob/master/documentation/dcpu16_1_3.txt
 
-Generic clock specification: http://www.reddit.com/r/dcpu16/comments/sripk/rfe_dcpu16_v13/c4gkv61
-Backup: https://github.com/robertsdionne/dcpu/blob/master/documentation/generic_clock.txt
+DCPU specification: http://0x10c.com/highnerd/dcpu16_1_3.txt
+Backup: https://github.com/robertsdionne/dcpu/blob/master/documentation/dcpu16_1_3.txt
+
+Clock specification: http://dcpu.com/highnerd/rc_1/clock.txt
+Backup: https://github.com/robertsdionne/dcpu/blob/master/documentation/clock.txt
+
+LEM1802 specification: http://dcpu.com/highnerd/lem1802.txt
+Backup: https://github.com/robertsdionne/dcpu/blob/master/documentation/lem1802.txt
+
+Keyboard specification: http://dcpu.com/highnerd/rc_1/keyboard.txt
+Backup: https://github.com/robertsdionne/dcpu/blob/master/documentation/keyboard.txt
 
 To build:
 1) Install libncurses-dev if needed.
