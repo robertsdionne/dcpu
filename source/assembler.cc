@@ -19,12 +19,18 @@ void Assembler::Assemble(const Program &program,
     } else if (statement.type() == Statement_Type_LABEL) {
       if (!statement.has_label()) {
         continue;
+      } else if (labels.find(statement.label()) != labels.end()) {
+        std::cout << "Duplicate label " << statement.label() << std::endl;
       } else {
         labels[statement.label()] = label_address;
       }
     } else {
       label_address += DetermineStatementSize(statement);
     }
+  }
+  std::map<std::string, Dcpu::Word>::const_iterator i;
+  for (i = labels.begin(); i != labels.end(); ++i) {
+    std::cout << i->first << ": " << i->second << std::endl;
   }
 }
 
@@ -38,9 +44,20 @@ Dcpu::Word Assembler::DetermineStatementSize(const Statement &statement) const {
     }
     return DetermineInstructionSize(statement.instruction());
   } else if (statement.type() == Statement_Type_DATA) {
-    return 0;
+    return DetermineDataSize(statement.data());
   } else {
     return 0;
+  }
+}
+
+Dcpu::Word Assembler::DetermineDataSize(const Data &data) const {
+  if (!data.has_type()) {
+    return 0;
+  }
+  if (data.type() == Data_Type_STRING) {
+    return data.string().size();
+  } else {
+    return data.bytes().size();
   }
 }
 

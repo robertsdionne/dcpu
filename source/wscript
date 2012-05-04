@@ -7,13 +7,16 @@ def build(ctx):
         'assembler.cc',
         'dcpu.cc',
         'disassembler.cc',
+        'program.pb.cc',
         ],
       target = 'dcpu',
       includes = [
         '.',
+        '../libraries/protobuf-2.4.1/src',
         ],
       use = [
         'NCURSES',
+        'protobuf',
         ],
       cxxflags = [
         '-g',

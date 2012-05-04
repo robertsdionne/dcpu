@@ -108,6 +108,7 @@ message Data {
     STRING = 0;
     BYTES = 1;
   }
-  optional string string = 1;
-  optional bytes bytes = 2;
+  optional Type type = 1;
+  optional string string = 2;
+  optional bytes bytes = 3;
 }

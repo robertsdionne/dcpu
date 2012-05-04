@@ -1050,10 +1050,17 @@ class Data : public ::google::protobuf::Message {
   
   // accessors -------------------------------------------------------
   
-  // optional string string = 1;
+  // optional .Data.Type type = 1;
+  inline bool has_type() const;
+  inline void clear_type();
+  static const int kTypeFieldNumber = 1;
+  inline ::Data_Type type() const;
+  inline void set_type(::Data_Type value);
+  
+  // optional string string = 2;
   inline bool has_string() const;
   inline void clear_string();
-  static const int kStringFieldNumber = 1;
+  static const int kStringFieldNumber = 2;
   inline const ::std::string& string() const;
   inline void set_string(const ::std::string& value);
   inline void set_string(const char* value);
@@ -1061,10 +1068,10 @@ class Data : public ::google::protobuf::Message {
   inline ::std::string* mutable_string();
   inline ::std::string* release_string();
   
-  // optional bytes bytes = 2;
+  // optional bytes bytes = 3;
   inline bool has_bytes() const;
   inline void clear_bytes();
-  static const int kBytesFieldNumber = 2;
+  static const int kBytesFieldNumber = 3;
   inline const ::std::string& bytes() const;
   inline void set_bytes(const ::std::string& value);
   inline void set_bytes(const char* value);
@@ -1074,6 +1081,8 @@ class Data : public ::google::protobuf::Message {
   
   // @@protoc_insertion_point(class_scope:Data)
  private:
+  inline void set_has_type();
+  inline void clear_has_type();
   inline void set_has_string();
   inline void clear_has_string();
   inline void set_has_bytes();
@@ -1083,9 +1092,10 @@ class Data : public ::google::protobuf::Message {
   
   ::std::string* string_;
   ::std::string* bytes_;
+  int type_;
   
   mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(2 + 31) / 32];
+  ::google::protobuf::uint32 _has_bits_[(3 + 31) / 32];
   
   friend void  protobuf_AddDesc_program_2eproto();
   friend void protobuf_AssignDesc_program_2eproto();
@@ -1705,15 +1715,38 @@ inline ::std::string* Operand::release_label() {
 
 // Data
 
-// optional string string = 1;
-inline bool Data::has_string() const {
+// optional .Data.Type type = 1;
+inline bool Data::has_type() const {
   return (_has_bits_[0] & 0x00000001u) != 0;
 }
-inline void Data::set_has_string() {
+inline void Data::set_has_type() {
   _has_bits_[0] |= 0x00000001u;
 }
-inline void Data::clear_has_string() {
+inline void Data::clear_has_type() {
   _has_bits_[0] &= ~0x00000001u;
+}
+inline void Data::clear_type() {
+  type_ = 0;
+  clear_has_type();
+}
+inline ::Data_Type Data::type() const {
+  return static_cast< ::Data_Type >(type_);
+}
+inline void Data::set_type(::Data_Type value) {
+  GOOGLE_DCHECK(::Data_Type_IsValid(value));
+  set_has_type();
+  type_ = value;
+}
+
+// optional string string = 2;
+inline bool Data::has_string() const {
+  return (_has_bits_[0] & 0x00000002u) != 0;
+}
+inline void Data::set_has_string() {
+  _has_bits_[0] |= 0x00000002u;
+}
+inline void Data::clear_has_string() {
+  _has_bits_[0] &= ~0x00000002u;
 }
 inline void Data::clear_string() {
   if (string_ != &::google::protobuf::internal::kEmptyString) {
@@ -1763,15 +1796,15 @@ inline ::std::string* Data::release_string() {
   }
 }
 
-// optional bytes bytes = 2;
+// optional bytes bytes = 3;
 inline bool Data::has_bytes() const {
-  return (_has_bits_[0] & 0x00000002u) != 0;
+  return (_has_bits_[0] & 0x00000004u) != 0;
 }
 inline void Data::set_has_bytes() {
-  _has_bits_[0] |= 0x00000002u;
+  _has_bits_[0] |= 0x00000004u;
 }
 inline void Data::clear_has_bytes() {
-  _has_bits_[0] &= ~0x00000002u;
+  _has_bits_[0] &= ~0x00000004u;
 }
 inline void Data::clear_bytes() {
   if (bytes_ != &::google::protobuf::internal::kEmptyString) {

@@ -145,7 +145,8 @@ void protobuf_AssignDesc_program_2eproto() {
   Operand_Type_descriptor_ = Operand_descriptor_->enum_type(0);
   Operand_Register_descriptor_ = Operand_descriptor_->enum_type(1);
   Data_descriptor_ = file->message_type(5);
-  static const int Data_offsets_[2] = {
+  static const int Data_offsets_[3] = {
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Data, type_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Data, string_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Data, bytes_),
   };
@@ -241,9 +242,9 @@ void protobuf_AddDesc_program_2eproto() {
     "POINTER\020\033\022\023\n\017PROGRAM_COUNTER\020\034\022\t\n\005EXTRA\020"
     "\035\022\014\n\010LOCATION\020\036\022\013\n\007LITERAL\020\037\"B\n\010Register"
     "\022\005\n\001A\020\000\022\005\n\001B\020\001\022\005\n\001C\020\002\022\005\n\001X\020\003\022\005\n\001Y\020\004\022\005\n\001Z"
-    "\020\005\022\005\n\001I\020\006\022\005\n\001J\020\007\"D\n\004Data\022\016\n\006string\030\001 \001(\t"
-    "\022\r\n\005bytes\030\002 \001(\014\"\035\n\004Type\022\n\n\006STRING\020\000\022\t\n\005B"
-    "YTES\020\001", 1286);
+    "\020\005\022\005\n\001I\020\006\022\005\n\001J\020\007\"^\n\004Data\022\030\n\004type\030\001 \001(\0162\n"
+    ".Data.Type\022\016\n\006string\030\002 \001(\t\022\r\n\005bytes\030\003 \001("
+    "\014\"\035\n\004Type\022\n\n\006STRING\020\000\022\t\n\005BYTES\020\001", 1312);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "program.proto", &protobuf_RegisterTypes);
   Program::default_instance_ = new Program();
@@ -2186,6 +2187,7 @@ const Data_Type Data::Type_MAX;
 const int Data::Type_ARRAYSIZE;
 #endif  // _MSC_VER
 #ifndef _MSC_VER
+const int Data::kTypeFieldNumber;
 const int Data::kStringFieldNumber;
 const int Data::kBytesFieldNumber;
 #endif  // !_MSC_VER
@@ -2206,6 +2208,7 @@ Data::Data(const Data& from)
 
 void Data::SharedCtor() {
   _cached_size_ = 0;
+  type_ = 0;
   string_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
   bytes_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
@@ -2248,6 +2251,7 @@ Data* Data::New() const {
 
 void Data::Clear() {
   if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    type_ = 0;
     if (has_string()) {
       if (string_ != &::google::protobuf::internal::kEmptyString) {
         string_->clear();
@@ -2269,10 +2273,31 @@ bool Data::MergePartialFromCodedStream(
   ::google::protobuf::uint32 tag;
   while ((tag = input->ReadTag()) != 0) {
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // optional string string = 1;
+      // optional .Data.Type type = 1;
       case 1: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+          int value;
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   int, ::google::protobuf::internal::WireFormatLite::TYPE_ENUM>(
+                 input, &value)));
+          if (::Data_Type_IsValid(value)) {
+            set_type(static_cast< ::Data_Type >(value));
+          } else {
+            mutable_unknown_fields()->AddVarint(1, value);
+          }
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(18)) goto parse_string;
+        break;
+      }
+      
+      // optional string string = 2;
+      case 2: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
+         parse_string:
           DO_(::google::protobuf::internal::WireFormatLite::ReadString(
                 input, this->mutable_string()));
           ::google::protobuf::internal::WireFormat::VerifyUTF8String(
@@ -2281,12 +2306,12 @@ bool Data::MergePartialFromCodedStream(
         } else {
           goto handle_uninterpreted;
         }
-        if (input->ExpectTag(18)) goto parse_bytes;
+        if (input->ExpectTag(26)) goto parse_bytes;
         break;
       }
       
-      // optional bytes bytes = 2;
-      case 2: {
+      // optional bytes bytes = 3;
+      case 3: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
          parse_bytes:
@@ -2317,19 +2342,25 @@ bool Data::MergePartialFromCodedStream(
 
 void Data::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
-  // optional string string = 1;
+  // optional .Data.Type type = 1;
+  if (has_type()) {
+    ::google::protobuf::internal::WireFormatLite::WriteEnum(
+      1, this->type(), output);
+  }
+  
+  // optional string string = 2;
   if (has_string()) {
     ::google::protobuf::internal::WireFormat::VerifyUTF8String(
       this->string().data(), this->string().length(),
       ::google::protobuf::internal::WireFormat::SERIALIZE);
     ::google::protobuf::internal::WireFormatLite::WriteString(
-      1, this->string(), output);
+      2, this->string(), output);
   }
   
-  // optional bytes bytes = 2;
+  // optional bytes bytes = 3;
   if (has_bytes()) {
     ::google::protobuf::internal::WireFormatLite::WriteBytes(
-      2, this->bytes(), output);
+      3, this->bytes(), output);
   }
   
   if (!unknown_fields().empty()) {
@@ -2340,21 +2371,27 @@ void Data::SerializeWithCachedSizes(
 
 ::google::protobuf::uint8* Data::SerializeWithCachedSizesToArray(
     ::google::protobuf::uint8* target) const {
-  // optional string string = 1;
+  // optional .Data.Type type = 1;
+  if (has_type()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteEnumToArray(
+      1, this->type(), target);
+  }
+  
+  // optional string string = 2;
   if (has_string()) {
     ::google::protobuf::internal::WireFormat::VerifyUTF8String(
       this->string().data(), this->string().length(),
       ::google::protobuf::internal::WireFormat::SERIALIZE);
     target =
       ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
-        1, this->string(), target);
+        2, this->string(), target);
   }
   
-  // optional bytes bytes = 2;
+  // optional bytes bytes = 3;
   if (has_bytes()) {
     target =
       ::google::protobuf::internal::WireFormatLite::WriteBytesToArray(
-        2, this->bytes(), target);
+        3, this->bytes(), target);
   }
   
   if (!unknown_fields().empty()) {
@@ -2368,14 +2405,20 @@ int Data::ByteSize() const {
   int total_size = 0;
   
   if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    // optional string string = 1;
+    // optional .Data.Type type = 1;
+    if (has_type()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::EnumSize(this->type());
+    }
+    
+    // optional string string = 2;
     if (has_string()) {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::StringSize(
           this->string());
     }
     
-    // optional bytes bytes = 2;
+    // optional bytes bytes = 3;
     if (has_bytes()) {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::BytesSize(
@@ -2409,6 +2452,9 @@ void Data::MergeFrom(const ::google::protobuf::Message& from) {
 void Data::MergeFrom(const Data& from) {
   GOOGLE_CHECK_NE(&from, this);
   if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    if (from.has_type()) {
+      set_type(from.type());
+    }
     if (from.has_string()) {
       set_string(from.string());
     }
@@ -2438,6 +2484,7 @@ bool Data::IsInitialized() const {
 
 void Data::Swap(Data* other) {
   if (other != this) {
+    std::swap(type_, other->type_);
     std::swap(string_, other->string_);
     std::swap(bytes_, other->bytes_);
     std::swap(_has_bits_[0], other->_has_bits_[0]);

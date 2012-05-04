@@ -5,6 +5,7 @@
 
 #include "dcpu.h"
 
+class Data;
 class Instruction;
 class Operand;
 class Program;
@@ -20,6 +21,7 @@ class Assembler {
         const Dcpu::Word *const memory_end) const; 
   private:
     Dcpu::Word DetermineStatementSize(const Statement &statement) const;
+    Dcpu::Word DetermineDataSize(const Data &data) const;
     Dcpu::Word DetermineInstructionSize(const Instruction &instruction) const;
     Dcpu::Word DetermineOperandSize(const Operand &operand) const;
 };

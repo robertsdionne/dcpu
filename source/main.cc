@@ -1,14 +1,27 @@
 // Copyright 2012 Robert Scott Dionne. All rights reserved.
 
 #include <algorithm>
+#include <fstream>
+#include <iostream>
 #include <ncurses.h>
+#include <google/protobuf/text_format.h>
+#include <google/protobuf/io/zero_copy_stream_impl.h>
 #include <string>
+#include "assembler.h"
 #include "dcpu.h"
+#include "program.pb.h"
 
 const Dcpu::Word kVideoMemoryBegin = 0x8000;
 
 int main(int argc, char *argv[]) {
   Dcpu dcpu;
+  Assembler assembler;
+  Program prgm;
+  std::ifstream in("source/main.ascii");
+  google::protobuf::io::IstreamInputStream in_stream(&in);
+  google::protobuf::TextFormat::Parse(&in_stream, &prgm);
+  assembler.Assemble(prgm, 0, 0);
+  exit(1);
   initscr();
   Dcpu::Word program[] = {
     // set a, 0xBEEF
