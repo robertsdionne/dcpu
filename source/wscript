@@ -40,6 +40,10 @@ def build(ctx):
         'main.cc',
         ],
       target = '../dcpu',
+      includes = [
+        '.',
+        '../libraries/protobuf-2.4.1/src',
+        ],
       use = [
         'dcpu',
         ],
