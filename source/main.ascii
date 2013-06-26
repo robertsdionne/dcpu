@@ -1,0 +1,205 @@
+statement: {
+  type: INSTRUCTION
+  instruction: {
+    opcode: {
+      type: BASIC
+      basic: SET
+    }
+    operand_b: {
+      type: REGISTER
+      register: A
+    }
+    operand_a: {
+      type: LITERAL
+      value: 0xBEEF
+    }
+  }
+}
+statement: {
+  type: INSTRUCTION
+  instruction: {
+    opcode: {
+      type: BASIC
+      basic: SET
+    }
+    operand_b: {
+      type: LOCATION
+      value: 0x1000
+    }
+    operand_a: {
+      type: REGISTER
+      register: A
+    }
+  }
+}
+statement: {
+  type: INSTRUCTION
+  instruction: {
+    opcode: {
+      type: BASIC
+      basic: IFN
+    }
+    operand_b: {
+      type: REGISTER
+      register: A
+    }
+    operand_a: {
+      type: LOCATION
+      value: 0x1000
+    }
+  }
+}
+statement: {
+  type: INSTRUCTION
+  instruction: {
+    opcode: {
+      type: BASIC
+      basic: SET
+    }
+    operand_b: {
+      type: PROGRAM_COUNTER
+    }
+    operand_a: {
+      type: LITERAL
+      label: "end"
+    }
+  }
+}
+statement: {
+  type: INSTRUCTION
+  instruction: {
+    opcode: {
+      type: BASIC
+      basic: SET
+    }
+    operand_b: {
+      type: REGISTER
+      register: A
+    }
+    operand_a: {
+      type: LITERAL
+      value: 0
+    }
+  }
+}
+statement: {
+  type: LABEL
+  label: "nextchar"
+}
+statement: {
+  type: INSTRUCTION
+  instruction: {
+    opcode: {
+      type: BASIC
+      basic: IFE
+    }
+    operand_b: {
+      type: LOCATION_OFFSET_BY_REGISTER
+      register: I
+      label: "data"
+    }
+    operand_a: {
+      type: LITERAL
+      value: 0
+    }
+  }
+}
+statement: {
+  type: INSTRUCTION
+  instruction: {
+    opcode: {
+      type: BASIC
+      basic: SET
+    }
+    operand_b: {
+      type: PROGRAM_COUNTER
+    }
+    operand_a: {
+      type: LITERAL
+      label: "end"
+    }
+  }
+}
+statement: {
+  type: INSTRUCTION
+  instruction: {
+    opcode: {
+      type: BASIC
+      basic: SET
+    }
+    operand_b: {
+      type: LOCATION_OFFSET_BY_REGISTER
+      register: I
+      value: 0x8000
+    }
+    operand_a: {
+      type: LOCATION_OFFSET_BY_REGISTER
+      register: I
+      label: "data"
+    }
+  }
+}
+statement: {
+  type: INSTRUCTION
+  instruction: {
+    opcode: {
+      type: BASIC
+      basic: ADD
+    }
+    operand_b: {
+      type: REGISTER
+      register: I
+    }
+    operand_a: {
+      type: LITERAL
+      value: 1
+    }
+  }
+}
+statement: {
+  type: INSTRUCTION
+  instruction: {
+    opcode: {
+      type: BASIC
+      basic: SET
+    }
+    operand_b: {
+      type: PROGRAM_COUNTER
+    }
+    operand_a: {
+      type: LITERAL
+      label: "nextchar"
+    }
+  }
+}
+statement: {
+  type: LABEL
+  label: "data"
+}
+statement: {
+  type: DATA
+  data: {
+    type: STRING
+    string: "Hello world!\0"
+  }
+}
+statement: {
+  type: LABEL
+  label: "end"
+}
+statement: {
+  type: INSTRUCTION
+  instruction: {
+    opcode: {
+      type: BASIC
+      basic: SUB
+    }
+    operand_b: {
+      type: PROGRAM_COUNTER
+    }
+    operand_a: {
+      type: LITERAL
+      value: 1
+    }
+  }
+}

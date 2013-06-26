@@ -1,0 +1,114 @@
+// Copyright 2012 Robert Scott Dionne. All rights reserved.
+
+message Program {
+  optional bytes assembled = 1;
+  repeated Statement statement = 2;
+}
+
+message Statement {
+  enum Type {
+    INSTRUCTION = 0;
+    LABEL = 1;
+    DATA = 2;
+    COMMENT = 3;
+    BLANK_SPACE = 4;
+  }
+  optional Type type = 1;
+  optional Instruction instruction = 2;
+  optional string label = 3;
+  optional Data data = 4;
+  optional string comment = 5;
+  optional uint32 space = 6;
+}
+
+message Instruction {
+  optional Opcode opcode = 1;
+  optional Operand operand_b = 2;
+  optional Operand operand_a = 3;
+}
+
+message Opcode {
+  enum Type {
+    BASIC = 0;
+    ADVANCED = 1;
+  }
+  enum Basic {
+    SET = 0x01;
+    ADD = 0x02;
+    SUB = 0x03;
+    MUL = 0x04;
+    MLI = 0x05;
+    DIV = 0x06;
+    DVI = 0x07;
+    MOD = 0x08;
+    AND = 0x09;
+    BOR = 0x0a;
+    XOR = 0x0b;
+    SHR = 0x0c;
+    ASR = 0x0d;
+    SHL = 0x0e;
+    MVI = 0x0f;
+    IFB = 0x10;
+    IFC = 0x11;
+    IFE = 0x12;
+    IFN = 0x13;
+    IFG = 0x14;
+    IFA = 0x15;
+    IFL = 0x16;
+    IFU = 0x17;
+    ADX = 0x1a;
+    SUX = 0x1b;
+  }
+  enum Advanced {
+    JSR = 0x01;
+    INT = 0x08;
+    IAG = 0x09;
+    IAS = 0x0a;
+    HWN = 0x10;
+    HWQ = 0x11;
+    HWI = 0x12;
+  }
+  optional Type type = 1;
+  optional Basic basic = 2;
+  optional Advanced advanced = 3;
+}
+
+message Operand {
+  enum Type {
+    REGISTER = 0x00;
+    LOCATION_IN_REGISTER = 0x08;
+    LOCATION_OFFSET_BY_REGISTER = 0x10;
+    PUSH_POP = 0x18;
+    PEEK = 0x19;
+    PICK = 0x1a;
+    STACK_POINTER = 0x1b;
+    PROGRAM_COUNTER = 0x1c;
+    EXTRA = 0x1d;
+    LOCATION = 0x1e;
+    LITERAL = 0x1f;
+  }
+  enum Register {
+    A = 0x0;
+    B = 0x1;
+    C = 0x2;
+    X = 0x3;
+    Y = 0x4;
+    Z = 0x5;
+    I = 0x6;
+    J = 0x7;
+  }
+  optional Type type = 1;
+  optional Register register = 2;
+  optional sint32 value = 3;
+  optional string label = 4;
+}
+
+message Data {
+  enum Type {
+    STRING = 0;
+    BYTES = 1;
+  }
+  optional Type type = 1;
+  optional string string = 2;
+  optional bytes bytes = 3;
+}
