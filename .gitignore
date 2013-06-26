@@ -1,10 +1,10 @@
+binary/
 build/
 .lock-waf_darwin_build
 .lock-waf_linux2_build
 .settings/
 *.swp
 .waf*
-/Tests
 /Debug
 /.cproject
 /.project

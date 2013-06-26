@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <gtest/gtest.h>
+
 #include "dcpu.h"
 
 TEST(DcpuTest, DefaultConstructor) {
