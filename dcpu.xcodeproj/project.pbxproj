@@ -267,6 +267,12 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		46087EC9177BE71000181E37 /* 3d-vector-display.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "3d-vector-display.txt"; sourceTree = "<group>"; };
+		46087ECA177BE71000181E37 /* clock.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = clock.txt; sourceTree = "<group>"; };
+		46087ECB177BE71000181E37 /* dcpu-16.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "dcpu-16.txt"; sourceTree = "<group>"; };
+		46087ECC177BE71000181E37 /* floppy-drive.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "floppy-drive.txt"; sourceTree = "<group>"; };
+		46087ECD177BE71000181E37 /* keyboard.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = keyboard.txt; sourceTree = "<group>"; };
+		46087ECE177BE71000181E37 /* monitor.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = monitor.txt; sourceTree = "<group>"; };
 		4616A31B177A705B00367EF6 /* assembler.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = assembler.cc; sourceTree = "<group>"; };
 		4616A31C177A705B00367EF6 /* assembler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = assembler.h; sourceTree = "<group>"; };
 		4616A31D177A705B00367EF6 /* dcpu.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = dcpu.cc; sourceTree = "<group>"; };
@@ -1178,10 +1184,24 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		46087EC8177BE71000181E37 /* documents */ = {
+			isa = PBXGroup;
+			children = (
+				46087EC9177BE71000181E37 /* 3d-vector-display.txt */,
+				46087ECA177BE71000181E37 /* clock.txt */,
+				46087ECB177BE71000181E37 /* dcpu-16.txt */,
+				46087ECC177BE71000181E37 /* floppy-drive.txt */,
+				46087ECD177BE71000181E37 /* keyboard.txt */,
+				46087ECE177BE71000181E37 /* monitor.txt */,
+			);
+			path = documents;
+			sourceTree = "<group>";
+		};
 		4616A305177A6F8600367EF6 = {
 			isa = PBXGroup;
 			children = (
 				4616A882177A76BF00367EF6 /* binary */,
+				46087EC8177BE71000181E37 /* documents */,
 				4616A33D177A708500367EF6 /* libraries */,
 				4616A31A177A705B00367EF6 /* source */,
 				4616A335177A706E00367EF6 /* tests */,
