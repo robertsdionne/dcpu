@@ -84,6 +84,7 @@
 		4616A8DA177A793900367EF6 /* zip_writer.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4616A666177A708600367EF6 /* zip_writer.cc */; };
 		4616A8DB177A7A0900367EF6 /* assembler.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4616A31B177A705B00367EF6 /* assembler.cc */; };
 		4616A8DC177A7A0900367EF6 /* program.pb.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4616A325177A705B00367EF6 /* program.pb.cc */; };
+		4661ADC2177C858800828482 /* parser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4661ADC0177C858800828482 /* parser.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -1146,6 +1147,9 @@
 		4616A87E177A76B300367EF6 /* libprotobuf.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libprotobuf.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		4616A8A8177A78C500367EF6 /* protoc */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = protoc; sourceTree = BUILT_PRODUCTS_DIR; };
 		464D2BB9177A7AE400113BAC /* dcpu */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = dcpu; sourceTree = BUILT_PRODUCTS_DIR; };
+		4661ADC0177C858800828482 /* parser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = parser.cpp; sourceTree = "<group>"; };
+		4661ADC1177C858800828482 /* parser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = parser.h; sourceTree = "<group>"; };
+		466C9925177F55FE00FBE2E9 /* Dcpu.g4 */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Dcpu.g4; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1211,6 +1215,7 @@
 		4616A31A177A705B00367EF6 /* source */ = {
 			isa = PBXGroup;
 			children = (
+				466C9925177F55FE00FBE2E9 /* Dcpu.g4 */,
 				4616A31B177A705B00367EF6 /* assembler.cc */,
 				4616A31C177A705B00367EF6 /* assembler.h */,
 				4616A31D177A705B00367EF6 /* dcpu.cc */,
@@ -1219,6 +1224,8 @@
 				4616A321177A705B00367EF6 /* disassembler.h */,
 				4616A323177A705B00367EF6 /* main.ascii */,
 				4616A324177A705B00367EF6 /* main.cc */,
+				4661ADC0177C858800828482 /* parser.cpp */,
+				4661ADC1177C858800828482 /* parser.h */,
 				4616A325177A705B00367EF6 /* program.pb.cc */,
 				4616A326177A705B00367EF6 /* program.pb.h */,
 				4616A327177A705B00367EF6 /* program.proto */,
@@ -3073,6 +3080,7 @@
 				4616A32A177A705B00367EF6 /* dcpu.cc in Sources */,
 				4616A32C177A705B00367EF6 /* disassembler.cc in Sources */,
 				4616A32E177A705B00367EF6 /* main.cc in Sources */,
+				4661ADC2177C858800828482 /* parser.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
