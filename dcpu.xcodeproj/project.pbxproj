@@ -1149,7 +1149,8 @@
 		464D2BB9177A7AE400113BAC /* dcpu */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = dcpu; sourceTree = BUILT_PRODUCTS_DIR; };
 		4661ADC0177C858800828482 /* parser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = parser.cpp; sourceTree = "<group>"; };
 		4661ADC1177C858800828482 /* parser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = parser.h; sourceTree = "<group>"; };
-		466C9925177F55FE00FBE2E9 /* Dcpu.g4 */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Dcpu.g4; sourceTree = "<group>"; };
+		46792156177FC9620035745B /* Dcpu.java */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.java; path = Dcpu.java; sourceTree = "<group>"; };
+		46792157177FC9620035745B /* Dcpu.g4 */ = {isa = PBXFileReference; lastKnownFileType = text; path = Dcpu.g4; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1206,6 +1207,7 @@
 			children = (
 				4616A882177A76BF00367EF6 /* binary */,
 				46087EC8177BE71000181E37 /* documents */,
+				46792154177FC9620035745B /* java */,
 				4616A33D177A708500367EF6 /* libraries */,
 				4616A31A177A705B00367EF6 /* source */,
 				4616A335177A706E00367EF6 /* tests */,
@@ -1215,7 +1217,6 @@
 		4616A31A177A705B00367EF6 /* source */ = {
 			isa = PBXGroup;
 			children = (
-				466C9925177F55FE00FBE2E9 /* Dcpu.g4 */,
 				4616A31B177A705B00367EF6 /* assembler.cc */,
 				4616A31C177A705B00367EF6 /* assembler.h */,
 				4616A31D177A705B00367EF6 /* dcpu.cc */,
@@ -2808,6 +2809,23 @@
 				4616A877177A755C00367EF6 /* tests */,
 			);
 			name = binary;
+			sourceTree = "<group>";
+		};
+		46792154177FC9620035745B /* java */ = {
+			isa = PBXGroup;
+			children = (
+				46792155177FC9620035745B /* dcpu */,
+				46792157177FC9620035745B /* Dcpu.g4 */,
+			);
+			path = java;
+			sourceTree = "<group>";
+		};
+		46792155177FC9620035745B /* dcpu */ = {
+			isa = PBXGroup;
+			children = (
+				46792156177FC9620035745B /* Dcpu.java */,
+			);
+			path = dcpu;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
