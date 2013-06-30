@@ -1,5 +1,6 @@
 binary/
 build/
+java/dcpu/generated/
 .lock-waf_darwin_build
 .lock-waf_linux2_build
 .settings/
@@ -7,5 +8,5 @@ build/
 .waf*
 /Debug
 /.cproject
-/.project
 /Protoc
+/bin
