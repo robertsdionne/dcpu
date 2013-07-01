@@ -1,7 +1,7 @@
 grammar Dcpu;
 
 program
-    : (label | instruction | data_section)+ EOF
+    : (label | instruction | dataSection)+ EOF
     ;
 
 label
@@ -9,11 +9,11 @@ label
     ;
 
 instruction
-    : binary_operation
-    | unary_operation
+    : binaryOperation
+    | unaryOperation
     ;
 
-data_section
+dataSection
     : '.dat' data
     ;
 
@@ -27,11 +27,11 @@ datum
     | NUMBER
     ;
 
-binary_operation
-    : binary_opcode argument_b ',' argument_a
+binaryOperation
+    : binaryOpcode argumentB ',' argumentA
     ;
 
-binary_opcode
+binaryOpcode
     : SET
     | ADD
     | SUB
@@ -89,10 +89,10 @@ SBX : 'SBX' | 'sbx' ;
 STI : 'STI' | 'sti' ;
 STD : 'STD' | 'std' ;
 
-argument_a
+argumentA
     : REGISTER
-    | location_in_register
-    | location_offset_by_register
+    | locationInRegister
+    | locationOffsetByRegister
     | POP
     | PEEK
     | pick
@@ -112,10 +112,10 @@ POP
     | 'pop'
     ;
 
-argument_b
+argumentB
     : REGISTER
-    | location_in_register
-    | location_offset_by_register
+    | locationInRegister
+    | locationOffsetByRegister
     | PUSH
     | PEEK
     | pick
@@ -160,15 +160,15 @@ EXTRA
     | 'ex'
     ;
 
-unary_operation
-    : unary_opcode argument_a
+unaryOperation
+    : unaryOpcode argumentA
     ;
 
-location_in_register
+locationInRegister
     : '[' REGISTER ']'
     ;
 
-location_offset_by_register
+locationOffsetByRegister
     : '[' ( REGISTER '+' value | value '+' REGISTER ) ']'
     ;
 
@@ -186,7 +186,7 @@ REGISTER
     : [abcxyzijABCXYZIJ]
     ;
 
-unary_opcode
+unaryOpcode
     : JSR
     | INT
     | IAG
