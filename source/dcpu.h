@@ -3,6 +3,8 @@
 #ifndef DCPU_DCPU_H_
 #define DCPU_DCPU_H_
 
+#include "generated/program.pb.h"
+
 class Dcpu {
 public:
   typedef unsigned short Word;
@@ -22,46 +24,46 @@ public:
 
   enum BasicOpcode {
     kBasicReserved = 0x00,
-    kSet = 0x01,
-    kAdd = 0x02,
-    kSubtract = 0x03,
-    kMultiply = 0x04,
-    kMultiplySigned = 0x05,
-    kDivide = 0x06,
-    kDivideSigned = 0x07,
-    kModulo = 0x08,
-    kModuloSigned = 0x09,
-    kBinaryAnd = 0x0A,
-    kBinaryOr = 0x0B,
-    kBinaryExclusiveOr = 0x0C,
-    kShiftRight = 0x0D,
-    kArithmeticShiftRight = 0x0E,
-    kShiftLeft = 0x0F,
-    kIfBitSet = 0x10,
-    kIfClear = 0x11,
-    kIfEqual = 0x12,
-    kIfNotEqual = 0x13,
-    kIfGreaterThan = 0x14,
-    kIfAbove = 0x15,
-    kIfLessThan = 0x16,
-    kIfUnder = 0x17,
-    kAddWithCarry = 0x1A,
-    kSubtractWithCarry = 0x1B,
-    kSetAndIncrement = 0x1E,
-    kSetAndDecrement = 0x1F
+    kSet = Opcode_Basic_SET,
+    kAdd = Opcode_Basic_ADD,
+    kSubtract = Opcode_Basic_SUB,
+    kMultiply = Opcode_Basic_MUL,
+    kMultiplySigned = Opcode_Basic_MLI,
+    kDivide = Opcode_Basic_DIV,
+    kDivideSigned = Opcode_Basic_DVI,
+    kModulo = Opcode_Basic_MOD,
+    kModuloSigned = Opcode_Basic_MDI,
+    kBinaryAnd = Opcode_Basic_AND,
+    kBinaryOr = Opcode_Basic_BOR,
+    kBinaryExclusiveOr = Opcode_Basic_XOR,
+    kShiftRight = Opcode_Basic_SHR,
+    kArithmeticShiftRight = Opcode_Basic_ASR,
+    kShiftLeft = Opcode_Basic_SHL,
+    kIfBitSet = Opcode_Basic_IFB,
+    kIfClear = Opcode_Basic_IFC,
+    kIfEqual = Opcode_Basic_IFE,
+    kIfNotEqual = Opcode_Basic_IFN,
+    kIfGreaterThan = Opcode_Basic_IFG,
+    kIfAbove = Opcode_Basic_IFA,
+    kIfLessThan = Opcode_Basic_IFL,
+    kIfUnder = Opcode_Basic_IFU,
+    kAddWithCarry = Opcode_Basic_ADX,
+    kSubtractWithCarry = Opcode_Basic_SBX,
+    kSetAndIncrement = Opcode_Basic_STI,
+    kSetAndDecrement = Opcode_Basic_STD
   };
 
   enum AdvancedOpcode {
     kAdvancedReserved = 0x00,
-    kJumpSubRoutine = 0x01,
-    kInterruptTrigger = 0x08,
-    kInterruptGet = 0x09,
-    kInterruptSet = 0x0A,
-    kReturnFromInterrupt = 0x0B,
-    kInterruptAddToQueue = 0x0C,
-    kHardwareNumberConnected = 0x10,
-    kHardwareQuery = 0x11,
-    kHardwareInterrupt = 0x12
+    kJumpSubRoutine = Opcode_Advanced_JSR,
+    kInterruptTrigger = Opcode_Advanced_INT,
+    kInterruptAddressGet = Opcode_Advanced_IAG,
+    kInterruptAddressSet = Opcode_Advanced_IAS,
+    kReturnFromInterrupt = Opcode_Advanced_RFI,
+    kInterruptAddToQueue = Opcode_Advanced_IAQ,
+    kHardwareNumberConnected = Opcode_Advanced_HWN,
+    kHardwareQuery = Opcode_Advanced_HWQ,
+    kHardwareInterrupt = Opcode_Advanced_HWI
   };
 
   /**

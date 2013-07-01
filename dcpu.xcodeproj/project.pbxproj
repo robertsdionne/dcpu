@@ -243,6 +243,13 @@
 			remoteGlobalIDString = 4616A8A7177A78C500367EF6;
 			remoteInfo = protoc;
 		};
+		468C10E317813CAF0035A585 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4616A306177A6F8600367EF6 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4616A30D177A6F8600367EF6;
+			remoteInfo = dcpu;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -2898,6 +2905,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				468C10E417813CAF0035A585 /* PBXTargetDependency */,
 				4616A870177A733400367EF6 /* PBXTargetDependency */,
 			);
 			name = tests;
@@ -3123,8 +3131,11 @@
 			files = (
 			);
 			inputPaths = (
+				"$(SRCROOT)/source/program.proto",
 			);
 			outputPaths = (
+				"$(DERIVED_FILE_DIR)/source/generated/program.pb.cc",
+				"$(DERIVED_FILE_DIR)/source/generated/program.pb.h",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -3259,6 +3270,11 @@
 			target = 4616A8A7177A78C500367EF6 /* protoc */;
 			targetProxy = 468C109D178131450035A585 /* PBXContainerItemProxy */;
 		};
+		468C10E417813CAF0035A585 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 4616A30D177A6F8600367EF6 /* dcpu */;
+			targetProxy = 468C10E317813CAF0035A585 /* PBXContainerItemProxy */;
+		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
@@ -3346,7 +3362,10 @@
 					"GTEST_LANG_CXX11=1",
 					"DEBUG=1",
 				);
-				HEADER_SEARCH_PATHS = "libraries/gtest-1.6.0/include";
+				HEADER_SEARCH_PATHS = (
+					"libraries/gtest-1.6.0/include",
+					"libraries/protobuf-2.4.1/src",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -3359,7 +3378,10 @@
 					"GTEST_USE_OWN_TR1_TUPLE=1",
 					"GTEST_LANG_CXX11=1",
 				);
-				HEADER_SEARCH_PATHS = "libraries/gtest-1.6.0/include";
+				HEADER_SEARCH_PATHS = (
+					"libraries/gtest-1.6.0/include",
+					"libraries/protobuf-2.4.1/src",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;

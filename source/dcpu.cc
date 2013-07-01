@@ -179,7 +179,7 @@ void Dcpu::ExecuteInstruction(const bool skip) {
         instruction & kAdvancedOpcodeMask) >> kAdvancedOpcodeShift;
     const Operand operand_a = static_cast<Operand>(
         (instruction & kAdvancedOperandMaskA) >> kAdvancedOperandShiftA);
-    const bool assignable = advanced_opcode == kInterruptGet
+    const bool assignable = advanced_opcode == kInterruptAddressGet
         || advanced_opcode == kHardwareNumberConnected;
     Word operand_a_literal = 0;
     Word *const operand_a_address = GetOperandAddressOrLiteral(
@@ -201,10 +201,10 @@ void Dcpu::ExecuteInstruction(const bool skip) {
       case kInterruptTrigger:
         Interrupt(operand_a_value);
         break;
-      case kInterruptGet:
+      case kInterruptAddressGet:
         MaybeAssignResult(operand_a_address, interrupt_address_);
         break;
-      case kInterruptSet:
+      case kInterruptAddressSet:
         interrupt_address_ = operand_a_value;
         break;
       case kHardwareNumberConnected:
