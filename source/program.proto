@@ -1,5 +1,9 @@
 // Copyright 2012 Robert Scott Dionne. All rights reserved.
 
+option java_package = "dcpu.generated";
+
+option java_outer_classname = "DcpuProgram";
+
 message Program {
   optional bytes assembled = 1;
   repeated Statement statement = 2;
