@@ -9,19 +9,19 @@ void Disassembler::Disassemble(const Dcpu::Word *const program_begin,
     const Dcpu::Word *const program_end, std::ostream &out) const {
   for (const Dcpu::Word *i = program_begin; i < program_end; ++i) {
     const Dcpu::Word instruction = *i;
-    const Dcpu::Word basic_opcode = instruction & Dcpu::kBasicOpcodeMask;
+    const Dcpu::BasicOpcode basic_opcode = static_cast<Dcpu::BasicOpcode>(instruction & Dcpu::kBasicOpcodeMask);
 
-    if (basic_opcode == Dcpu::kBasicReserved) {
-      const Dcpu::Word advanced_opcode = (instruction &
-          Dcpu::kAdvancedOpcodeMask) >> Dcpu::kAdvancedOpcodeShift;
+    if (basic_opcode == Dcpu::BasicOpcode::kBasicReserved) {
+      const Dcpu::AdvancedOpcode advanced_opcode = static_cast<Dcpu::AdvancedOpcode>((instruction &
+          Dcpu::kAdvancedOpcodeMask) >> Dcpu::kAdvancedOpcodeShift);
       const Dcpu::Operand operand_a = static_cast<Dcpu::Operand>(
           (instruction & Dcpu::kAdvancedOperandMaskA) >>
               Dcpu::kAdvancedOperandShiftA);
       switch (advanced_opcode) {
-        case Dcpu::kAdvancedReserved:
+        case Dcpu::AdvancedOpcode::kAdvancedReserved:
           out << "set a, a" << std::endl;
           break;
-        case Dcpu::kJumpSubRoutine:
+        case Dcpu::AdvancedOpcode::kJumpSubRoutine:
           out << "jsr ";
           OutputOperand(i, operand_a, /* assignable */ false, out);
           out << std::endl;
@@ -38,80 +38,80 @@ void Disassembler::Disassemble(const Dcpu::Word *const program_begin,
           (instruction & Dcpu::kBasicOperandMaskB) >>
               Dcpu::kBasicOperandShiftB);
       switch (basic_opcode) {
-        case Dcpu::kBasicReserved:
+        case Dcpu::BasicOpcode::kBasicReserved:
           out << "set a, a" << std::endl;
           break;
-        case Dcpu::kSet:
+        case Dcpu::BasicOpcode::kSet:
           out << "set ";
           OutputOperands(i, operand_b, operand_a, out);
           out << std::endl;
           break;
-        case Dcpu::kAdd:
+        case Dcpu::BasicOpcode::kAdd:
           out << "add ";
           OutputOperands(i, operand_b, operand_a, out);
           out << std::endl;
           break;
-        case Dcpu::kSubtract:
+        case Dcpu::BasicOpcode::kSubtract:
           out << "sub ";
           OutputOperands(i, operand_b, operand_a, out);
           out << std::endl;
           break;
-        case Dcpu::kMultiply:
+        case Dcpu::BasicOpcode::kMultiply:
           out << "mul ";
           OutputOperands(i, operand_b, operand_a, out);
           out << std::endl;
           break;
-        case Dcpu::kDivide:
+        case Dcpu::BasicOpcode::kDivide:
           out << "div ";
           OutputOperands(i, operand_b, operand_a, out);
           out << std::endl;
           break;
-        case Dcpu::kModulo:
+        case Dcpu::BasicOpcode::kModulo:
           out << "mod ";
           OutputOperands(i, operand_b, operand_a, out);
           out << std::endl;
           break;
-        case Dcpu::kShiftLeft:
+        case Dcpu::BasicOpcode::kShiftLeft:
           out << "shl ";
           OutputOperands(i, operand_b, operand_a, out);
           out << std::endl;
           break;
-        case Dcpu::kShiftRight:
+        case Dcpu::BasicOpcode::kShiftRight:
           out << "shr ";
           OutputOperands(i, operand_b, operand_a, out);
           out << std::endl;
           break;
-        case Dcpu::kBinaryAnd:
+        case Dcpu::BasicOpcode::kBinaryAnd:
           out << "and ";
           OutputOperands(i, operand_b, operand_a, out);
           out << std::endl;
           break;
-        case Dcpu::kBinaryOr:
+        case Dcpu::BasicOpcode::kBinaryOr:
           out << "bor ";
           OutputOperands(i, operand_b, operand_a, out);
           out << std::endl;
           break;
-        case Dcpu::kBinaryExclusiveOr:
+        case Dcpu::BasicOpcode::kBinaryExclusiveOr:
           out << "xor ";
           OutputOperands(i, operand_b, operand_a, out);
           out << std::endl;
           break;
-        case Dcpu::kIfEqual:
+        case Dcpu::BasicOpcode::kIfEqual:
           out << "ife ";
           OutputOperands(i, operand_b, operand_a, out);
           out << std::endl;
           break;
-        case Dcpu::kIfNotEqual:
+        case Dcpu::BasicOpcode::kIfNotEqual:
           out << "ifn ";
           OutputOperands(i, operand_b, operand_a, out);
           out << std::endl;
           break;
-        case Dcpu::kIfGreaterThan:
+        case Dcpu::BasicOpcode::kIfGreaterThan:
           out << "ifg ";
           OutputOperands(i, operand_b, operand_a, out);
           out << std::endl;
           break;
-        case Dcpu::kIfBitSet:
+        case Dcpu::BasicOpcode::kIfBitSet:
           out << "ifb ";
           OutputOperands(i, operand_b, operand_a, out);
           out << std::endl;
