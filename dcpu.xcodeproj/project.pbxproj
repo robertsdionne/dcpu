@@ -86,6 +86,12 @@
 		4661ADC2177C858800828482 /* parser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4661ADC0177C858800828482 /* parser.cpp */; };
 		468C10C2178136270035A585 /* program.pb.cc in Sources */ = {isa = PBXBuildFile; fileRef = 468C10C0178136270035A585 /* program.pb.cc */; };
 		468C10C51781365F0035A585 /* DcpuProgram.java in Sources */ = {isa = PBXBuildFile; fileRef = 468C10C41781365F0035A585 /* DcpuProgram.java */; };
+		46DAD3581781405C007F7284 /* DcpuBaseListener.java in Sources */ = {isa = PBXBuildFile; fileRef = 46DAD3511781405C007F7284 /* DcpuBaseListener.java */; };
+		46DAD3591781405C007F7284 /* DcpuBaseVisitor.java in Sources */ = {isa = PBXBuildFile; fileRef = 46DAD3521781405C007F7284 /* DcpuBaseVisitor.java */; };
+		46DAD35A1781405C007F7284 /* DcpuLexer.java in Sources */ = {isa = PBXBuildFile; fileRef = 46DAD3531781405C007F7284 /* DcpuLexer.java */; };
+		46DAD35B1781405C007F7284 /* DcpuListener.java in Sources */ = {isa = PBXBuildFile; fileRef = 46DAD3551781405C007F7284 /* DcpuListener.java */; };
+		46DAD35C1781405C007F7284 /* DcpuParser.java in Sources */ = {isa = PBXBuildFile; fileRef = 46DAD3561781405C007F7284 /* DcpuParser.java */; };
+		46DAD35D1781405C007F7284 /* DcpuVisitor.java in Sources */ = {isa = PBXBuildFile; fileRef = 46DAD3571781405C007F7284 /* DcpuVisitor.java */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -1167,6 +1173,14 @@
 		468C10C0178136270035A585 /* program.pb.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = program.pb.cc; sourceTree = "<group>"; };
 		468C10C1178136270035A585 /* program.pb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = program.pb.h; sourceTree = "<group>"; };
 		468C10C41781365F0035A585 /* DcpuProgram.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = DcpuProgram.java; sourceTree = "<group>"; };
+		46DAD3501781405C007F7284 /* Dcpu.tokens */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Dcpu.tokens; sourceTree = "<group>"; };
+		46DAD3511781405C007F7284 /* DcpuBaseListener.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = DcpuBaseListener.java; sourceTree = "<group>"; };
+		46DAD3521781405C007F7284 /* DcpuBaseVisitor.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = DcpuBaseVisitor.java; sourceTree = "<group>"; };
+		46DAD3531781405C007F7284 /* DcpuLexer.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = DcpuLexer.java; sourceTree = "<group>"; };
+		46DAD3541781405C007F7284 /* DcpuLexer.tokens */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DcpuLexer.tokens; sourceTree = "<group>"; };
+		46DAD3551781405C007F7284 /* DcpuListener.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = DcpuListener.java; sourceTree = "<group>"; };
+		46DAD3561781405C007F7284 /* DcpuParser.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = DcpuParser.java; sourceTree = "<group>"; };
+		46DAD3571781405C007F7284 /* DcpuVisitor.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = DcpuVisitor.java; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -2856,6 +2870,14 @@
 		468C10C31781365F0035A585 /* generated */ = {
 			isa = PBXGroup;
 			children = (
+				46DAD3501781405C007F7284 /* Dcpu.tokens */,
+				46DAD3511781405C007F7284 /* DcpuBaseListener.java */,
+				46DAD3521781405C007F7284 /* DcpuBaseVisitor.java */,
+				46DAD3531781405C007F7284 /* DcpuLexer.java */,
+				46DAD3541781405C007F7284 /* DcpuLexer.tokens */,
+				46DAD3551781405C007F7284 /* DcpuListener.java */,
+				46DAD3561781405C007F7284 /* DcpuParser.java */,
+				46DAD3571781405C007F7284 /* DcpuVisitor.java */,
 				468C10C41781365F0035A585 /* DcpuProgram.java */,
 			);
 			path = generated;
@@ -2878,6 +2900,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 4616A317177A6F8600367EF6 /* Build configuration list for PBXNativeTarget "dcpu" */;
 			buildPhases = (
+				46DAD33617813FF7007F7284 /* ShellScript */,
 				468C10B8178131530035A585 /* ShellScript */,
 				4616A30A177A6F8600367EF6 /* Sources */,
 				4616A30B177A6F8600367EF6 /* Frameworks */,
@@ -3141,6 +3164,20 @@
 			shellPath = /bin/sh;
 			shellScript = "mkdir -p $SRCROOT/source/generated/\n$SRCROOT/binary/protoc --proto_path=$SRCROOT/source/ --cpp_out=$SRCROOT/source/generated/ --java_out=$SRCROOT/java/ $SRCROOT/source/program.proto";
 		};
+		46DAD33617813FF7007F7284 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/java/Dcpu.g4",
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "/usr/bin/java -jar $SRCROOT/libraries/antlr-4.0/antlr-4.0-complete.jar $SRCROOT/java/Dcpu.g4 -package dcpu.generated -o $SRCROOT/java/dcpu/generated -visitor";
+		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -3155,6 +3192,12 @@
 				4661ADC2177C858800828482 /* parser.cpp in Sources */,
 				468C10C2178136270035A585 /* program.pb.cc in Sources */,
 				468C10C51781365F0035A585 /* DcpuProgram.java in Sources */,
+				46DAD3581781405C007F7284 /* DcpuBaseListener.java in Sources */,
+				46DAD3591781405C007F7284 /* DcpuBaseVisitor.java in Sources */,
+				46DAD35A1781405C007F7284 /* DcpuLexer.java in Sources */,
+				46DAD35B1781405C007F7284 /* DcpuListener.java in Sources */,
+				46DAD35C1781405C007F7284 /* DcpuParser.java in Sources */,
+				46DAD35D1781405C007F7284 /* DcpuVisitor.java in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
