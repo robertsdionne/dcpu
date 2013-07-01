@@ -9,19 +9,19 @@ void Disassembler::Disassemble(const Dcpu::Word *const program_begin,
     const Dcpu::Word *const program_end, std::ostream &out) const {
   for (const Dcpu::Word *i = program_begin; i < program_end; ++i) {
     const Dcpu::Word instruction = *i;
-    const Dcpu::Word basic_opcode = instruction & Dcpu::kBasicOpcodeMask;
+    const Dcpu::BasicOpcode basic_opcode = static_cast<Dcpu::BasicOpcode>(instruction & Dcpu::kBasicOpcodeMask);
 
-    if (basic_opcode == Dcpu::kBasicReserved) {
-      const Dcpu::Word advanced_opcode = (instruction &
-          Dcpu::kAdvancedOpcodeMask) >> Dcpu::kAdvancedOpcodeShift;
+    if (basic_opcode == Dcpu::BasicOpcode::kBasicReserved) {
+      const Dcpu::AdvancedOpcode advanced_opcode = static_cast<Dcpu::AdvancedOpcode>((instruction &
+          Dcpu::kAdvancedOpcodeMask) >> Dcpu::kAdvancedOpcodeShift);
       const Dcpu::Operand operand_a = static_cast<Dcpu::Operand>(
           (instruction & Dcpu::kAdvancedOperandMaskA) >>
               Dcpu::kAdvancedOperandShiftA);
       switch (advanced_opcode) {
-        case Dcpu::kAdvancedReserved:
+        case Dcpu::AdvancedOpcode::kAdvancedReserved:
           out << "set a, a" << std::endl;
           break;
-        case Dcpu::kJumpSubRoutine:
+        case Dcpu::AdvancedOpcode::kJumpSubRoutine:
           out << "jsr ";
           OutputOperand(i, operand_a, /* assignable */ false, out);
           out << std::endl;
@@ -38,80 +38,80 @@ void Disassembler::Disassemble(const Dcpu::Word *const program_begin,
           (instruction & Dcpu::kBasicOperandMaskB) >>
               Dcpu::kBasicOperandShiftB);
       switch (basic_opcode) {
-        case Dcpu::kBasicReserved:
+        case Dcpu::BasicOpcode::kBasicReserved:
           out << "set a, a" << std::endl;
           break;
-        case Dcpu::kSet:
+        case Dcpu::BasicOpcode::kSet:
           out << "set ";
           OutputOperands(i, operand_b, operand_a, out);
           out << std::endl;
           break;
-        case Dcpu::kAdd:
+        case Dcpu::BasicOpcode::kAdd:
           out << "add ";
           OutputOperands(i, operand_b, operand_a, out);
           out << std::endl;
           break;
-        case Dcpu::kSubtract:
+        case Dcpu::BasicOpcode::kSubtract:
           out << "sub ";
           OutputOperands(i, operand_b, operand_a, out);
           out << std::endl;
           break;
-        case Dcpu::kMultiply:
+        case Dcpu::BasicOpcode::kMultiply:
           out << "mul ";
           OutputOperands(i, operand_b, operand_a, out);
           out << std::endl;
           break;
-        case Dcpu::kDivide:
+        case Dcpu::BasicOpcode::kDivide:
           out << "div ";
           OutputOperands(i, operand_b, operand_a, out);
           out << std::endl;
           break;
-        case Dcpu::kModulo:
+        case Dcpu::BasicOpcode::kModulo:
           out << "mod ";
           OutputOperands(i, operand_b, operand_a, out);
           out << std::endl;
           break;
-        case Dcpu::kShiftLeft:
+        case Dcpu::BasicOpcode::kShiftLeft:
           out << "shl ";
           OutputOperands(i, operand_b, operand_a, out);
           out << std::endl;
           break;
-        case Dcpu::kShiftRight:
+        case Dcpu::BasicOpcode::kShiftRight:
           out << "shr ";
           OutputOperands(i, operand_b, operand_a, out);
           out << std::endl;
           break;
-        case Dcpu::kBinaryAnd:
+        case Dcpu::BasicOpcode::kBinaryAnd:
           out << "and ";
           OutputOperands(i, operand_b, operand_a, out);
           out << std::endl;
           break;
-        case Dcpu::kBinaryOr:
+        case Dcpu::BasicOpcode::kBinaryOr:
           out << "bor ";
           OutputOperands(i, operand_b, operand_a, out);
           out << std::endl;
           break;
-        case Dcpu::kBinaryExclusiveOr:
+        case Dcpu::BasicOpcode::kBinaryExclusiveOr:
           out << "xor ";
           OutputOperands(i, operand_b, operand_a, out);
           out << std::endl;
           break;
-        case Dcpu::kIfEqual:
+        case Dcpu::BasicOpcode::kIfEqual:
           out << "ife ";
           OutputOperands(i, operand_b, operand_a, out);
           out << std::endl;
           break;
-        case Dcpu::kIfNotEqual:
+        case Dcpu::BasicOpcode::kIfNotEqual:
           out << "ifn ";
           OutputOperands(i, operand_b, operand_a, out);
           out << std::endl;
           break;
-        case Dcpu::kIfGreaterThan:
+        case Dcpu::BasicOpcode::kIfGreaterThan:
           out << "ifg ";
           OutputOperands(i, operand_b, operand_a, out);
           out << std::endl;
           break;
-        case Dcpu::kIfBitSet:
+        case Dcpu::BasicOpcode::kIfBitSet:
           out << "ifb ";
           OutputOperands(i, operand_b, operand_a, out);
           out << std::endl;
@@ -125,20 +125,20 @@ void Disassembler::Disassemble(const Dcpu::Word *const program_begin,
 }
 
 char Disassembler::DetermineRegisterName(const Dcpu::Operand operand) const {
-  switch (operand % 8) {
-    case Dcpu::kRegisterA:
+  switch (static_cast<Dcpu::Operand>(static_cast<int>(operand) % 8)) {
+    case Dcpu::Operand::kRegisterA:
       return 'a';
-    case Dcpu::kRegisterB:
+    case Dcpu::Operand::kRegisterB:
       return 'b';
-    case Dcpu::kRegisterC:
+    case Dcpu::Operand::kRegisterC:
       return 'c';
-    case Dcpu::kRegisterX:
+    case Dcpu::Operand::kRegisterX:
       return 'x';
-    case Dcpu::kRegisterY:
+    case Dcpu::Operand::kRegisterY:
       return 'y';
-    case Dcpu::kRegisterZ:
+    case Dcpu::Operand::kRegisterZ:
       return 'z';
-    case Dcpu::kRegisterI:
+    case Dcpu::Operand::kRegisterI:
       return 'i';
     default:
       return 'j';
@@ -148,15 +148,15 @@ char Disassembler::DetermineRegisterName(const Dcpu::Operand operand) const {
 void Disassembler::OutputOperand(
     const Dcpu::Word *&i, const Dcpu::Operand operand,
     const bool assignable, std::ostream &out) const {
-  if (operand < Dcpu::kLocationInRegisterA) {
+  if (operand < Dcpu::Operand::kLocationInRegisterA) {
     const char register_name = DetermineRegisterName(operand);
     out << register_name;
-  } else if (Dcpu::kLocationInRegisterA <= operand &&
-      operand < Dcpu::kLocationOffsetByRegisterA) {
+  } else if (Dcpu::Operand::kLocationInRegisterA <= operand &&
+      operand < Dcpu::Operand::kLocationOffsetByRegisterA) {
     const char register_name = DetermineRegisterName(operand);
     out << '[' << register_name << ']';
-  } else if (Dcpu::kLocationOffsetByRegisterA <= operand &&
-      operand < Dcpu::kPop) {
+  } else if (Dcpu::Operand::kLocationOffsetByRegisterA <= operand &&
+      operand < Dcpu::Operand::kPop) {
     const char register_name = DetermineRegisterName(operand);
     i += 1;
     out << '[';
@@ -167,17 +167,17 @@ void Disassembler::OutputOperand(
   } else {
     std::ios_base::fmtflags flags;
     switch (operand) {
-      case Dcpu::kPushPop:
+      case Dcpu::Operand::kPushPop:
         if (assignable) {
           out << "push";
         } else {
           out << "pop";
         }
         break;
-      case Dcpu::kPeek:
+      case Dcpu::Operand::kPeek:
         out << "peek";
         break;
-      case Dcpu::kPick:
+      case Dcpu::Operand::kPick:
         i += 1;
         out << "[sp+";
         flags = out.flags();
@@ -185,16 +185,16 @@ void Disassembler::OutputOperand(
         out.flags(flags);
         out << ']';
         break;
-      case Dcpu::kStackPointer:
+      case Dcpu::Operand::kStackPointer:
         out << "sp";
         break;
-      case Dcpu::kProgramCounter:
+      case Dcpu::Operand::kProgramCounter:
         out << "pc";
         break;
-      case Dcpu::kExtra:
+      case Dcpu::Operand::kExtra:
         out << "ex";
         break;
-      case Dcpu::kLocation:
+      case Dcpu::Operand::kLocation:
         i += 1;
         out << '[';
         flags = out.flags();
@@ -202,7 +202,7 @@ void Disassembler::OutputOperand(
         out.flags(flags);
         out << ']';
         break;
-      case Dcpu::kLiteral:
+      case Dcpu::Operand::kLiteral:
         i += 1;
         flags = out.flags();
         out << std::showbase << std::hex << *i;
@@ -210,7 +210,7 @@ void Disassembler::OutputOperand(
         break;
       default:
         flags = out.flags();
-        out << std::showbase << std::hex << operand - Dcpu::k0;
+        out << std::showbase << std::hex << static_cast<int>(operand) - static_cast<int>(Dcpu::Operand::k0);
         out.flags(flags);
         break;
     }

@@ -22,7 +22,7 @@ public:
   static const Word kAdvancedOpcodeMask = 0x03E0;
   static const Word kAdvancedOpcodeShift = 0x5;
 
-  enum BasicOpcode {
+  enum class BasicOpcode {
     kBasicReserved = 0x00,
     kSet = Opcode_Basic_SET,
     kAdd = Opcode_Basic_ADD,
@@ -53,7 +53,7 @@ public:
     kSetAndDecrement = Opcode_Basic_STD
   };
 
-  enum AdvancedOpcode {
+  enum class AdvancedOpcode {
     kAdvancedReserved = 0x00,
     kJumpSubRoutine = Opcode_Advanced_JSR,
     kInterruptTrigger = Opcode_Advanced_INT,
@@ -76,7 +76,7 @@ public:
   static const Word kAdvancedOperandMaskA = 0xFC00;
   static const Word kAdvancedOperandShiftA = 0xA;
 
-  enum Operand {
+  enum class Operand {
     kRegisterA = 0x00,
     kRegisterB = 0x01,
     kRegisterC = 0x02,
