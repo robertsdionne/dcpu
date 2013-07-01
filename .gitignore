@@ -1,6 +1,7 @@
 binary/
 build/
 java/dcpu/generated/
+libraries/protobuf-2.4.1/java/target/
 .lock-waf_darwin_build
 .lock-waf_linux2_build
 .settings/
