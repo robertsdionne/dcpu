@@ -83,8 +83,9 @@
 		4616A8D8177A793900367EF6 /* subprocess.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4616A662177A708600367EF6 /* subprocess.cc */; };
 		4616A8DA177A793900367EF6 /* zip_writer.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4616A666177A708600367EF6 /* zip_writer.cc */; };
 		4616A8DB177A7A0900367EF6 /* assembler.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4616A31B177A705B00367EF6 /* assembler.cc */; };
-		4616A8DC177A7A0900367EF6 /* program.pb.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4616A325177A705B00367EF6 /* program.pb.cc */; };
 		4661ADC2177C858800828482 /* parser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4661ADC0177C858800828482 /* parser.cpp */; };
+		468C10C2178136270035A585 /* program.pb.cc in Sources */ = {isa = PBXBuildFile; fileRef = 468C10C0178136270035A585 /* program.pb.cc */; };
+		468C10C51781365F0035A585 /* DcpuProgram.java in Sources */ = {isa = PBXBuildFile; fileRef = 468C10C41781365F0035A585 /* DcpuProgram.java */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -235,6 +236,13 @@
 			remoteGlobalIDString = 4616A87D177A76B300367EF6;
 			remoteInfo = protobuf;
 		};
+		468C109D178131450035A585 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4616A306177A6F8600367EF6 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4616A8A7177A78C500367EF6;
+			remoteInfo = protoc;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -282,8 +290,6 @@
 		4616A321177A705B00367EF6 /* disassembler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = disassembler.h; sourceTree = "<group>"; };
 		4616A323177A705B00367EF6 /* main.ascii */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = main.ascii; sourceTree = "<group>"; };
 		4616A324177A705B00367EF6 /* main.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cc; sourceTree = "<group>"; };
-		4616A325177A705B00367EF6 /* program.pb.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = program.pb.cc; sourceTree = "<group>"; };
-		4616A326177A705B00367EF6 /* program.pb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = program.pb.h; sourceTree = "<group>"; };
 		4616A327177A705B00367EF6 /* program.proto */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = program.proto; sourceTree = "<group>"; };
 		4616A33F177A708500367EF6 /* aclocal.m4 */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = aclocal.m4; sourceTree = "<group>"; };
 		4616A341177A708500367EF6 /* config.guess */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = config.guess; sourceTree = "<group>"; };
@@ -1151,6 +1157,9 @@
 		4661ADC1177C858800828482 /* parser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = parser.h; sourceTree = "<group>"; };
 		46792156177FC9620035745B /* Dcpu.java */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.java; path = Dcpu.java; sourceTree = "<group>"; };
 		46792157177FC9620035745B /* Dcpu.g4 */ = {isa = PBXFileReference; lastKnownFileType = text; path = Dcpu.g4; sourceTree = "<group>"; };
+		468C10C0178136270035A585 /* program.pb.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = program.pb.cc; sourceTree = "<group>"; };
+		468C10C1178136270035A585 /* program.pb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = program.pb.h; sourceTree = "<group>"; };
+		468C10C41781365F0035A585 /* DcpuProgram.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = DcpuProgram.java; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1223,12 +1232,11 @@
 				4616A31E177A705B00367EF6 /* dcpu.h */,
 				4616A320177A705B00367EF6 /* disassembler.cc */,
 				4616A321177A705B00367EF6 /* disassembler.h */,
+				468C10BF178136270035A585 /* generated */,
 				4616A323177A705B00367EF6 /* main.ascii */,
 				4616A324177A705B00367EF6 /* main.cc */,
 				4661ADC0177C858800828482 /* parser.cpp */,
 				4661ADC1177C858800828482 /* parser.h */,
-				4616A325177A705B00367EF6 /* program.pb.cc */,
-				4616A326177A705B00367EF6 /* program.pb.h */,
 				4616A327177A705B00367EF6 /* program.proto */,
 			);
 			path = source;
@@ -2824,8 +2832,26 @@
 			isa = PBXGroup;
 			children = (
 				46792156177FC9620035745B /* Dcpu.java */,
+				468C10C31781365F0035A585 /* generated */,
 			);
 			path = dcpu;
+			sourceTree = "<group>";
+		};
+		468C10BF178136270035A585 /* generated */ = {
+			isa = PBXGroup;
+			children = (
+				468C10C0178136270035A585 /* program.pb.cc */,
+				468C10C1178136270035A585 /* program.pb.h */,
+			);
+			path = generated;
+			sourceTree = "<group>";
+		};
+		468C10C31781365F0035A585 /* generated */ = {
+			isa = PBXGroup;
+			children = (
+				468C10C41781365F0035A585 /* DcpuProgram.java */,
+			);
+			path = generated;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -2845,6 +2871,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 4616A317177A6F8600367EF6 /* Build configuration list for PBXNativeTarget "dcpu" */;
 			buildPhases = (
+				468C10B8178131530035A585 /* ShellScript */,
 				4616A30A177A6F8600367EF6 /* Sources */,
 				4616A30B177A6F8600367EF6 /* Frameworks */,
 				4616A30C177A6F8600367EF6 /* CopyFiles */,
@@ -2852,6 +2879,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				468C109E178131450035A585 /* PBXTargetDependency */,
 				4616A8B2177A78D800367EF6 /* PBXTargetDependency */,
 			);
 			name = dcpu;
@@ -3088,17 +3116,34 @@
 		};
 /* End PBXReferenceProxy section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		468C10B8178131530035A585 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "mkdir -p $SRCROOT/source/generated/\n$SRCROOT/binary/protoc --proto_path=$SRCROOT/source/ --cpp_out=$SRCROOT/source/generated/ --java_out=$SRCROOT/java/ $SRCROOT/source/program.proto";
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		4616A30A177A6F8600367EF6 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				4616A8DB177A7A0900367EF6 /* assembler.cc in Sources */,
-				4616A8DC177A7A0900367EF6 /* program.pb.cc in Sources */,
 				4616A32A177A705B00367EF6 /* dcpu.cc in Sources */,
 				4616A32C177A705B00367EF6 /* disassembler.cc in Sources */,
 				4616A32E177A705B00367EF6 /* main.cc in Sources */,
 				4661ADC2177C858800828482 /* parser.cpp in Sources */,
+				468C10C2178136270035A585 /* program.pb.cc in Sources */,
+				468C10C51781365F0035A585 /* DcpuProgram.java in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3208,6 +3253,11 @@
 			isa = PBXTargetDependency;
 			target = 4616A87D177A76B300367EF6 /* protobuf */;
 			targetProxy = 4616A8B4177A78E500367EF6 /* PBXContainerItemProxy */;
+		};
+		468C109E178131450035A585 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 4616A8A7177A78C500367EF6 /* protoc */;
+			targetProxy = 468C109D178131450035A585 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 

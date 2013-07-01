@@ -5,7 +5,7 @@
 #include <string>
 #include "assembler.h"
 #include "dcpu.h"
-#include "program.pb.h"
+#include "generated/program.pb.h"
 
 void Assembler::Assemble(const Program &program,
     const Dcpu::Word *const memory_begin,
