@@ -582,6 +582,7 @@
 			isa = PBXProject;
 			buildConfigurationList = 4FADC24608B4156D00ABE55E /* Build configuration list for PBXProject "gtest" */;
 			compatibilityVersion = "Xcode 2.4";
+			developmentRegion = English;
 			hasScannedForEncodings = 1;
 			knownRegions = (
 				English,
@@ -939,6 +940,8 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 40D4CDF20E30E07400294801 /* FrameworkTarget.xcconfig */;
 			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				HEADER_SEARCH_PATHS = (
@@ -949,6 +952,7 @@
 				INFOPLIST_PREFIX_HEADER = "$(PROJECT_TEMP_DIR)/Version.h";
 				INFOPLIST_PREPROCESS = YES;
 				PRODUCT_NAME = gtest;
+				STRIP_STYLE = all;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Debug;
@@ -957,6 +961,8 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 40D4CDF20E30E07400294801 /* FrameworkTarget.xcconfig */;
 			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				HEADER_SEARCH_PATHS = (
@@ -967,6 +973,7 @@
 				INFOPLIST_PREFIX_HEADER = "$(PROJECT_TEMP_DIR)/Version.h";
 				INFOPLIST_PREPROCESS = YES;
 				PRODUCT_NAME = gtest;
+				STRIP_STYLE = all;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Release;
@@ -975,6 +982,13 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 40D4CDF10E30E07400294801 /* DebugProject.xcconfig */;
 			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"GTEST_HAS_PTHREAD=1",
+					"GTEST_LANG_CXX11=1",
+					"GTEST_USE_OWN_TR1_TUPLE=1",
+				);
 			};
 			name = Debug;
 		};
@@ -982,6 +996,13 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 40D4CDF40E30E07400294801 /* ReleaseProject.xcconfig */;
 			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"GTEST_HAS_PTHREAD=1",
+					"GTEST_LANG_CXX11=1",
+					"GTEST_USE_OWN_TR1_TUPLE=1",
+				);
 			};
 			name = Release;
 		};
