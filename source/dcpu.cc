@@ -14,19 +14,19 @@ const Dcpu::Word Dcpu::kAdvancedOperandMaskA;
 const Dcpu::Word Dcpu::kAdvancedOperandShiftA;
 
 Dcpu::Word Dcpu::Noop() {
-  return Dcpu::Instruct(BasicOpcode::kSet, kRegisterA, kRegisterA);
+  return Dcpu::Instruct(BasicOpcode::kSet, Operand::kRegisterA, Operand::kRegisterA);
 }
 
 Dcpu::Word Dcpu::Instruct(const Dcpu::BasicOpcode basic_opcode,
     const Dcpu::Operand operand_b, const Dcpu::Operand operand_a) {
   return static_cast<int>(basic_opcode) | (
-      operand_a << kBasicOperandShiftA) | (operand_b << kBasicOperandShiftB);
+      static_cast<int>(operand_a) << kBasicOperandShiftA) | (static_cast<int>(operand_b) << kBasicOperandShiftB);
 }
 
 Dcpu::Word Dcpu::Instruct(
     const Dcpu::AdvancedOpcode advanced_opcode, const Dcpu::Operand operand_a) {
   return (static_cast<int>(advanced_opcode) << kAdvancedOpcodeShift) | (
-      operand_a << kAdvancedOperandShiftA);
+      static_cast<int>(operand_a) << kAdvancedOperandShiftA);
 }
 
 Dcpu::Dcpu()
@@ -385,7 +385,7 @@ void Dcpu::Reset() {
 }
 
 Dcpu::Word *Dcpu::register_address(const Word register_index) {
-  return &register_a_ + register_index % kLocationInRegisterA;
+  return &register_a_ + register_index % static_cast<int>(Operand::kLocationInRegisterA);
 }
 
 Dcpu::Word Dcpu::register_value(const Word register_index) {
@@ -394,17 +394,17 @@ Dcpu::Word Dcpu::register_value(const Word register_index) {
 
 Dcpu::Word *Dcpu::GetOperandAddressOrLiteral(
     const Operand operand, const bool assignable, Word &literal) {
-  if (operand < kLocationInRegisterA) {
-    return register_address(operand);
-  } else if (kLocationInRegisterA <= operand
-      && operand < kLocationOffsetByRegisterA) {
-    return address(register_value(operand));
-  } else if (kLocationOffsetByRegisterA <= operand && operand < kPushPop) {
+  if (operand < Operand::kLocationInRegisterA) {
+    return register_address(static_cast<int>(operand));
+  } else if (Operand::kLocationInRegisterA <= operand
+      && operand < Operand::kLocationOffsetByRegisterA) {
+    return address(register_value(static_cast<int>(operand)));
+  } else if (Operand::kLocationOffsetByRegisterA <= operand && operand < Operand::kPushPop) {
     Word *const result =
-        address(*address(program_counter_)) + register_value(operand);
+        address(*address(program_counter_)) + register_value(static_cast<int>(operand));
     program_counter_ += 1;
     return result;
-  } else if (operand == kPushPop) {
+  } else if (operand == Operand::kPushPop) {
     if (assignable) { // Push
       stack_pointer_ -= 1;
       return address(stack_pointer_);
@@ -413,28 +413,28 @@ Dcpu::Word *Dcpu::GetOperandAddressOrLiteral(
       stack_pointer_ += 1;
       return result;
     }
-  } else if (operand == kPeek) {
+  } else if (operand == Operand::kPeek) {
     return address(stack_pointer_);
-  } else if (operand == kPick) {
+  } else if (operand == Operand::kPick) {
     const Word offset = *address(program_counter_);
     program_counter_ += 1;
     return address(stack_pointer_ + offset);
-  } else if (operand == kStackPointer) {
+  } else if (operand == Operand::kStackPointer) {
     return &stack_pointer_;
-  } else if (operand == kProgramCounter) {
+  } else if (operand == Operand::kProgramCounter) {
     return &program_counter_;
-  } else if (operand == kExtra) {
+  } else if (operand == Operand::kExtra) {
     return &extra_;
-  } else if (operand == kLocation) {
+  } else if (operand == Operand::kLocation) {
     Word *const result = address(*address(program_counter_));
     program_counter_ += 1;
     return result;
-  } else if (operand == kLiteral) {
+  } else if (operand == Operand::kLiteral) {
     Word *const result = address(program_counter_);
     program_counter_ += 1;
     return result;
   } else {
-    literal = operand - k0;
+    literal = static_cast<int>(operand) - static_cast<int>(Operand::k0);
     return 0;
   }
 }

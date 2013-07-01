@@ -41,9 +41,9 @@ TEST(DisassemblerTest, Disassemble_set_register_with_register) {
   Disassembler disassembler;
   const Dcpu::Word program[] = {
     // set b, 1
-    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::kRegisterB, Dcpu::k1),
+    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::Operand::kRegisterB, Dcpu::Operand::k1),
     // set a, b
-    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::kRegisterA, Dcpu::kRegisterB)
+    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::Operand::kRegisterA, Dcpu::Operand::kRegisterB)
   };
   const Dcpu::Word *const program_end =
       program + sizeof(program)/sizeof(Dcpu::Word);
@@ -58,9 +58,9 @@ TEST(DisassemblerTest, Disassemble_set_register_with_last_register) {
   Disassembler disassembler;
   const Dcpu::Word program[] = {
     // set j, 1
-    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::kRegisterJ, Dcpu::k1),
+    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::Operand::kRegisterJ, Dcpu::Operand::k1),
     // set a, j
-    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::kRegisterA, Dcpu::kRegisterJ)
+    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::Operand::kRegisterA, Dcpu::Operand::kRegisterJ)
   };
   const Dcpu::Word *const program_end =
       program + sizeof(program)/sizeof(Dcpu::Word);
@@ -75,13 +75,13 @@ TEST(DisassemblerTest, Disassemble_set_register_with_location_in_register) {
   Disassembler disassembler;
   const Dcpu::Word program[] = {
     // set [0x1000], 13
-    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::kLocation, Dcpu::k13),
+    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::Operand::kLocation, Dcpu::Operand::k13),
     0x1000,
     // set b, 0x1000
-    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::kRegisterB, Dcpu::kLiteral),
+    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::Operand::kRegisterB, Dcpu::Operand::kLiteral),
     0x1000,
     // set a, [b]
-    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::kRegisterA, Dcpu::kLocationInRegisterB)
+    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::Operand::kRegisterA, Dcpu::Operand::kLocationInRegisterB)
   };
   const Dcpu::Word *const program_end =
       program + sizeof(program)/sizeof(Dcpu::Word);
@@ -98,13 +98,13 @@ TEST(DisassemblerTest,
   Disassembler disassembler;
   const Dcpu::Word program[] = {
     // set [0x1000], 13
-    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::kLocation, Dcpu::k13),
+    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::Operand::kLocation, Dcpu::Operand::k13),
     0x1000,
     // set j, 0x1000
-    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::kRegisterJ, Dcpu::kLiteral),
+    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::Operand::kRegisterJ, Dcpu::Operand::kLiteral),
     0x1000,
     // set a, [j]
-    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::kRegisterA, Dcpu::kLocationInRegisterJ)
+    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::Operand::kRegisterA, Dcpu::Operand::kLocationInRegisterJ)
   };
   const Dcpu::Word *const program_end =
       program + sizeof(program)/sizeof(Dcpu::Word);
@@ -121,13 +121,13 @@ TEST(DisassemblerTest,
   Disassembler disassembler;
   const Dcpu::Word program[] = {
     // set [0x100A], 13
-    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::kLocation, Dcpu::k13),
+    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::Operand::kLocation, Dcpu::Operand::k13),
     0x100A,
     // set b, 10
-    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::kRegisterB, Dcpu::k10),
+    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::Operand::kRegisterB, Dcpu::Operand::k10),
     // set a, [0x1000+b]
     Dcpu::Instruct(
-        Dcpu::BasicOpcode::kSet, Dcpu::kRegisterA, Dcpu::kLocationOffsetByRegisterB),
+        Dcpu::BasicOpcode::kSet, Dcpu::Operand::kRegisterA, Dcpu::Operand::kLocationOffsetByRegisterB),
     0x1000
   };
   const Dcpu::Word *const program_end =
@@ -145,13 +145,13 @@ TEST(DisassemblerTest,
   Disassembler disassembler;
   const Dcpu::Word program[] = {
     // set [0x100A], 13
-    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::kLocation, Dcpu::k13),
+    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::Operand::kLocation, Dcpu::Operand::k13),
     0x100A,
     // set j, 10
-    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::kRegisterJ, Dcpu::k10),
+    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::Operand::kRegisterJ, Dcpu::Operand::k10),
     // set a, [0x1000+j]
     Dcpu::Instruct(
-        Dcpu::BasicOpcode::kSet, Dcpu::kRegisterA, Dcpu::kLocationOffsetByRegisterJ),
+        Dcpu::BasicOpcode::kSet, Dcpu::Operand::kRegisterA, Dcpu::Operand::kLocationOffsetByRegisterJ),
     0x1000
   };
   const Dcpu::Word *const program_end =
@@ -168,9 +168,9 @@ TEST(DisassemblerTest, Disassemble_set_register_with_pop) {
   Disassembler disassembler;
   const Dcpu::Word program[] = {
     // set push, 13
-    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::kPush, Dcpu::k13),
+    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::Operand::kPush, Dcpu::Operand::k13),
     // set a, pop
-    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::kRegisterA, Dcpu::kPop)
+    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::Operand::kRegisterA, Dcpu::Operand::kPop)
   };
   const Dcpu::Word *const program_end =
       program + sizeof(program)/sizeof(Dcpu::Word);
@@ -185,9 +185,9 @@ TEST(DisassemblerTest, Disassemble_set_register_with_peek) {
   Disassembler disassembler;
   const Dcpu::Word program[] = {
     // set push, 13
-    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::kPush, Dcpu::k13),
+    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::Operand::kPush, Dcpu::Operand::k13),
     // set a, peek
-    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::kRegisterA, Dcpu::kPeek)
+    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::Operand::kRegisterA, Dcpu::Operand::kPeek)
   };
   const Dcpu::Word *const program_end =
       program + sizeof(program)/sizeof(Dcpu::Word);
@@ -202,11 +202,11 @@ TEST(DisassemblerTest, Disassemble_set_register_with_pick) {
   Disassembler disassembler;
   const Dcpu::Word program[] = {
     // set push, 13
-    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::kPush, Dcpu::k13),
+    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::Operand::kPush, Dcpu::Operand::k13),
     // set push, 14
-    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::kPush, Dcpu::k14),
+    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::Operand::kPush, Dcpu::Operand::k14),
     // set a, [sp+1]
-    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::kRegisterA, Dcpu::kPick),
+    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::Operand::kRegisterA, Dcpu::Operand::kPick),
     0x1
   };
   const Dcpu::Word *const program_end =
@@ -223,9 +223,9 @@ TEST(DisassemblerTest, Disassemble_set_register_with_stack_pointer) {
   Disassembler disassembler;
   const Dcpu::Word program[] = {
     // set push, 13
-    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::kPush, Dcpu::k13),
+    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::Operand::kPush, Dcpu::Operand::k13),
     // set a, sp
-    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::kRegisterA, Dcpu::kStackPointer)
+    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::Operand::kRegisterA, Dcpu::Operand::kStackPointer)
   };
   const Dcpu::Word *const program_end =
       program + sizeof(program)/sizeof(Dcpu::Word);
@@ -242,7 +242,7 @@ TEST(DisassemblerTest, Disassemble_set_register_with_program_counter) {
     // noop
     Dcpu::Noop(),
     // set a, pc
-    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::kRegisterA, Dcpu::kProgramCounter)
+    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::Operand::kRegisterA, Dcpu::Operand::kProgramCounter)
   };
   const Dcpu::Word *const program_end =
       program + sizeof(program)/sizeof(Dcpu::Word);
@@ -257,9 +257,9 @@ TEST(DisassemblerTest, Disassemble_set_register_with_overflow) {
   Disassembler disassembler;
   const Dcpu::Word program[] = {
     // set ex, 13
-    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::kExtra, Dcpu::k13),
+    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::Operand::kExtra, Dcpu::Operand::k13),
     // set a, ex
-    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::kRegisterA, Dcpu::kExtra)
+    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::Operand::kRegisterA, Dcpu::Operand::kExtra)
   };
   const Dcpu::Word *const program_end =
       program + sizeof(program)/sizeof(Dcpu::Word);
@@ -274,10 +274,10 @@ TEST(DisassemblerTest, Disassemble_set_register_with_location) {
   Disassembler disassembler;
   const Dcpu::Word program[] = {
     // set [0x1000], 13
-    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::kLocation, Dcpu::k13),
+    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::Operand::kLocation, Dcpu::Operand::k13),
     0x1000,
     // set a, [0x1000]
-    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::kRegisterA, Dcpu::kLocation),
+    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::Operand::kRegisterA, Dcpu::Operand::kLocation),
     0x1000
   };
   const Dcpu::Word *const program_end =
@@ -293,7 +293,7 @@ TEST(DisassemblerTest, Disassemble_set_register_with_high_literal) {
   Disassembler disassembler;
   const Dcpu::Word program[] = {
     // set a, 0x1001
-    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::kRegisterA, Dcpu::kLiteral),
+    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::Operand::kRegisterA, Dcpu::Operand::kLiteral),
     0x1001
   };
   const Dcpu::Word *const program_end =
@@ -308,7 +308,7 @@ TEST(DisassemblerTest, Disassemble_set_register_with_low_literal) {
   Disassembler disassembler;
   const Dcpu::Word program[] = {
     // set a, 1
-    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::kRegisterA, Dcpu::k1),
+    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::Operand::kRegisterA, Dcpu::Operand::k1),
   };
   const Dcpu::Word *const program_end =
       program + sizeof(program)/sizeof(Dcpu::Word);
@@ -322,7 +322,7 @@ TEST(DisassemblerTest, Disassemble_set_last_register_with_low_literal) {
   Disassembler disassembler;
   const Dcpu::Word program[] = {
     // set j, 1
-    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::kRegisterJ, Dcpu::k1),
+    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::Operand::kRegisterJ, Dcpu::Operand::k1),
   };
   const Dcpu::Word *const program_end =
       program + sizeof(program)/sizeof(Dcpu::Word);
@@ -336,10 +336,10 @@ TEST(DisassemblerTest, Disassemble_set_location_in_register_with_low_literal) {
   Disassembler disassembler;
   const Dcpu::Word program[] = {
     // set a, 0x1000
-    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::kRegisterA, Dcpu::kLiteral),
+    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::Operand::kRegisterA, Dcpu::Operand::kLiteral),
     0x1000,
     // set [a], 13
-    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::kLocationInRegisterA, Dcpu::k13)
+    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::Operand::kLocationInRegisterA, Dcpu::Operand::k13)
   };
   const Dcpu::Word *const program_end =
       program + sizeof(program)/sizeof(Dcpu::Word);
@@ -355,10 +355,10 @@ TEST(DisassemblerTest,
   Disassembler disassembler;
   const Dcpu::Word program[] = {
     // set j, 0x1000
-    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::kRegisterJ, Dcpu::kLiteral),
+    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::Operand::kRegisterJ, Dcpu::Operand::kLiteral),
     0x1000,
     // set [j], 13
-    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::kLocationInRegisterJ, Dcpu::k13)
+    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::Operand::kLocationInRegisterJ, Dcpu::Operand::k13)
   };
   const Dcpu::Word *const program_end =
       program + sizeof(program)/sizeof(Dcpu::Word);
@@ -374,10 +374,10 @@ TEST(DisassemblerTest,
   Disassembler disassembler;
   const Dcpu::Word program[] = {
     // set a, 10
-    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::kRegisterA, Dcpu::k10),
+    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::Operand::kRegisterA, Dcpu::Operand::k10),
     // set [0x1000+a], 13
     Dcpu::Instruct(
-        Dcpu::BasicOpcode::kSet, Dcpu::kLocationOffsetByRegisterA, Dcpu::k13),
+        Dcpu::BasicOpcode::kSet, Dcpu::Operand::kLocationOffsetByRegisterA, Dcpu::Operand::k13),
     0x1000
   };
   const Dcpu::Word *const program_end =
@@ -394,14 +394,14 @@ TEST(DisassemblerTest,
   Disassembler disassembler;
   const Dcpu::Word program[] = {
     // set a, 10
-    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::kRegisterA, Dcpu::k10),
+    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::Operand::kRegisterA, Dcpu::Operand::k10),
     // set [0x1000+a], 13
     Dcpu::Instruct(
-        Dcpu::BasicOpcode::kSet, Dcpu::kLocationOffsetByRegisterA, Dcpu::k13),
+        Dcpu::BasicOpcode::kSet, Dcpu::Operand::kLocationOffsetByRegisterA, Dcpu::Operand::k13),
     0x1000,
     // set [0x2000+a], [0x1000+a]
     Dcpu::Instruct(Dcpu::BasicOpcode::kSet,
-        Dcpu::kLocationOffsetByRegisterA, Dcpu::kLocationOffsetByRegisterA),
+        Dcpu::Operand::kLocationOffsetByRegisterA, Dcpu::Operand::kLocationOffsetByRegisterA),
     0x1000,
     0x2000
   };
@@ -421,10 +421,10 @@ TEST(DisassemblerTest,
   Disassembler disassembler;
   const Dcpu::Word program[] = {
     // set j, 10
-    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::kRegisterJ, Dcpu::k10),
+    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::Operand::kRegisterJ, Dcpu::Operand::k10),
     // set [0x1000+j], 13
     Dcpu::Instruct(
-        Dcpu::BasicOpcode::kSet, Dcpu::kLocationOffsetByRegisterJ, Dcpu::k13),
+        Dcpu::BasicOpcode::kSet, Dcpu::Operand::kLocationOffsetByRegisterJ, Dcpu::Operand::k13),
     0x1000
   };
   const Dcpu::Word *const program_end =
@@ -440,7 +440,7 @@ TEST(DisassemblerTest, Disassemble_set_push_with_low_literal) {
   Disassembler disassembler;
   const Dcpu::Word program[] = {
     // set push, 13
-    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::kPush, Dcpu::k13)
+    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::Operand::kPush, Dcpu::Operand::k13)
   };
   const Dcpu::Word *const program_end =
       program + sizeof(program)/sizeof(Dcpu::Word);
@@ -454,9 +454,9 @@ TEST(DisassemblerTest, Disassemble_set_push_with_pop) {
   Disassembler disassembler;
   const Dcpu::Word program[] = {
     // set push, 13
-    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::kPush, Dcpu::k13),
+    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::Operand::kPush, Dcpu::Operand::k13),
     // set push, pop
-    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::kPush, Dcpu::kPop)
+    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::Operand::kPush, Dcpu::Operand::kPop)
   };
   const Dcpu::Word *const program_end =
       program + sizeof(program)/sizeof(Dcpu::Word);
@@ -471,9 +471,9 @@ TEST(DisassemblerTest, Disassemble_set_peek_with_low_literal) {
   Disassembler disassembler;
   const Dcpu::Word program[] = {
     // set push, 13
-    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::kPush, Dcpu::k13),
+    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::Operand::kPush, Dcpu::Operand::k13),
     // set peek, 14
-    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::kPeek, Dcpu::k14)
+    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::Operand::kPeek, Dcpu::Operand::k14)
   };
   const Dcpu::Word *const program_end =
       program + sizeof(program)/sizeof(Dcpu::Word);
@@ -488,11 +488,11 @@ TEST(DisassemblerTest, Disassemble_set_pick_with_low_literal) {
   Disassembler disassembler;
   const Dcpu::Word program[] = {
     // set push, 12
-    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::kPush, Dcpu::k12),
+    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::Operand::kPush, Dcpu::Operand::k12),
     // set push, 13
-    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::kPush, Dcpu::k13),
+    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::Operand::kPush, Dcpu::Operand::k13),
     // set [sp+1], 14
-    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::kPick, Dcpu::k14),
+    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::Operand::kPick, Dcpu::Operand::k14),
     0x1
   };
   const Dcpu::Word *const program_end =
@@ -509,7 +509,7 @@ TEST(DisassemblerTest, Disassemble_set_stack_pointer_with_low_literal) {
   Disassembler disassembler;
   const Dcpu::Word program[] = {
     // set sp, 13
-    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::kStackPointer, Dcpu::k13)
+    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::Operand::kStackPointer, Dcpu::Operand::k13)
   };
   const Dcpu::Word *const program_end =
       program + sizeof(program)/sizeof(Dcpu::Word);
@@ -523,7 +523,7 @@ TEST(DisassemblerTest, Disassemble_set_program_counter_with_low_literal) {
   Disassembler disassembler;
   const Dcpu::Word program[] = {
     // set pc, 13
-    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::kProgramCounter, Dcpu::k13)
+    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::Operand::kProgramCounter, Dcpu::Operand::k13)
   };
   const Dcpu::Word *const program_end =
       program + sizeof(program)/sizeof(Dcpu::Word);
@@ -537,7 +537,7 @@ TEST(DisassemblerTest, Disassemble_set_overflow_with_low_literal) {
   Disassembler disassembler;
   const Dcpu::Word program[] = {
     // set ex, 13
-    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::kExtra, Dcpu::k13)
+    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::Operand::kExtra, Dcpu::Operand::k13)
   };
   const Dcpu::Word *const program_end =
       program + sizeof(program)/sizeof(Dcpu::Word);
@@ -551,7 +551,7 @@ TEST(DisassemblerTest, Disassemble_set_location_with_low_literal) {
   Disassembler disassembler;
   const Dcpu::Word program[] = {
     // set [0x1000], 13
-    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::kLocation, Dcpu::k13),
+    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::Operand::kLocation, Dcpu::Operand::k13),
     0x1000
   };
   const Dcpu::Word *const program_end =
@@ -566,7 +566,7 @@ TEST(DisassemblerTest, Disassemble_set_literal_with_low_literal) {
   Disassembler disassembler;
   const Dcpu::Word program[] = {
     // set 0x1000, 13
-    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::kLiteral, Dcpu::k13),
+    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::Operand::kLiteral, Dcpu::Operand::k13),
     0x1000
   };
   const Dcpu::Word *const program_end =
@@ -581,9 +581,9 @@ TEST(DisassemblerTest, Disassemble_add_register_with_low_literal) {
   Disassembler disassembler;
   const Dcpu::Word program[] = {
     // set a, 0x0D
-    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::kRegisterA, Dcpu::k13),
+    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::Operand::kRegisterA, Dcpu::Operand::k13),
     // add a, 0x0E
-    Dcpu::Instruct(Dcpu::BasicOpcode::kAdd, Dcpu::kRegisterA, Dcpu::k14)
+    Dcpu::Instruct(Dcpu::BasicOpcode::kAdd, Dcpu::Operand::kRegisterA, Dcpu::Operand::k14)
   };
   const Dcpu::Word *const program_end =
       program + sizeof(program)/sizeof(Dcpu::Word);
@@ -598,10 +598,10 @@ TEST(DisassemblerTest, Disassemble_add_register_with_overflow) {
   Disassembler disassembler;
   const Dcpu::Word program[] = {
     // set a, 0xFFFF
-    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::kRegisterA, Dcpu::kLiteral),
+    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::Operand::kRegisterA, Dcpu::Operand::kLiteral),
     0xFFFF,
     // add a, 0xFFFF
-    Dcpu::Instruct(Dcpu::BasicOpcode::kAdd, Dcpu::kRegisterA, Dcpu::kLiteral),
+    Dcpu::Instruct(Dcpu::BasicOpcode::kAdd, Dcpu::Operand::kRegisterA, Dcpu::Operand::kLiteral),
     0xFFFF
   };
   const Dcpu::Word *const program_end =
@@ -617,9 +617,9 @@ TEST(DisassemblerTest, Disassemble_subtract_register_with_low_literal) {
   Disassembler disassembler;
   const Dcpu::Word program[] = {
     // set a, 0x1E
-    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::kRegisterA, Dcpu::k30),
+    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::Operand::kRegisterA, Dcpu::Operand::k30),
     // sub a, 0x10
-    Dcpu::Instruct(Dcpu::BasicOpcode::kSubtract, Dcpu::kRegisterA, Dcpu::k16)
+    Dcpu::Instruct(Dcpu::BasicOpcode::kSubtract, Dcpu::Operand::kRegisterA, Dcpu::Operand::k16)
   };
   const Dcpu::Word *const program_end =
       program + sizeof(program)/sizeof(Dcpu::Word);
@@ -634,9 +634,9 @@ TEST(DisassemblerTest, Disassemble_subtract_register_with_underflow) {
   Disassembler disassembler;
   const Dcpu::Word program[] = {
     // set a, 0x10
-    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::kRegisterA, Dcpu::k16),
+    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::Operand::kRegisterA, Dcpu::Operand::k16),
     // sub a, 0x1E
-    Dcpu::Instruct(Dcpu::BasicOpcode::kSubtract, Dcpu::kRegisterA, Dcpu::k30)
+    Dcpu::Instruct(Dcpu::BasicOpcode::kSubtract, Dcpu::Operand::kRegisterA, Dcpu::Operand::k30)
   };
   const Dcpu::Word *const program_end =
       program + sizeof(program)/sizeof(Dcpu::Word);
@@ -651,9 +651,9 @@ TEST(DisassemblerTest, Disassemble_multiply_register_with_low_literal) {
   Disassembler disassembler;
   const Dcpu::Word program[] = {
     // set a, 0x10
-    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::kRegisterA, Dcpu::k16),
+    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::Operand::kRegisterA, Dcpu::Operand::k16),
     // mul a, 0x1E
-    Dcpu::Instruct(Dcpu::BasicOpcode::kMultiply, Dcpu::kRegisterA, Dcpu::k30)
+    Dcpu::Instruct(Dcpu::BasicOpcode::kMultiply, Dcpu::Operand::kRegisterA, Dcpu::Operand::k30)
   };
   const Dcpu::Word *const program_end =
       program + sizeof(program)/sizeof(Dcpu::Word);
@@ -668,10 +668,10 @@ TEST(DisassemblerTest, Disassemble_multiply_register_with_overflow) {
   Disassembler disassembler;
   const Dcpu::Word program[] = {
     // set a, 0xFFFF
-    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::kRegisterA, Dcpu::kLiteral),
+    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::Operand::kRegisterA, Dcpu::Operand::kLiteral),
     0xFFFF,
     // mul a, 0xFFFF
-    Dcpu::Instruct(Dcpu::BasicOpcode::kMultiply, Dcpu::kRegisterA, Dcpu::kLiteral),
+    Dcpu::Instruct(Dcpu::BasicOpcode::kMultiply, Dcpu::Operand::kRegisterA, Dcpu::Operand::kLiteral),
     0xFFFF
   };
   const Dcpu::Word *const program_end =
@@ -687,9 +687,9 @@ TEST(DisassemblerTest, Disassemble_divide_register_with_low_literal) {
   Disassembler disassembler;
   const Dcpu::Word program[] = {
     // set a, 0x1E
-    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::kRegisterA, Dcpu::k30),
+    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::Operand::kRegisterA, Dcpu::Operand::k30),
     // div a, 0x10
-    Dcpu::Instruct(Dcpu::BasicOpcode::kDivide, Dcpu::kRegisterA, Dcpu::k16)
+    Dcpu::Instruct(Dcpu::BasicOpcode::kDivide, Dcpu::Operand::kRegisterA, Dcpu::Operand::k16)
   };
   const Dcpu::Word *const program_end =
       program + sizeof(program)/sizeof(Dcpu::Word);
@@ -704,9 +704,9 @@ TEST(DisassemblerTest, Disassemble_divide_register_by_zero) {
   Disassembler disassembler;
   const Dcpu::Word program[] = {
     // set a, 0x1E
-    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::kRegisterA, Dcpu::k30),
+    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::Operand::kRegisterA, Dcpu::Operand::k30),
     // div a, 0x00
-    Dcpu::Instruct(Dcpu::BasicOpcode::kDivide, Dcpu::kRegisterA, Dcpu::k0)
+    Dcpu::Instruct(Dcpu::BasicOpcode::kDivide, Dcpu::Operand::kRegisterA, Dcpu::Operand::k0)
   };
   const Dcpu::Word *const program_end =
       program + sizeof(program)/sizeof(Dcpu::Word);
@@ -721,9 +721,9 @@ TEST(DisassemblerTest, Disassemble_modulo_register_with_low_literal) {
   Disassembler disassembler;
   const Dcpu::Word program[] = {
     // set a, 0x1E
-    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::kRegisterA, Dcpu::k30),
+    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::Operand::kRegisterA, Dcpu::Operand::k30),
     // mod a, 0x0B
-    Dcpu::Instruct(Dcpu::BasicOpcode::kModulo, Dcpu::kRegisterA, Dcpu::k11)
+    Dcpu::Instruct(Dcpu::BasicOpcode::kModulo, Dcpu::Operand::kRegisterA, Dcpu::Operand::k11)
   };
   const Dcpu::Word *const program_end =
       program + sizeof(program)/sizeof(Dcpu::Word);
@@ -738,9 +738,9 @@ TEST(DisassemblerTest, Disassemble_shift_left_register_with_low_literal) {
   Disassembler disassembler;
   const Dcpu::Word program[] = {
     // set a, 0x1E
-    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::kRegisterA, Dcpu::k30),
+    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::Operand::kRegisterA, Dcpu::Operand::k30),
     // shl a, 0x02
-    Dcpu::Instruct(Dcpu::BasicOpcode::kShiftLeft, Dcpu::kRegisterA, Dcpu::k2)
+    Dcpu::Instruct(Dcpu::BasicOpcode::kShiftLeft, Dcpu::Operand::kRegisterA, Dcpu::Operand::k2)
   };
   const Dcpu::Word *const program_end =
       program + sizeof(program)/sizeof(Dcpu::Word);
@@ -755,10 +755,10 @@ TEST(DisassemblerTest, Disassemble_shift_left_register_with_overflow) {
   Disassembler disassembler;
   const Dcpu::Word program[] = {
     // set a, 0xFFFF
-    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::kRegisterA, Dcpu::kLiteral),
+    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::Operand::kRegisterA, Dcpu::Operand::kLiteral),
     0xFFFF,
     // shl a, 0x02
-    Dcpu::Instruct(Dcpu::BasicOpcode::kShiftLeft, Dcpu::kRegisterA, Dcpu::k2)
+    Dcpu::Instruct(Dcpu::BasicOpcode::kShiftLeft, Dcpu::Operand::kRegisterA, Dcpu::Operand::k2)
   };
   const Dcpu::Word *const program_end =
       program + sizeof(program)/sizeof(Dcpu::Word);
@@ -773,10 +773,10 @@ TEST(DisassemblerTest, Disassemble_shift_right_register_with_low_literal) {
   Disassembler disassembler;
   const Dcpu::Word program[] = {
     // set a, 0xFFF0
-    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::kRegisterA, Dcpu::kLiteral),
+    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::Operand::kRegisterA, Dcpu::Operand::kLiteral),
     0xFFF0,
     // shr a, 0x02
-    Dcpu::Instruct(Dcpu::BasicOpcode::kShiftRight, Dcpu::kRegisterA, Dcpu::k2)
+    Dcpu::Instruct(Dcpu::BasicOpcode::kShiftRight, Dcpu::Operand::kRegisterA, Dcpu::Operand::k2)
   };
   const Dcpu::Word *const program_end =
       program + sizeof(program)/sizeof(Dcpu::Word);
@@ -791,10 +791,10 @@ TEST(DisassemblerTest, Disassemble_shift_right_register_with_underflow) {
   Disassembler disassembler;
   const Dcpu::Word program[] = {
     // set a, 0xFFFF
-    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::kRegisterA, Dcpu::kLiteral),
+    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::Operand::kRegisterA, Dcpu::Operand::kLiteral),
     0xFFFF,
     // shr a, 0x02
-    Dcpu::Instruct(Dcpu::BasicOpcode::kShiftRight, Dcpu::kRegisterA, Dcpu::k2)
+    Dcpu::Instruct(Dcpu::BasicOpcode::kShiftRight, Dcpu::Operand::kRegisterA, Dcpu::Operand::k2)
   };
   const Dcpu::Word *const program_end =
       program + sizeof(program)/sizeof(Dcpu::Word);
@@ -809,10 +809,10 @@ TEST(DisassemblerTest, Disassemble_and_register_with_low_literal) {
   Disassembler disassembler;
   const Dcpu::Word program[] = {
     // set a, 0xF0F0
-    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::kRegisterA, Dcpu::kLiteral),
+    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::Operand::kRegisterA, Dcpu::Operand::kLiteral),
     0xF0F0,
     // and a, 0x00FF
-    Dcpu::Instruct(Dcpu::BasicOpcode::kBinaryAnd, Dcpu::kRegisterA, Dcpu::kLiteral),
+    Dcpu::Instruct(Dcpu::BasicOpcode::kBinaryAnd, Dcpu::Operand::kRegisterA, Dcpu::Operand::kLiteral),
     0x00FF
   };
   const Dcpu::Word *const program_end =
@@ -828,10 +828,10 @@ TEST(DisassemblerTest, Disassemble_or_register_with_low_literal) {
   Disassembler disassembler;
   const Dcpu::Word program[] = {
     // set a, 0xF0F0
-    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::kRegisterA, Dcpu::kLiteral),
+    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::Operand::kRegisterA, Dcpu::Operand::kLiteral),
     0xF0F0,
     // bor a, 0x00FF
-    Dcpu::Instruct(Dcpu::BasicOpcode::kBinaryOr, Dcpu::kRegisterA, Dcpu::kLiteral),
+    Dcpu::Instruct(Dcpu::BasicOpcode::kBinaryOr, Dcpu::Operand::kRegisterA, Dcpu::Operand::kLiteral),
     0x00FF
   };
   const Dcpu::Word *const program_end =
@@ -847,10 +847,10 @@ TEST(DisassemblerTest, Disassemble_xor_register_with_low_literal) {
   Disassembler disassembler;
   const Dcpu::Word program[] = {
     // set a, 0xF0F0
-    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::kRegisterA, Dcpu::kLiteral),
+    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::Operand::kRegisterA, Dcpu::Operand::kLiteral),
     0xF0F0,
     // xor a, 0x00FF
-    Dcpu::Instruct(Dcpu::BasicOpcode::kBinaryExclusiveOr, Dcpu::kRegisterA, Dcpu::kLiteral),
+    Dcpu::Instruct(Dcpu::BasicOpcode::kBinaryExclusiveOr, Dcpu::Operand::kRegisterA, Dcpu::Operand::kLiteral),
     0x00FF
   };
   const Dcpu::Word *const program_end =
@@ -866,13 +866,13 @@ TEST(DisassemblerTest, Disassemble_if_equal_register_with_equal_low_literal) {
   Disassembler disassembler;
   const Dcpu::Word program[] = {
     // set a, 0x0F
-    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::kRegisterA, Dcpu::k15),
+    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::Operand::kRegisterA, Dcpu::Operand::k15),
     // ife a, 0x0F
-    Dcpu::Instruct(Dcpu::BasicOpcode::kIfEqual, Dcpu::kRegisterA, Dcpu::k15),
+    Dcpu::Instruct(Dcpu::BasicOpcode::kIfEqual, Dcpu::Operand::kRegisterA, Dcpu::Operand::k15),
     // set push, 13
-    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::kPush, Dcpu::k13),
+    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::Operand::kPush, Dcpu::Operand::k13),
     // set push, 14
-    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::kPush, Dcpu::k14)
+    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::Operand::kPush, Dcpu::Operand::k14)
   };
   const Dcpu::Word *const program_end =
       program + sizeof(program)/sizeof(Dcpu::Word);
@@ -889,13 +889,13 @@ TEST(DisassemblerTest, Disassemble_if_equal_register_with_unequal_low_literal) {
   Disassembler disassembler;
   const Dcpu::Word program[] = {
     // set a, 0x0F
-    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::kRegisterA, Dcpu::k15),
+    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::Operand::kRegisterA, Dcpu::Operand::k15),
     // ife a, 0x00
-    Dcpu::Instruct(Dcpu::BasicOpcode::kIfEqual, Dcpu::kRegisterA, Dcpu::k0),
+    Dcpu::Instruct(Dcpu::BasicOpcode::kIfEqual, Dcpu::Operand::kRegisterA, Dcpu::Operand::k0),
     // set push, 13
-    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::kPush, Dcpu::k13),
+    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::Operand::kPush, Dcpu::Operand::k13),
     // set push, 14
-    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::kPush, Dcpu::k14)
+    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::Operand::kPush, Dcpu::Operand::k14)
   };
   const Dcpu::Word *const program_end =
       program + sizeof(program)/sizeof(Dcpu::Word);
@@ -913,13 +913,13 @@ TEST(DisassemblerTest,
   Disassembler disassembler;
   const Dcpu::Word program[] = {
     // set a, 0x0F
-    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::kRegisterA, Dcpu::k15),
+    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::Operand::kRegisterA, Dcpu::Operand::k15),
     // ifn a, 0x00
-    Dcpu::Instruct(Dcpu::BasicOpcode::kIfNotEqual, Dcpu::kRegisterA, Dcpu::k0),
+    Dcpu::Instruct(Dcpu::BasicOpcode::kIfNotEqual, Dcpu::Operand::kRegisterA, Dcpu::Operand::k0),
     // set push, 13
-    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::kPush, Dcpu::k13),
+    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::Operand::kPush, Dcpu::Operand::k13),
     // set push, 14
-    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::kPush, Dcpu::k14)
+    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::Operand::kPush, Dcpu::Operand::k14)
   };
   const Dcpu::Word *const program_end =
       program + sizeof(program)/sizeof(Dcpu::Word);
@@ -937,13 +937,13 @@ TEST(DisassemblerTest,
   Disassembler disassembler;
   const Dcpu::Word program[] = {
     // set a, 0x0F
-    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::kRegisterA, Dcpu::k15),
+    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::Operand::kRegisterA, Dcpu::Operand::k15),
     // ife a, 0x0F
-    Dcpu::Instruct(Dcpu::BasicOpcode::kIfNotEqual, Dcpu::kRegisterA, Dcpu::k15),
+    Dcpu::Instruct(Dcpu::BasicOpcode::kIfNotEqual, Dcpu::Operand::kRegisterA, Dcpu::Operand::k15),
     // set push, 13
-    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::kPush, Dcpu::k13),
+    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::Operand::kPush, Dcpu::Operand::k13),
     // set push, 14
-    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::kPush, Dcpu::k14)
+    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::Operand::kPush, Dcpu::Operand::k14)
   };
   const Dcpu::Word *const program_end =
       program + sizeof(program)/sizeof(Dcpu::Word);
@@ -961,13 +961,13 @@ TEST(DisassemblerTest,
   Disassembler disassembler;
   const Dcpu::Word program[] = {
     // set a, 0x1E
-    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::kRegisterA, Dcpu::k30),
+    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::Operand::kRegisterA, Dcpu::Operand::k30),
     // ifg a, 0x0F
-    Dcpu::Instruct(Dcpu::BasicOpcode::kIfGreaterThan, Dcpu::kRegisterA, Dcpu::k15),
+    Dcpu::Instruct(Dcpu::BasicOpcode::kIfGreaterThan, Dcpu::Operand::kRegisterA, Dcpu::Operand::k15),
     // set push, 13
-    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::kPush, Dcpu::k13),
+    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::Operand::kPush, Dcpu::Operand::k13),
     // set push, 14
-    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::kPush, Dcpu::k14)
+    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::Operand::kPush, Dcpu::Operand::k14)
   };
   const Dcpu::Word *const program_end =
       program + sizeof(program)/sizeof(Dcpu::Word);
@@ -985,13 +985,13 @@ TEST(DisassemblerTest,
   Disassembler disassembler;
   const Dcpu::Word program[] = {
     // set a, 0x0F
-    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::kRegisterA, Dcpu::k15),
+    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::Operand::kRegisterA, Dcpu::Operand::k15),
     // ifg a, 0x1E
-    Dcpu::Instruct(Dcpu::BasicOpcode::kIfGreaterThan, Dcpu::kRegisterA, Dcpu::k30),
+    Dcpu::Instruct(Dcpu::BasicOpcode::kIfGreaterThan, Dcpu::Operand::kRegisterA, Dcpu::Operand::k30),
     // set push, 13
-    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::kPush, Dcpu::k13),
+    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::Operand::kPush, Dcpu::Operand::k13),
     // set push, 14
-    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::kPush, Dcpu::k14)
+    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::Operand::kPush, Dcpu::Operand::k14)
   };
   const Dcpu::Word *const program_end =
       program + sizeof(program)/sizeof(Dcpu::Word);
@@ -1009,13 +1009,13 @@ TEST(DisassemblerTest,
   Disassembler disassembler;
   const Dcpu::Word program[] = {
     // set a, 0x1E
-    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::kRegisterA, Dcpu::k30),
+    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::Operand::kRegisterA, Dcpu::Operand::k30),
     // ifb a, 0x10
-    Dcpu::Instruct(Dcpu::BasicOpcode::kIfBitSet, Dcpu::kRegisterA, Dcpu::k16),
+    Dcpu::Instruct(Dcpu::BasicOpcode::kIfBitSet, Dcpu::Operand::kRegisterA, Dcpu::Operand::k16),
     // set push, 13
-    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::kPush, Dcpu::k13),
+    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::Operand::kPush, Dcpu::Operand::k13),
     // set push, 14
-    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::kPush, Dcpu::k14)
+    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::Operand::kPush, Dcpu::Operand::k14)
   };
   const Dcpu::Word *const program_end =
       program + sizeof(program)/sizeof(Dcpu::Word);
@@ -1033,13 +1033,13 @@ TEST(DisassemblerTest,
   Disassembler disassembler;
   const Dcpu::Word program[] = {
     // set a, 0x0F
-    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::kRegisterA, Dcpu::k15),
+    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::Operand::kRegisterA, Dcpu::Operand::k15),
     // ife a, 0x10
-    Dcpu::Instruct(Dcpu::BasicOpcode::kIfBitSet, Dcpu::kRegisterA, Dcpu::k16),
+    Dcpu::Instruct(Dcpu::BasicOpcode::kIfBitSet, Dcpu::Operand::kRegisterA, Dcpu::Operand::k16),
     // set push, 13
-    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::kPush, Dcpu::k13),
+    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::Operand::kPush, Dcpu::Operand::k13),
     // set push, 14
-    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::kPush, Dcpu::k14)
+    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::Operand::kPush, Dcpu::Operand::k14)
   };
   const Dcpu::Word *const program_end =
       program + sizeof(program)/sizeof(Dcpu::Word);
@@ -1056,15 +1056,15 @@ TEST(DisassemblerTest, Disassemble_jump_sub_routine) {
   Disassembler disassembler;
   const Dcpu::Word program[] = {
     // jsr subroutine
-    Dcpu::Instruct(Dcpu::AdvancedOpcode::kJumpSubRoutine, Dcpu::k3),
+    Dcpu::Instruct(Dcpu::AdvancedOpcode::kJumpSubRoutine, Dcpu::Operand::k3),
     // set a, 13
-    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::kRegisterA, Dcpu::k13),
+    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::Operand::kRegisterA, Dcpu::Operand::k13),
     // sub pc, 1
-    Dcpu::Instruct(Dcpu::BasicOpcode::kSubtract, Dcpu::kProgramCounter, Dcpu::k1),
+    Dcpu::Instruct(Dcpu::BasicOpcode::kSubtract, Dcpu::Operand::kProgramCounter, Dcpu::Operand::k1),
     // subroutine: set b, 14
-    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::kRegisterB, Dcpu::k14),
+    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::Operand::kRegisterB, Dcpu::Operand::k14),
     // set pc, pop
-    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::kProgramCounter, Dcpu::kPop)
+    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::Operand::kProgramCounter, Dcpu::Operand::kPop)
   };
   const Dcpu::Word *const program_end =
       program + sizeof(program)/sizeof(Dcpu::Word);

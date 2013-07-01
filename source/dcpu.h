@@ -76,7 +76,7 @@ public:
   static const Word kAdvancedOperandMaskA = 0xFC00;
   static const Word kAdvancedOperandShiftA = 0xA;
 
-  enum Operand {
+  enum class Operand {
     kRegisterA = 0x00,
     kRegisterB = 0x01,
     kRegisterC = 0x02,
