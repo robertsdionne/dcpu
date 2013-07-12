@@ -123,7 +123,6 @@ argumentB
     | PROGRAM_COUNTER
     | EXTRA
     | location
-    | value
     ;
 
 PUSH
@@ -179,7 +178,7 @@ value
 
 NUMBER
     : '0x' [0-9a-fA-F]+
-    | [0-9]+
+    | '-'? [0-9]+
     ;
 
 REGISTER

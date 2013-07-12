@@ -17,6 +17,8 @@ public class Dcpu {
     final CommonTokenStream tokens = new CommonTokenStream(lexer);
     final DcpuParser parser = new DcpuParser(tokens);
     final ParseTree tree = parser.program();
+    final DcpuAssembler assembler = new DcpuAssembler();
     System.out.println(tree.toStringTree(parser));
+    assembler.visit(tree);
   }
 }
