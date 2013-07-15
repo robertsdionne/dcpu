@@ -1,15 +1,5 @@
 DCPU
 Robert Dionne
-2012.03.30
+2013.07.15
 
 I'm implementing Notch's DCPU.
-
-DCPU specification: http://0x10c.com/highnerd/dcpu16_1_3.txt
-Clock specification: http://dcpu.com/highnerd/rc_1/clock.txt
-LEM1802 specification: http://dcpu.com/highnerd/lem1802.txt
-Keyboard specification: http://dcpu.com/highnerd/rc_1/keyboard.txt
-
-To build:
-1) Install libncurses-dev if needed.
-2) Run ./waf configure
-3) Then ./waf build run
