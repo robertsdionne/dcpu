@@ -133,7 +133,6 @@ Display.prototype.lerp = function(a, b, t) {
 
 
 Display.prototype.update = function(dt) {
-  // TODO(robertsdionne): update angle
   this.currentState = this.numberOfVertices ? Display.State.RUNNING : Display.State.NO_DATA;
   var angle = this.lerp(this.angle, this.targetAngle, Display.LERP_ALPHA);
   this.currentState = angle - this.angle > Display.TURN_EPSILON ?
