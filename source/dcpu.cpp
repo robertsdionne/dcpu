@@ -4,43 +4,42 @@
 
 namespace dcpu {
 
-  Dcpu::Word Dcpu::Noop() {
-    return Dcpu::Instruct(BasicOpcode::kSet, Operand::kRegisterA, Operand::kRegisterA);
+  Word Noop() {
+    return Instruct(BasicOpcode::kSet, Operand::kRegisterA, Operand::kRegisterA);
   }
 
-  Dcpu::Word Dcpu::Instruct(const Dcpu::BasicOpcode basic_opcode,
-      const Dcpu::Operand operand_b, const Dcpu::Operand operand_a) {
+  Word Instruct(const BasicOpcode basic_opcode,
+      const Operand operand_b, const Operand operand_a) {
     return static_cast<int>(basic_opcode) | (
         static_cast<int>(operand_a) << kBasicOperandShiftA) | (static_cast<int>(operand_b) << kBasicOperandShiftB);
   }
 
-  Dcpu::Word Dcpu::Instruct(
-      const Dcpu::AdvancedOpcode advanced_opcode, const Dcpu::Operand operand_a) {
+  Word Instruct(const AdvancedOpcode advanced_opcode, const Operand operand_a) {
     return (static_cast<int>(advanced_opcode) << kAdvancedOpcodeShift) | (
         static_cast<int>(operand_a) << kAdvancedOperandShiftA);
   }
 
-  Dcpu::Word *Dcpu::address(const Dcpu::Word address_value) {
+  Word *Dcpu::address(const Word address_value) {
     return memory_begin() + address_value;
   }
 
-  const Dcpu::Word *Dcpu::address(const Dcpu::Word address_value) const {
+  const Word *Dcpu::address(const Word address_value) const {
     return memory_begin() + address_value;
   }
 
-  Dcpu::Word *Dcpu::memory_begin() {
+  Word *Dcpu::memory_begin() {
     return &memory_[0];
   }
 
-  const Dcpu::Word *Dcpu::memory_begin() const {
+  const Word *Dcpu::memory_begin() const {
     return &memory_[0];
   }
 
-  Dcpu::Word *Dcpu::memory_end() {
+  Word *Dcpu::memory_end() {
     return memory_begin() + kMemorySize;
   }
 
-  const Dcpu::Word *Dcpu::memory_end() const {
+  const Word *Dcpu::memory_end() const {
     return memory_begin() + kMemorySize;
   }
 
@@ -271,15 +270,15 @@ namespace dcpu {
     interrupt_address = 0;
   }
 
-  Dcpu::Word *Dcpu::register_address(const Word register_index) {
+  Word *Dcpu::register_address(const Word register_index) {
     return &register_a + register_index % static_cast<int>(Operand::kLocationInRegisterA);
   }
 
-  Dcpu::Word Dcpu::register_value(const Word register_index) {
+  Word Dcpu::register_value(const Word register_index) {
     return *register_address(register_index);
   }
 
-  Dcpu::Word *Dcpu::GetOperandAddressOrLiteral(
+  Word *Dcpu::GetOperandAddressOrLiteral(
       const Operand operand, const bool assignable, Word &literal) {
     if (operand < Operand::kLocationInRegisterA) {
       return register_address(static_cast<int>(operand));

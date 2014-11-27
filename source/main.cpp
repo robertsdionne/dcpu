@@ -9,30 +9,30 @@
 
 using namespace dcpu;
 
-const Dcpu::Word kVideoMemoryBegin = 0x8000;
+constexpr Word kVideoMemoryBegin = 0x8000;
 
 int main(int argument_count, char *arguments[]) {
   Dcpu dcpu;
   Assembler assembler;
   initscr();
-  Dcpu::Word program[] = {
-    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::Operand::kRegisterA, Dcpu::Operand::kLiteral), 0xBEEF,               // set a, 0xBEEF
-    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::Operand::kLocation, Dcpu::Operand::kRegisterA), 0x1000,              // set [0x1000], a
-    Dcpu::Instruct(Dcpu::BasicOpcode::kIfNotEqual, Dcpu::Operand::kRegisterA, Dcpu::Operand::kLocation), 0x1000,       // ifn a, [0x1000]
-    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::Operand::kProgramCounter, Dcpu::Operand::k29),                       //     set pc, end
-    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::Operand::kRegisterI, Dcpu::Operand::k0),                             // set i, 0
-    Dcpu::Instruct(Dcpu::BasicOpcode::kIfEqual, Dcpu::Operand::kLocationOffsetByRegisterI, Dcpu::Operand::k0), 0x0010, // nextchar: ife [data+i], 0
-    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::Operand::kProgramCounter, Dcpu::Operand::k29),                       //     set pc, end
-    Dcpu::Instruct(Dcpu::BasicOpcode::kSet,
-                   Dcpu::Operand::kLocationOffsetByRegisterI,
-                   Dcpu::Operand::kLocationOffsetByRegisterI), 0x0010, kVideoMemoryBegin,        // set [0x8000+i], [data+i]
-    Dcpu::Instruct(Dcpu::BasicOpcode::kAdd, Dcpu::Operand::kRegisterI, Dcpu::Operand::k1),                             // add i, 1
-    Dcpu::Instruct(Dcpu::BasicOpcode::kSet, Dcpu::Operand::kProgramCounter, Dcpu::Operand::k8),                        // set pc, nextchar
+  Word program[] = {
+    Instruct(BasicOpcode::kSet, Operand::kRegisterA, Operand::kLiteral), 0xBEEF,               // set a, 0xBEEF
+    Instruct(BasicOpcode::kSet, Operand::kLocation, Operand::kRegisterA), 0x1000,              // set [0x1000], a
+    Instruct(BasicOpcode::kIfNotEqual, Operand::kRegisterA, Operand::kLocation), 0x1000,       // ifn a, [0x1000]
+    Instruct(BasicOpcode::kSet, Operand::kProgramCounter, Operand::k29),                       //     set pc, end
+    Instruct(BasicOpcode::kSet, Operand::kRegisterI, Operand::k0),                             // set i, 0
+    Instruct(BasicOpcode::kIfEqual, Operand::kLocationOffsetByRegisterI, Operand::k0), 0x0010, // nextchar: ife [data+i], 0
+    Instruct(BasicOpcode::kSet, Operand::kProgramCounter, Operand::k29),                       //     set pc, end
+    Instruct(BasicOpcode::kSet,
+                   Operand::kLocationOffsetByRegisterI,
+                   Operand::kLocationOffsetByRegisterI), 0x0010, kVideoMemoryBegin,        // set [0x8000+i], [data+i]
+    Instruct(BasicOpcode::kAdd, Operand::kRegisterI, Operand::k1),                             // add i, 1
+    Instruct(BasicOpcode::kSet, Operand::kProgramCounter, Operand::k8),                        // set pc, nextchar
     'H', 'e', 'l', 'l', 'o', ' ', 'w', 'o', 'r', 'l', 'd', '!', '\0',                   // data: dat "Hello world!", 0
-    Dcpu::Instruct(Dcpu::BasicOpcode::kSubtract, Dcpu::Operand::kProgramCounter, Dcpu::Operand::k1)                    // end: sub pc, 1
+    Instruct(BasicOpcode::kSubtract, Operand::kProgramCounter, Operand::k1)                    // end: sub pc, 1
   };
   std::copy(program,
-            program + sizeof(program)/sizeof(Dcpu::Word), dcpu.memory_begin());
+            program + sizeof(program)/sizeof(Word), dcpu.memory_begin());
   bool quit = false;
   while (!quit) {
     move(0, 0);

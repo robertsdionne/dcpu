@@ -5,25 +5,29 @@
 
 namespace dcpu {
 
-  class Data;
-  class Instruction;
-  class Operand;
-  class Program;
-  class Statement;
+  namespace proto {
+
+    class Data;
+    class Instruction;
+    class Operand;
+    class Program;
+    class Statement;
+
+  }  // namespace proto
 
   class Assembler {
   public:
     Assembler() {}
     virtual ~Assembler() {}
 
-    void Assemble(const Program &program,
-                  const Dcpu::Word *const memory_begin,
-                  const Dcpu::Word *const memory_end) const;
+    void Assemble(const proto::Program &program,
+                  const Word *const memory_begin,
+                  const Word *const memory_end) const;
   private:
-    Dcpu::Word DetermineStatementSize(const Statement &statement) const;
-    Dcpu::Word DetermineDataSize(const Data &data) const;
-    Dcpu::Word DetermineInstructionSize(const Instruction &instruction) const;
-    Dcpu::Word DetermineOperandSize(const Operand &operand) const;
+    Word DetermineStatementSize(const proto::Statement &statement) const;
+    Word DetermineDataSize(const proto::Data &data) const;
+    Word DetermineInstructionSize(const proto::Instruction &instruction) const;
+    Word DetermineOperandSize(const proto::Operand &operand) const;
   };
 
 }  // namespace dcpu

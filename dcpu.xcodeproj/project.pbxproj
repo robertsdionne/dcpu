@@ -218,13 +218,6 @@
 			remoteGlobalIDString = 3B07BDEA0E3F3F9E00647869;
 			remoteInfo = WidgetFrameworkTest;
 		};
-		4616A86F177A733400367EF6 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 4616A3FA177A708500367EF6 /* gtest.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 8D07F2BC0486CC7A007CD1D0;
-			remoteInfo = "gtest-framework";
-		};
 		4616A8B1177A78D800367EF6 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 4616A306177A6F8600367EF6 /* Project object */;
@@ -238,6 +231,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = 4616A87D177A76B300367EF6;
 			remoteInfo = protobuf;
+		};
+		465BDAD71A26E87B00C45D82 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4616A3FA177A708500367EF6 /* gtest.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 8D07F2BC0486CC7A007CD1D0;
+			remoteInfo = "gtest-framework";
 		};
 		468C109D178131450035A585 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -1172,7 +1172,7 @@
 		46DAD3571781405C007F7284 /* DcpuVisitor.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = DcpuVisitor.java; sourceTree = "<group>"; };
 		46DF0B741A26D8C500712A52 /* assembler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = assembler.cpp; sourceTree = "<group>"; };
 		46DF0B751A26D8C500712A52 /* assembler.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = assembler.hpp; sourceTree = "<group>"; };
-		46DF0B761A26D8C500712A52 /* dcpu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = dcpu.cpp; sourceTree = "<group>"; };
+		46DF0B761A26D8C500712A52 /* dcpu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 2; lastKnownFileType = sourcecode.cpp.cpp; path = dcpu.cpp; sourceTree = "<group>"; };
 		46DF0B771A26D8C500712A52 /* dcpu.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = dcpu.hpp; sourceTree = "<group>"; };
 		46DF0B781A26D8C500712A52 /* disassembler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = disassembler.cpp; sourceTree = "<group>"; };
 		46DF0B791A26D8C500712A52 /* disassembler.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = disassembler.hpp; sourceTree = "<group>"; };
@@ -1240,6 +1240,7 @@
 				4616A31A177A705B00367EF6 /* source */,
 				4616A335177A706E00367EF6 /* tests */,
 			);
+			indentWidth = 2;
 			sourceTree = "<group>";
 		};
 		4616A31A177A705B00367EF6 /* source */ = {
@@ -2926,8 +2927,8 @@
 			buildRules = (
 			);
 			dependencies = (
+				465BDAD81A26E87B00C45D82 /* PBXTargetDependency */,
 				468C10E417813CAF0035A585 /* PBXTargetDependency */,
-				4616A870177A733400367EF6 /* PBXTargetDependency */,
 			);
 			name = tests;
 			productName = tests;
@@ -3287,11 +3288,6 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		4616A870177A733400367EF6 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = "gtest-framework";
-			targetProxy = 4616A86F177A733400367EF6 /* PBXContainerItemProxy */;
-		};
 		4616A8B2177A78D800367EF6 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 4616A87D177A76B300367EF6 /* protobuf */;
@@ -3301,6 +3297,11 @@
 			isa = PBXTargetDependency;
 			target = 4616A87D177A76B300367EF6 /* protobuf */;
 			targetProxy = 4616A8B4177A78E500367EF6 /* PBXContainerItemProxy */;
+		};
+		465BDAD81A26E87B00C45D82 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "gtest-framework";
+			targetProxy = 465BDAD71A26E87B00C45D82 /* PBXContainerItemProxy */;
 		};
 		468C109E178131450035A585 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;

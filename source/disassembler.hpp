@@ -12,16 +12,16 @@ namespace dcpu {
     Disassembler() {}
     virtual ~Disassembler() {}
 
-    void Disassemble(const Dcpu::Word *const program_begin,
-                     const Dcpu::Word *const program_end, std::ostream &out) const;
+    void Disassemble(const Word *const program_begin,
+                     const Word *const program_end, std::ostream &out) const;
 
   private:
-    char DetermineRegisterName(const Dcpu::Operand operand) const;
-    void OutputOperand(const Dcpu::Word *&i, const Dcpu::Operand operand,
+    char DetermineRegisterName(const Operand operand) const;
+    void OutputOperand(const Word *&i, const Operand operand,
                        const bool assignable, std::ostream &out) const;
     void OutputOperands(
-                        const Dcpu::Word *&i, const Dcpu::Operand operand_a,
-                        const Dcpu::Operand operand_b, std::ostream &out) const;
+                        const Word *&i, const Operand operand_a,
+                        const Operand operand_b, std::ostream &out) const;
   };
 
 }  // namespace dcpu
