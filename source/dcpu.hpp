@@ -163,48 +163,26 @@ namespace dcpu {
     Word *memory_end();
     const Word *memory_end() const;
 
-    Word &register_a();
-    Word register_a() const;
-
-    Word &register_b();
-    Word register_b() const;
-
-    Word &register_c();
-    Word register_c() const;
-
-    Word &register_x();
-    Word register_x() const;
-
-    Word &register_y();
-    Word register_y() const;
-
-    Word &register_z();
-    Word register_z() const;
-
-    Word &register_i();
-    Word register_i() const;
-
-    Word &register_j();
-    Word register_j() const;
-
-    Word &program_counter();
-    Word program_counter() const;
-
-    Word &stack_pointer();
-    Word stack_pointer() const;
-
-    Word &extra();
-    Word extra() const;
-
-    Word &interrupt_address();
-    Word interrupt_address() const;
-
     void Interrupt(const Word message);
 
     void ExecuteInstruction(const bool skip = false);
     void ExecuteInstructions(const unsigned long int count);
 
     void Reset();
+
+  public:
+    Word register_a;
+    Word register_b;
+    Word register_c;
+    Word register_x;
+    Word register_y;
+    Word register_z;
+    Word register_i;
+    Word register_j;
+    Word program_counter;
+    Word stack_pointer;
+    Word extra;
+    Word interrupt_address;
 
   private:
     Word *register_address(const Word register_index);
@@ -216,18 +194,6 @@ namespace dcpu {
 
   private:
     Word memory_[kMemorySize];
-    Word register_a_;
-    Word register_b_;
-    Word register_c_;
-    Word register_x_;
-    Word register_y_;
-    Word register_z_;
-    Word register_i_;
-    Word register_j_;
-    Word program_counter_;
-    Word stack_pointer_;
-    Word extra_;
-    Word interrupt_address_;
   };
 
 }  // namespace dcpu
