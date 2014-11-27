@@ -17,16 +17,20 @@ namespace dcpu {
 
   class Assembler {
   public:
-    Assembler() {}
-    virtual ~Assembler() {}
+    Assembler() = default;
+
+    virtual ~Assembler() = default;
 
     void Assemble(const proto::Program &program,
-                  const Word *const memory_begin,
-                  const Word *const memory_end) const;
+        const Word *const memory_begin, const Word *const memory_end) const;
+
   private:
     Word DetermineStatementSize(const proto::Statement &statement) const;
+
     Word DetermineDataSize(const proto::Data &data) const;
+
     Word DetermineInstructionSize(const proto::Instruction &instruction) const;
+
     Word DetermineOperandSize(const proto::Operand &operand) const;
   };
 

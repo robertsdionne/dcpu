@@ -10,8 +10,8 @@ namespace dcpu {
 
   Word Instruct(const BasicOpcode basic_opcode,
       const Operand operand_b, const Operand operand_a) {
-    return static_cast<int>(basic_opcode) | (
-        static_cast<int>(operand_a) << kBasicOperandShiftA) | (static_cast<int>(operand_b) << kBasicOperandShiftB);
+    return static_cast<int>(basic_opcode) | (static_cast<int>(operand_a)
+        << kBasicOperandShiftA) | (static_cast<int>(operand_b) << kBasicOperandShiftB);
   }
 
   Word Instruct(const AdvancedOpcode advanced_opcode, const Operand operand_a) {
@@ -70,8 +70,7 @@ namespace dcpu {
       Word operand_a_literal = 0;
       Word *const operand_a_address = GetOperandAddressOrLiteral(
           operand_a, assignable, operand_a_literal);
-      const Word operand_a_value = operand_a_address ?
-        *operand_a_address : operand_a_literal;
+      const Word operand_a_value = operand_a_address ? *operand_a_address : operand_a_literal;
       if (skip) {
         stack_pointer = stack_pointerbackup;
         return;
@@ -119,10 +118,8 @@ namespace dcpu {
       Word operand_b_literal = 0;
       Word *const operand_b_address = GetOperandAddressOrLiteral(
           operand_b, /* assignable */ true, operand_b_literal);
-      const Word operand_a_value = operand_a_address ?
-          *operand_a_address : operand_a_literal;
-      const Word operand_b_value = operand_b_address ?
-          *operand_b_address : operand_b_literal;
+      const Word operand_a_value = operand_a_address ? *operand_a_address : operand_a_literal;
+      const Word operand_b_value = operand_b_address ? *operand_b_address : operand_b_literal;
       if (skip) {
         stack_pointer = stack_pointerbackup;
         return;
@@ -158,8 +155,7 @@ namespace dcpu {
         case BasicOpcode::kDivide:
           if (operand_a_value) {
             extra = 0;
-            MaybeAssignResult(
-                operand_b_address, operand_b_value / operand_a_value);
+            MaybeAssignResult(operand_b_address, operand_b_value / operand_a_value);
           } else {
             extra = 1;
             MaybeAssignResult(operand_b_address, 0);
@@ -168,10 +164,9 @@ namespace dcpu {
         case BasicOpcode::kDivideSigned:
           if (operand_a_value) {
             extra = 0;
-            MaybeAssignResult(
-                operand_b_address, static_cast<Word>(
-                    static_cast<SignedWord>(operand_b_value) /
-                        static_cast<SignedWord>(operand_a_value)));
+            MaybeAssignResult(operand_b_address, static_cast<Word>(
+                static_cast<SignedWord>(operand_b_value) /
+                    static_cast<SignedWord>(operand_a_value)));
           } else {
             extra = 1;
             MaybeAssignResult(operand_b_address, 0);
@@ -195,8 +190,7 @@ namespace dcpu {
           MaybeAssignResult(operand_b_address, result);
           break;
         case BasicOpcode::kArithmeticShiftRight:
-          signed_result = static_cast<SignedWord>(operand_b_value)
-              >> operand_a_value;
+          signed_result = static_cast<SignedWord>(operand_b_value) >> operand_a_value;
           extra = operand_b_value << (0x10 - operand_a_value);
           MaybeAssignResult(operand_b_address, static_cast<Word>(signed_result));
           break;
