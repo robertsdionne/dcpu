@@ -2,8 +2,8 @@
 
 #include <iostream>
 #include <sstream>
-#include "dcpu.h"
-#include "disassembler.h"
+#include "dcpu.hpp"
+#include "disassembler.hpp"
 
 void Disassembler::Disassemble(const Dcpu::Word *const program_begin,
     const Dcpu::Word *const program_end, std::ostream &out) const {

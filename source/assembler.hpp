@@ -3,7 +3,7 @@
 #ifndef DCPU_ASSEMBLER_H_
 #define DCPU_ASSEMBLER_H_
 
-#include "dcpu.h"
+#include "dcpu.hpp"
 
 class Data;
 class Instruction;

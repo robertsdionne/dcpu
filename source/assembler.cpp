@@ -3,8 +3,8 @@
 #include <iostream>
 #include <map>
 #include <string>
-#include "assembler.h"
-#include "dcpu.h"
+#include "assembler.hpp"
+#include "dcpu.hpp"
 #include "generated/program.pb.h"
 
 void Assembler::Assemble(const Program &program,

@@ -7,16 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		4616A32A177A705B00367EF6 /* dcpu.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4616A31D177A705B00367EF6 /* dcpu.cc */; };
-		4616A32C177A705B00367EF6 /* disassembler.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4616A320177A705B00367EF6 /* disassembler.cc */; };
-		4616A32E177A705B00367EF6 /* main.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4616A324177A705B00367EF6 /* main.cc */; };
 		4616A86C177A727C00367EF6 /* libncurses.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4616A86B177A727C00367EF6 /* libncurses.dylib */; };
 		4616A871177A733B00367EF6 /* gtest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4616A831177A708600367EF6 /* gtest.framework */; };
 		4616A872177A735900367EF6 /* gtest_main.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4616A3B3177A708500367EF6 /* gtest_main.cc */; };
 		4616A875177A73AE00367EF6 /* disassembler_test.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4616A873177A73AE00367EF6 /* disassembler_test.cc */; };
 		4616A876177A73AE00367EF6 /* dcpu_test.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4616A874177A73AE00367EF6 /* dcpu_test.cc */; };
-		4616A878177A75CE00367EF6 /* dcpu.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4616A31D177A705B00367EF6 /* dcpu.cc */; };
-		4616A879177A75E900367EF6 /* disassembler.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4616A320177A705B00367EF6 /* disassembler.cc */; };
 		4616A887177A779100367EF6 /* descriptor.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4616A668177A708600367EF6 /* descriptor.cc */; };
 		4616A888177A779100367EF6 /* descriptor.pb.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4616A66A177A708600367EF6 /* descriptor.pb.cc */; };
 		4616A889177A779100367EF6 /* descriptor_database.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4616A66D177A708600367EF6 /* descriptor_database.cc */; };
@@ -82,7 +77,6 @@
 		4616A8D7177A793900367EF6 /* python_generator.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4616A65F177A708600367EF6 /* python_generator.cc */; };
 		4616A8D8177A793900367EF6 /* subprocess.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4616A662177A708600367EF6 /* subprocess.cc */; };
 		4616A8DA177A793900367EF6 /* zip_writer.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4616A666177A708600367EF6 /* zip_writer.cc */; };
-		4616A8DB177A7A0900367EF6 /* assembler.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4616A31B177A705B00367EF6 /* assembler.cc */; };
 		4661ADC2177C858800828482 /* parser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4661ADC0177C858800828482 /* parser.cpp */; };
 		468C10C2178136270035A585 /* program.pb.cc in Sources */ = {isa = PBXBuildFile; fileRef = 468C10C0178136270035A585 /* program.pb.cc */; };
 		468C10C51781365F0035A585 /* DcpuProgram.java in Sources */ = {isa = PBXBuildFile; fileRef = 468C10C41781365F0035A585 /* DcpuProgram.java */; };
@@ -92,6 +86,10 @@
 		46DAD35B1781405C007F7284 /* DcpuListener.java in Sources */ = {isa = PBXBuildFile; fileRef = 46DAD3551781405C007F7284 /* DcpuListener.java */; };
 		46DAD35C1781405C007F7284 /* DcpuParser.java in Sources */ = {isa = PBXBuildFile; fileRef = 46DAD3561781405C007F7284 /* DcpuParser.java */; };
 		46DAD35D1781405C007F7284 /* DcpuVisitor.java in Sources */ = {isa = PBXBuildFile; fileRef = 46DAD3571781405C007F7284 /* DcpuVisitor.java */; };
+		46DF0B7C1A26D8C500712A52 /* assembler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 46DF0B741A26D8C500712A52 /* assembler.cpp */; };
+		46DF0B7D1A26D8C500712A52 /* dcpu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 46DF0B761A26D8C500712A52 /* dcpu.cpp */; };
+		46DF0B7E1A26D8C500712A52 /* disassembler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 46DF0B781A26D8C500712A52 /* disassembler.cpp */; };
+		46DF0B7F1A26D8C500712A52 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 46DF0B7A1A26D8C500712A52 /* main.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -295,14 +293,7 @@
 		46087ECC177BE71000181E37 /* floppy-drive.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "floppy-drive.txt"; sourceTree = "<group>"; };
 		46087ECD177BE71000181E37 /* keyboard.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = keyboard.txt; sourceTree = "<group>"; };
 		46087ECE177BE71000181E37 /* monitor.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = monitor.txt; sourceTree = "<group>"; };
-		4616A31B177A705B00367EF6 /* assembler.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = assembler.cc; sourceTree = "<group>"; };
-		4616A31C177A705B00367EF6 /* assembler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = assembler.h; sourceTree = "<group>"; };
-		4616A31D177A705B00367EF6 /* dcpu.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = dcpu.cc; sourceTree = "<group>"; };
-		4616A31E177A705B00367EF6 /* dcpu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dcpu.h; sourceTree = "<group>"; };
-		4616A320177A705B00367EF6 /* disassembler.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = disassembler.cc; sourceTree = "<group>"; };
-		4616A321177A705B00367EF6 /* disassembler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = disassembler.h; sourceTree = "<group>"; };
 		4616A323177A705B00367EF6 /* main.ascii */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = main.ascii; sourceTree = "<group>"; };
-		4616A324177A705B00367EF6 /* main.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cc; sourceTree = "<group>"; };
 		4616A327177A705B00367EF6 /* program.proto */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = program.proto; sourceTree = "<group>"; };
 		4616A33F177A708500367EF6 /* aclocal.m4 */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = aclocal.m4; sourceTree = "<group>"; };
 		4616A341177A708500367EF6 /* config.guess */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = config.guess; sourceTree = "<group>"; };
@@ -1167,7 +1158,6 @@
 		4616A8A8177A78C500367EF6 /* protoc */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = protoc; sourceTree = BUILT_PRODUCTS_DIR; };
 		464D2BB9177A7AE400113BAC /* dcpu */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = dcpu; sourceTree = BUILT_PRODUCTS_DIR; };
 		4661ADC0177C858800828482 /* parser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = parser.cpp; sourceTree = "<group>"; };
-		4661ADC1177C858800828482 /* parser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = parser.h; sourceTree = "<group>"; };
 		46792156177FC9620035745B /* Dcpu.java */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.java; path = Dcpu.java; sourceTree = "<group>"; };
 		46792157177FC9620035745B /* Dcpu.g4 */ = {isa = PBXFileReference; lastKnownFileType = text; path = Dcpu.g4; sourceTree = "<group>"; };
 		468C10C0178136270035A585 /* program.pb.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = program.pb.cc; sourceTree = "<group>"; };
@@ -1181,6 +1171,14 @@
 		46DAD3551781405C007F7284 /* DcpuListener.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = DcpuListener.java; sourceTree = "<group>"; };
 		46DAD3561781405C007F7284 /* DcpuParser.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = DcpuParser.java; sourceTree = "<group>"; };
 		46DAD3571781405C007F7284 /* DcpuVisitor.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = DcpuVisitor.java; sourceTree = "<group>"; };
+		46DF0B741A26D8C500712A52 /* assembler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = assembler.cpp; sourceTree = "<group>"; };
+		46DF0B751A26D8C500712A52 /* assembler.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = assembler.hpp; sourceTree = "<group>"; };
+		46DF0B761A26D8C500712A52 /* dcpu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = dcpu.cpp; sourceTree = "<group>"; };
+		46DF0B771A26D8C500712A52 /* dcpu.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = dcpu.hpp; sourceTree = "<group>"; };
+		46DF0B781A26D8C500712A52 /* disassembler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = disassembler.cpp; sourceTree = "<group>"; };
+		46DF0B791A26D8C500712A52 /* disassembler.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = disassembler.hpp; sourceTree = "<group>"; };
+		46DF0B7A1A26D8C500712A52 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		46DF0B7B1A26D8C500712A52 /* parser.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = parser.hpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1247,17 +1245,17 @@
 		4616A31A177A705B00367EF6 /* source */ = {
 			isa = PBXGroup;
 			children = (
-				4616A31B177A705B00367EF6 /* assembler.cc */,
-				4616A31C177A705B00367EF6 /* assembler.h */,
-				4616A31D177A705B00367EF6 /* dcpu.cc */,
-				4616A31E177A705B00367EF6 /* dcpu.h */,
-				4616A320177A705B00367EF6 /* disassembler.cc */,
-				4616A321177A705B00367EF6 /* disassembler.h */,
+				46DF0B741A26D8C500712A52 /* assembler.cpp */,
+				46DF0B751A26D8C500712A52 /* assembler.hpp */,
+				46DF0B761A26D8C500712A52 /* dcpu.cpp */,
+				46DF0B771A26D8C500712A52 /* dcpu.hpp */,
+				46DF0B781A26D8C500712A52 /* disassembler.cpp */,
+				46DF0B791A26D8C500712A52 /* disassembler.hpp */,
+				46DF0B7A1A26D8C500712A52 /* main.cpp */,
+				46DF0B7B1A26D8C500712A52 /* parser.hpp */,
 				468C10BF178136270035A585 /* generated */,
 				4616A323177A705B00367EF6 /* main.ascii */,
-				4616A324177A705B00367EF6 /* main.cc */,
 				4661ADC0177C858800828482 /* parser.cpp */,
-				4661ADC1177C858800828482 /* parser.h */,
 				4616A327177A705B00367EF6 /* program.proto */,
 			);
 			path = source;
@@ -3185,19 +3183,19 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4616A8DB177A7A0900367EF6 /* assembler.cc in Sources */,
-				4616A32A177A705B00367EF6 /* dcpu.cc in Sources */,
-				4616A32C177A705B00367EF6 /* disassembler.cc in Sources */,
-				4616A32E177A705B00367EF6 /* main.cc in Sources */,
 				4661ADC2177C858800828482 /* parser.cpp in Sources */,
+				46DF0B7F1A26D8C500712A52 /* main.cpp in Sources */,
 				468C10C2178136270035A585 /* program.pb.cc in Sources */,
 				468C10C51781365F0035A585 /* DcpuProgram.java in Sources */,
 				46DAD3581781405C007F7284 /* DcpuBaseListener.java in Sources */,
+				46DF0B7D1A26D8C500712A52 /* dcpu.cpp in Sources */,
 				46DAD3591781405C007F7284 /* DcpuBaseVisitor.java in Sources */,
 				46DAD35A1781405C007F7284 /* DcpuLexer.java in Sources */,
 				46DAD35B1781405C007F7284 /* DcpuListener.java in Sources */,
 				46DAD35C1781405C007F7284 /* DcpuParser.java in Sources */,
+				46DF0B7C1A26D8C500712A52 /* assembler.cpp in Sources */,
 				46DAD35D1781405C007F7284 /* DcpuVisitor.java in Sources */,
+				46DF0B7E1A26D8C500712A52 /* disassembler.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3205,8 +3203,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4616A879177A75E900367EF6 /* disassembler.cc in Sources */,
-				4616A878177A75CE00367EF6 /* dcpu.cc in Sources */,
 				4616A872177A735900367EF6 /* gtest_main.cc in Sources */,
 				4616A875177A73AE00367EF6 /* disassembler_test.cc in Sources */,
 				4616A876177A73AE00367EF6 /* dcpu_test.cc in Sources */,

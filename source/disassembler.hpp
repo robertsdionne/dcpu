@@ -4,7 +4,7 @@
 #define DCPU_DISASSEMBLER_H_
 
 #include <iostream>
-#include "dcpu.h"
+#include "dcpu.hpp"
 
 class Disassembler {
 public:

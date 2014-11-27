@@ -3,8 +3,7 @@ build/
 java/dcpu/generated/
 libraries/protobuf-2.4.1/java/target/
 source/generated/
-.lock-waf_darwin_build
-.lock-waf_linux2_build
+xcshareddata/
 *.swp
 /Debug
 /.cproject

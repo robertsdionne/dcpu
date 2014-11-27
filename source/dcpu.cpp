@@ -1,7 +1,7 @@
 // Copyright 2012 Robert Scott Dionne. All rights reserved.
 
 #include <algorithm>
-#include "dcpu.h"
+#include "dcpu.hpp"
 
 const unsigned int Dcpu::kMemorySize;
 const Dcpu::Word Dcpu::kBasicOpcodeMask;

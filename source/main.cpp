@@ -6,8 +6,8 @@
 #include <ncurses.h>
 #include <string>
 
-#include "assembler.h"
-#include "dcpu.h"
+#include "assembler.hpp"
+#include "dcpu.hpp"
 
 const Dcpu::Word kVideoMemoryBegin = 0x8000;
 
