@@ -83,6 +83,8 @@
 		465BDAD41A26DDD700C45D82 /* program.pb.cc in Sources */ = {isa = PBXBuildFile; fileRef = 468C10C0178136270035A585 /* program.pb.cc */; };
 		465BDAD51A26DDE300C45D82 /* parser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4661ADC0177C858800828482 /* parser.cpp */; };
 		465BDAD61A26DE2300C45D82 /* libprotobuf.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4616A87E177A76B300367EF6 /* libprotobuf.a */; };
+		465BDADE1A26FA5D00C45D82 /* clock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 465BDADD1A26FA5D00C45D82 /* clock.cpp */; };
+		465BDADF1A26FA5D00C45D82 /* clock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 465BDADD1A26FA5D00C45D82 /* clock.cpp */; };
 		4661ADC2177C858800828482 /* parser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4661ADC0177C858800828482 /* parser.cpp */; };
 		468C10C2178136270035A585 /* program.pb.cc in Sources */ = {isa = PBXBuildFile; fileRef = 468C10C0178136270035A585 /* program.pb.cc */; };
 		46DF0B7C1A26D8C500712A52 /* assembler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 46DF0B741A26D8C500712A52 /* assembler.cpp */; };
@@ -1156,6 +1158,9 @@
 		4616A87E177A76B300367EF6 /* libprotobuf.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libprotobuf.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		4616A8A8177A78C500367EF6 /* protoc */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = protoc; sourceTree = BUILT_PRODUCTS_DIR; };
 		464D2BB9177A7AE400113BAC /* dcpu */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = dcpu; sourceTree = BUILT_PRODUCTS_DIR; };
+		465BDADD1A26FA5D00C45D82 /* clock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = clock.cpp; sourceTree = "<group>"; };
+		465BDAF91A26FA6800C45D82 /* clock.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = clock.hpp; sourceTree = "<group>"; };
+		465BDAFA1A26FA6800C45D82 /* hardware.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = hardware.hpp; sourceTree = "<group>"; };
 		4661ADC0177C858800828482 /* parser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = parser.cpp; sourceTree = "<group>"; };
 		46792156177FC9620035745B /* Dcpu.java */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.java; path = Dcpu.java; sourceTree = "<group>"; };
 		46792157177FC9620035745B /* Dcpu.g4 */ = {isa = PBXFileReference; lastKnownFileType = text; path = Dcpu.g4; sourceTree = "<group>"; };
@@ -1248,15 +1253,18 @@
 			children = (
 				46DF0B741A26D8C500712A52 /* assembler.cpp */,
 				46DF0B751A26D8C500712A52 /* assembler.hpp */,
+				465BDADD1A26FA5D00C45D82 /* clock.cpp */,
+				465BDAF91A26FA6800C45D82 /* clock.hpp */,
 				46DF0B761A26D8C500712A52 /* dcpu.cpp */,
 				46DF0B771A26D8C500712A52 /* dcpu.hpp */,
 				46DF0B781A26D8C500712A52 /* disassembler.cpp */,
 				46DF0B791A26D8C500712A52 /* disassembler.hpp */,
-				46DF0B7A1A26D8C500712A52 /* main.cpp */,
-				46DF0B7B1A26D8C500712A52 /* parser.hpp */,
 				468C10BF178136270035A585 /* generated */,
+				465BDAFA1A26FA6800C45D82 /* hardware.hpp */,
 				4616A323177A705B00367EF6 /* main.ascii */,
+				46DF0B7A1A26D8C500712A52 /* main.cpp */,
 				4661ADC0177C858800828482 /* parser.cpp */,
+				46DF0B7B1A26D8C500712A52 /* parser.hpp */,
 				4616A327177A705B00367EF6 /* program.proto */,
 			);
 			path = source;
@@ -3186,6 +3194,7 @@
 			files = (
 				4661ADC2177C858800828482 /* parser.cpp in Sources */,
 				46DF0B7F1A26D8C500712A52 /* main.cpp in Sources */,
+				465BDADE1A26FA5D00C45D82 /* clock.cpp in Sources */,
 				468C10C2178136270035A585 /* program.pb.cc in Sources */,
 				46DF0B7D1A26D8C500712A52 /* dcpu.cpp in Sources */,
 				46DF0B7C1A26D8C500712A52 /* assembler.cpp in Sources */,
@@ -3197,6 +3206,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				465BDADF1A26FA5D00C45D82 /* clock.cpp in Sources */,
 				465BDAD51A26DDE300C45D82 /* parser.cpp in Sources */,
 				465BDAD41A26DDD700C45D82 /* program.pb.cc in Sources */,
 				465BDAB81A26DDCC00C45D82 /* assembler.cpp in Sources */,
