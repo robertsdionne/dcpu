@@ -77,15 +77,14 @@
 		4616A8D7177A793900367EF6 /* python_generator.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4616A65F177A708600367EF6 /* python_generator.cc */; };
 		4616A8D8177A793900367EF6 /* subprocess.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4616A662177A708600367EF6 /* subprocess.cc */; };
 		4616A8DA177A793900367EF6 /* zip_writer.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4616A666177A708600367EF6 /* zip_writer.cc */; };
+		465BDAB81A26DDCC00C45D82 /* assembler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 46DF0B741A26D8C500712A52 /* assembler.cpp */; };
+		465BDAB91A26DDCC00C45D82 /* dcpu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 46DF0B761A26D8C500712A52 /* dcpu.cpp */; };
+		465BDABA1A26DDCC00C45D82 /* disassembler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 46DF0B781A26D8C500712A52 /* disassembler.cpp */; };
+		465BDAD41A26DDD700C45D82 /* program.pb.cc in Sources */ = {isa = PBXBuildFile; fileRef = 468C10C0178136270035A585 /* program.pb.cc */; };
+		465BDAD51A26DDE300C45D82 /* parser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4661ADC0177C858800828482 /* parser.cpp */; };
+		465BDAD61A26DE2300C45D82 /* libprotobuf.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4616A87E177A76B300367EF6 /* libprotobuf.a */; };
 		4661ADC2177C858800828482 /* parser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4661ADC0177C858800828482 /* parser.cpp */; };
 		468C10C2178136270035A585 /* program.pb.cc in Sources */ = {isa = PBXBuildFile; fileRef = 468C10C0178136270035A585 /* program.pb.cc */; };
-		468C10C51781365F0035A585 /* DcpuProgram.java in Sources */ = {isa = PBXBuildFile; fileRef = 468C10C41781365F0035A585 /* DcpuProgram.java */; };
-		46DAD3581781405C007F7284 /* DcpuBaseListener.java in Sources */ = {isa = PBXBuildFile; fileRef = 46DAD3511781405C007F7284 /* DcpuBaseListener.java */; };
-		46DAD3591781405C007F7284 /* DcpuBaseVisitor.java in Sources */ = {isa = PBXBuildFile; fileRef = 46DAD3521781405C007F7284 /* DcpuBaseVisitor.java */; };
-		46DAD35A1781405C007F7284 /* DcpuLexer.java in Sources */ = {isa = PBXBuildFile; fileRef = 46DAD3531781405C007F7284 /* DcpuLexer.java */; };
-		46DAD35B1781405C007F7284 /* DcpuListener.java in Sources */ = {isa = PBXBuildFile; fileRef = 46DAD3551781405C007F7284 /* DcpuListener.java */; };
-		46DAD35C1781405C007F7284 /* DcpuParser.java in Sources */ = {isa = PBXBuildFile; fileRef = 46DAD3561781405C007F7284 /* DcpuParser.java */; };
-		46DAD35D1781405C007F7284 /* DcpuVisitor.java in Sources */ = {isa = PBXBuildFile; fileRef = 46DAD3571781405C007F7284 /* DcpuVisitor.java */; };
 		46DF0B7C1A26D8C500712A52 /* assembler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 46DF0B741A26D8C500712A52 /* assembler.cpp */; };
 		46DF0B7D1A26D8C500712A52 /* dcpu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 46DF0B761A26D8C500712A52 /* dcpu.cpp */; };
 		46DF0B7E1A26D8C500712A52 /* disassembler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 46DF0B781A26D8C500712A52 /* disassembler.cpp */; };
@@ -1195,6 +1194,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				465BDAD61A26DE2300C45D82 /* libprotobuf.a in Frameworks */,
 				4616A871177A733B00367EF6 /* gtest.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -3186,15 +3186,8 @@
 				4661ADC2177C858800828482 /* parser.cpp in Sources */,
 				46DF0B7F1A26D8C500712A52 /* main.cpp in Sources */,
 				468C10C2178136270035A585 /* program.pb.cc in Sources */,
-				468C10C51781365F0035A585 /* DcpuProgram.java in Sources */,
-				46DAD3581781405C007F7284 /* DcpuBaseListener.java in Sources */,
 				46DF0B7D1A26D8C500712A52 /* dcpu.cpp in Sources */,
-				46DAD3591781405C007F7284 /* DcpuBaseVisitor.java in Sources */,
-				46DAD35A1781405C007F7284 /* DcpuLexer.java in Sources */,
-				46DAD35B1781405C007F7284 /* DcpuListener.java in Sources */,
-				46DAD35C1781405C007F7284 /* DcpuParser.java in Sources */,
 				46DF0B7C1A26D8C500712A52 /* assembler.cpp in Sources */,
-				46DAD35D1781405C007F7284 /* DcpuVisitor.java in Sources */,
 				46DF0B7E1A26D8C500712A52 /* disassembler.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -3203,6 +3196,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				465BDAD51A26DDE300C45D82 /* parser.cpp in Sources */,
+				465BDAD41A26DDD700C45D82 /* program.pb.cc in Sources */,
+				465BDAB81A26DDCC00C45D82 /* assembler.cpp in Sources */,
+				465BDAB91A26DDCC00C45D82 /* dcpu.cpp in Sources */,
+				465BDABA1A26DDCC00C45D82 /* disassembler.cpp in Sources */,
 				4616A872177A735900367EF6 /* gtest_main.cc in Sources */,
 				4616A875177A73AE00367EF6 /* disassembler_test.cc in Sources */,
 				4616A876177A73AE00367EF6 /* dcpu_test.cc in Sources */,

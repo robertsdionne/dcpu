@@ -3,8 +3,11 @@
 #include <algorithm>
 #include <sstream>
 #include <gtest/gtest.h>
-#include "dcpu.h"
-#include "disassembler.h"
+
+#include "dcpu.hpp"
+#include "disassembler.hpp"
+
+using namespace dcpu;
 
 TEST(DisassemblerTest, Disassemble) {
   Disassembler disassembler;

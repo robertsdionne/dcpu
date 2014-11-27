@@ -3,7 +3,9 @@
 #include <algorithm>
 #include <gtest/gtest.h>
 
-#include "dcpu.h"
+#include "dcpu.hpp"
+
+using namespace dcpu;
 
 TEST(DcpuTest, DefaultConstructor) {
   Dcpu dcpu;
