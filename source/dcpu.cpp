@@ -4,16 +4,6 @@
 
 namespace dcpu {
 
-  const unsigned int Dcpu::kMemorySize;
-  const Dcpu::Word Dcpu::kBasicOpcodeMask;
-  const Dcpu::Word Dcpu::kAdvancedOpcodeMask;
-  const Dcpu::Word Dcpu::kBasicOperandMaskA;
-  const Dcpu::Word Dcpu::kBasicOperandMaskB;
-  const Dcpu::Word Dcpu::kBasicOperandShiftA;
-  const Dcpu::Word Dcpu::kBasicOperandShiftB;
-  const Dcpu::Word Dcpu::kAdvancedOperandMaskA;
-  const Dcpu::Word Dcpu::kAdvancedOperandShiftA;
-
   Dcpu::Word Dcpu::Noop() {
     return Dcpu::Instruct(BasicOpcode::kSet, Operand::kRegisterA, Operand::kRegisterA);
   }
@@ -28,14 +18,6 @@ namespace dcpu {
       const Dcpu::AdvancedOpcode advanced_opcode, const Dcpu::Operand operand_a) {
     return (static_cast<int>(advanced_opcode) << kAdvancedOpcodeShift) | (
         static_cast<int>(operand_a) << kAdvancedOperandShiftA);
-  }
-
-  Dcpu::Dcpu()
-    : register_a(0), register_b(0), register_c(0), register_x(0),
-      register_y(0), register_z(0), register_i(0), register_j(0),
-      program_counter(0), stack_pointer(0), extra(0), interrupt_address(0)
-  {
-    std::fill(memory_begin(), memory_end(), 0);
   }
 
   Dcpu::Word *Dcpu::address(const Dcpu::Word address_value) {

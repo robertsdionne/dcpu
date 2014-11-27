@@ -7,20 +7,20 @@ namespace dcpu {
 
   class Dcpu {
   public:
-    typedef unsigned short Word;
-    typedef signed short SignedWord;
+    using Word = unsigned short;
+    using SignedWord = signed short;
 
     /**
      * Memory landmarks.
      */
-    static const unsigned int kMemorySize = 0x10000;
+    static constexpr unsigned int kMemorySize = 0x10000;
 
     /**
      * Opcodes.
      */
-    static const Word kBasicOpcodeMask = 0x001F;
-    static const Word kAdvancedOpcodeMask = 0x03E0;
-    static const Word kAdvancedOpcodeShift = 0x5;
+    static constexpr Word kBasicOpcodeMask = 0x001F;
+    static constexpr Word kAdvancedOpcodeMask = 0x03E0;
+    static constexpr Word kAdvancedOpcodeShift = 0x5;
 
     enum class BasicOpcode {
       kBasicReserved = 0x00,
@@ -69,12 +69,12 @@ namespace dcpu {
     /**
      * Operands.
      */
-    static const Word kBasicOperandMaskA = 0xFC00;
-    static const Word kBasicOperandMaskB = 0x03E0;
-    static const Word kBasicOperandShiftA = 0xA;
-    static const Word kBasicOperandShiftB = 0x5;
-    static const Word kAdvancedOperandMaskA = 0xFC00;
-    static const Word kAdvancedOperandShiftA = 0xA;
+    static constexpr Word kBasicOperandMaskA = 0xFC00;
+    static constexpr Word kBasicOperandMaskB = 0x03E0;
+    static constexpr Word kBasicOperandShiftA = 0xA;
+    static constexpr Word kBasicOperandShiftB = 0x5;
+    static constexpr Word kAdvancedOperandMaskA = 0xFC00;
+    static constexpr Word kAdvancedOperandShiftA = 0xA;
 
     enum class Operand {
       kRegisterA = 0x00,
@@ -147,42 +147,50 @@ namespace dcpu {
 
   public:
     static Word Noop();
+
     static Word Instruct(const BasicOpcode basic_opcode,
                          const Operand operand_a, const Operand operand_b);
+
     static Word Instruct(
                          const AdvancedOpcode advanced_opcode, const Operand operand_a);
 
-    Dcpu();
-    virtual ~Dcpu() {}
+    Dcpu() = default;
+
+    virtual ~Dcpu() = default;
 
     Word *address(const Word address_value);
+
     const Word *address(const Word address_value) const;
 
     Word *memory_begin();
+
     const Word *memory_begin() const;
+
     Word *memory_end();
+
     const Word *memory_end() const;
 
     void Interrupt(const Word message);
 
     void ExecuteInstruction(const bool skip = false);
+
     void ExecuteInstructions(const unsigned long int count);
 
     void Reset();
 
   public:
-    Word register_a;
-    Word register_b;
-    Word register_c;
-    Word register_x;
-    Word register_y;
-    Word register_z;
-    Word register_i;
-    Word register_j;
-    Word program_counter;
-    Word stack_pointer;
-    Word extra;
-    Word interrupt_address;
+    Word register_a = 0;
+    Word register_b = 0;
+    Word register_c = 0;
+    Word register_x = 0;
+    Word register_y = 0;
+    Word register_z = 0;
+    Word register_i = 0;
+    Word register_j = 0;
+    Word program_counter = 0;
+    Word stack_pointer = 0;
+    Word extra = 0;
+    Word interrupt_address = 0;
 
   private:
     Word *register_address(const Word register_index);
@@ -193,7 +201,7 @@ namespace dcpu {
     void MaybeAssignResult(Word *const slot, const unsigned int result);
 
   private:
-    Word memory_[kMemorySize];
+    Word memory_[kMemorySize] = {};
   };
 
 }  // namespace dcpu
