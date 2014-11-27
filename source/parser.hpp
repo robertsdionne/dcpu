@@ -1,9 +1,9 @@
-#ifndef DCPU_PARSER_H_
-#define DCPU_PARSER_H_
+#ifndef DCPU_PARSER_HPP_
+#define DCPU_PARSER_HPP_
 
 class Parser {
 public:
   
 };
 
-#endif  // DCPU_PARSER_H_
+#endif  // DCPU_PARSER_HPP_

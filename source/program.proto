@@ -1,4 +1,4 @@
-// Copyright 2012 Robert Scott Dionne. All rights reserved.
+package dcpu;
 
 option java_package = "dcpu.generated";
 

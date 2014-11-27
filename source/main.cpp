@@ -1,5 +1,3 @@
-// Copyright 2012 Robert Scott Dionne. All rights reserved.
-
 #include <algorithm>
 #include <fstream>
 #include <iostream>
@@ -8,6 +6,8 @@
 
 #include "assembler.hpp"
 #include "dcpu.hpp"
+
+using namespace dcpu;
 
 const Dcpu::Word kVideoMemoryBegin = 0x8000;
 
