@@ -13,9 +13,8 @@ using namespace dcpu;
 constexpr Word kVideoMemoryBegin = 0x8000;
 
 int main(int argument_count, char *arguments[]) {
-  Clock clock;
   Dcpu cpu;
-  clock.Connect(&cpu);
+  Clock clock;
   cpu.Connect(&clock);
   Assembler assembler;
   initscr();

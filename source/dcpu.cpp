@@ -46,6 +46,7 @@ namespace dcpu {
 
   void Dcpu::Connect(Hardware *hardware) {
     this->hardware.push_back(hardware);
+    hardware->Connect(this);
   }
 
   void Dcpu::Interrupt(const Word message) {
