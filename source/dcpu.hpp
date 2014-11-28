@@ -1,9 +1,13 @@
 #ifndef DCPU_DCPU_HPP_
 #define DCPU_DCPU_HPP_
 
+#include <vector>
+
 #include "generated/program.pb.h"
 
 namespace dcpu {
+
+  class Hardware;
 
   using Word = unsigned short;
   using SignedWord = signed short;
@@ -145,7 +149,7 @@ namespace dcpu {
 
   Word Noop();
 
-  Word Instruct(const BasicOpcode basic_opcode, const Operand operand_a, const Operand operand_b);
+  Word Instruct(const BasicOpcode basic_opcode, const Operand operand_b, const Operand operand_a);
 
   Word Instruct(const AdvancedOpcode advanced_opcode, const Operand operand_a);
 
@@ -166,6 +170,8 @@ namespace dcpu {
     Word *memory_end();
 
     const Word *memory_end() const;
+
+    void Connect(Hardware *hardware);
 
     void Interrupt(const Word message);
 
@@ -196,9 +202,11 @@ namespace dcpu {
     Word stack_pointer = 0;
     Word extra = 0;
     Word interrupt_address = 0;
+    bool queue_interrupts = false;
 
   private:
     Word memory_[kMemorySize] = {};
+    std::vector<Hardware *> hardware{};
   };
 
 }  // namespace dcpu

@@ -22,6 +22,18 @@ namespace dcpu {
     this->dcpu = dcpu;
   }
 
+  unsigned int Clock::GetId() const {
+    return kId;
+  }
+
+  unsigned int Clock::GetManufacturerId() const {
+    return kManufacturerId;
+  }
+
+  Word Clock::GetVersion() const {
+    return kVersion;
+  }
+
   void Clock::HandleHardwareInterrupt() {
     if (dcpu) {
       switch (dcpu->register_a) {

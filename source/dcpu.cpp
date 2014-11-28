@@ -1,6 +1,7 @@
 #include <algorithm>
 
 #include "dcpu.hpp"
+#include "hardware.hpp"
 
 namespace dcpu {
 
@@ -43,8 +44,14 @@ namespace dcpu {
     return memory_begin() + kMemorySize;
   }
 
+  void Dcpu::Connect(Hardware *hardware) {
+    this->hardware.push_back(hardware);
+  }
+
   void Dcpu::Interrupt(const Word message) {
-    if (interrupt_address) {
+    if (!queue_interrupts && interrupt_address) {
+      // TODO(robertsdionne): turn on interrupt queueing
+      queue_interrupts = true;
       stack_pointer -= 1;
       *address(stack_pointer) = program_counter;
       stack_pointer -= 1;
@@ -78,34 +85,63 @@ namespace dcpu {
       switch (advanced_opcode) {
         case AdvancedOpcode::kAdvancedReserved:
           break;
-        case AdvancedOpcode::kJumpSubRoutine:
+        case AdvancedOpcode::kJumpSubRoutine: {
           stack_pointer -= 1;
           *address(stack_pointer) = program_counter;
           program_counter = operand_a_value;
           break;
-        case AdvancedOpcode::kInterruptTrigger:
+        }
+        case AdvancedOpcode::kInterruptTrigger: {
           Interrupt(operand_a_value);
           break;
-        case AdvancedOpcode::kInterruptAddressGet:
+        }
+        case AdvancedOpcode::kInterruptAddressGet: {
           MaybeAssignResult(operand_a_address, interrupt_address);
           break;
-        case AdvancedOpcode::kInterruptAddressSet:
+        }
+        case AdvancedOpcode::kInterruptAddressSet: {
           interrupt_address = operand_a_value;
           break;
-        case AdvancedOpcode::kHardwareNumberConnected:
-          MaybeAssignResult(operand_a_address, 0);
+        }
+        case AdvancedOpcode::kReturnFromInterrupt: {
+          // TODO(robertsdionne): disable interrupt queueing
+          queue_interrupts = false;
+          register_a = *address(stack_pointer);
+          stack_pointer += 1;
+          program_counter = *address(stack_pointer);
+          stack_pointer += 1;
           break;
-        case AdvancedOpcode::kHardwareQuery:
-          register_a = 0;
-          register_b = 0;
-          register_c = 0;
-          register_x = 0;
-          register_y = 0;
+        }
+        case AdvancedOpcode::kHardwareNumberConnected: {
+          MaybeAssignResult(operand_a_address, static_cast<Word>(hardware.size()));
           break;
-        case AdvancedOpcode::kHardwareInterrupt:
+        }
+        case AdvancedOpcode::kHardwareQuery: {
+          if (operand_a_value < hardware.size()) {
+            auto hardware_id = hardware[operand_a_value]->GetId();
+            auto hardware_version = hardware[operand_a_value]->GetVersion();
+            auto manufacturer_id = hardware[operand_a_value]->GetManufacturerId();
+            register_a = hardware_id;
+            register_b = hardware_id >> 16;
+            register_c = hardware_version;
+            register_x = manufacturer_id;
+            register_y = manufacturer_id >> 16;
+          } else {
+            register_a = 0;
+            register_b = 0;
+            register_c = 0;
+            register_x = 0;
+            register_y = 0;
+          }
           break;
-        default:
+        }
+        case AdvancedOpcode::kHardwareInterrupt: {
+          if (operand_a_value < hardware.size()) {
+            hardware[operand_a_value]->HandleHardwareInterrupt();
+          }
           break;
+        }
+        default: break;
       }
     } else {
       const Operand operand_a = static_cast<Operand>(
@@ -241,8 +277,7 @@ namespace dcpu {
             ExecuteInstruction(/* skip */ true);
           }
           break;
-        default:
-          break;
+        default: break;
       }
     }
   }
@@ -254,7 +289,6 @@ namespace dcpu {
   }
 
   void Dcpu::Reset() {
-    std::fill(memory_begin(), memory_end(), 0);
     register_a = register_b = register_c = 0;
     register_x = register_y = register_z = 0;
     register_i = register_j = 0;
@@ -262,6 +296,8 @@ namespace dcpu {
     stack_pointer = 0;
     extra = 0;
     interrupt_address = 0;
+    std::fill(memory_begin(), memory_end(), 0);
+    hardware.clear();
   }
 
   Word *Dcpu::register_address(const Word register_index) {

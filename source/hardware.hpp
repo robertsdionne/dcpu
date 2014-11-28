@@ -3,6 +3,8 @@
 
 namespace dcpu {
 
+  using Word = unsigned short;
+
   class Dcpu;
 
   class Hardware {
@@ -14,6 +16,12 @@ namespace dcpu {
     virtual void Connect(Dcpu *dcpu) = 0;
 
     virtual void Execute() = 0;
+
+    virtual unsigned int GetId() const = 0;
+
+    virtual unsigned int GetManufacturerId() const = 0;
+
+    virtual Word GetVersion() const = 0;
 
     virtual void HandleHardwareInterrupt() = 0;
   };
