@@ -4,11 +4,12 @@
 #include <ncurses.h>
 #include <string>
 
-#include "assembler.hpp"
 #include "clock.hpp"
 #include "dcpu.hpp"
+#include "dsl.hpp"
 
 using namespace dcpu;
+using namespace dcpu::dsl;
 
 constexpr Word kVideoMemoryBegin = 0x8000;
 
@@ -16,61 +17,43 @@ int main(int argument_count, char *arguments[]) {
   Dcpu cpu;
   Clock clock;
   cpu.Connect(&clock);
-  Assembler assembler;
-  initscr();
-  Word program[] = {
-    Instruct(AdvancedOpcode::kInterruptAddressSet, Operand::kLiteral),
-    0x000B,
-    Instruct(BasicOpcode::kSet, Operand::kRegisterA, Operand::k0),
-    Instruct(BasicOpcode::kSet, Operand::kRegisterB, Operand::kLiteral),
-    0x003C,
-    Instruct(AdvancedOpcode::kHardwareInterrupt, Operand::k0),
-    Instruct(BasicOpcode::kSet, Operand::kRegisterA, Operand::k2),
-    Instruct(BasicOpcode::kSet, Operand::kRegisterB, Operand::k13),
-    Instruct(AdvancedOpcode::kHardwareInterrupt, Operand::k0),
-    Instruct(BasicOpcode::kSubtract, Operand::kProgramCounter, Operand::k1),
-    // state = 0x000A
-    0x0000,
-    // handler = 0x000B
-    Instruct(BasicOpcode::kSet, Operand::kRegisterI, Operand::k0),
-    Instruct(BasicOpcode::kIfEqual, Operand::kLocation, Operand::k0),
-    0x000A,
-    Instruct(BasicOpcode::kSet, Operand::kProgramCounter, Operand::kLiteral),
-    0x001B,
-    // tock = 0x0010
-    Instruct(BasicOpcode::kSet, Operand::kLocation, Operand::k0),
-    0x000A,
-    Instruct(BasicOpcode::kIfEqual, Operand::kLocationOffsetByRegisterI, Operand::k0),
-    0x002B,
-    Instruct(AdvancedOpcode::kReturnFromInterrupt, Operand::k0),
-    Instruct(BasicOpcode::kSet,
-        Operand::kLocationOffsetByRegisterI, Operand::kLocationOffsetByRegisterI),
-    0x002B,
-    kVideoMemoryBegin,
-    Instruct(BasicOpcode::kAdd, Operand::kRegisterI, Operand::k1),
-    Instruct(BasicOpcode::kSet, Operand::kProgramCounter, Operand::kLiteral),
-    0x0010,
-    // tick = 0x001B
-    Instruct(BasicOpcode::kSet, Operand::kLocation, Operand::k1),
-    0x000A,
-    Instruct(BasicOpcode::kIfEqual, Operand::kLocationOffsetByRegisterI, Operand::k0),
-    0x0026,
-    Instruct(AdvancedOpcode::kReturnFromInterrupt, Operand::k0),
-    Instruct(BasicOpcode::kSet,
-        Operand::kLocationOffsetByRegisterI, Operand::kLocationOffsetByRegisterI),
-    0x0026,
-    kVideoMemoryBegin,
-    Instruct(BasicOpcode::kAdd, Operand::kRegisterI, Operand::k1),
-    Instruct(BasicOpcode::kSet, Operand::kProgramCounter, Operand::kLiteral),
-    0x001B,
-    // tick_data = 0x0026
-    't', 'i', 'c', 'k', 0,
-    // tock_data = 0x002B
-    't', 'o', 'c', 'k', 0
-  };
 
-  std::copy(program,
-            program + sizeof(program)/sizeof(Word), cpu.memory_begin());
+  Dsl d;
+  d.ias("handler")
+    .set(a(), 0)
+    .set(b(), 60)
+    .hwi(0)
+    .set(a(), 2)
+    .set(b(), 13)
+    .hwi(0)
+    .sub(pc(), 1)
+    .label("state")
+      .data(0)
+    .label("handler")
+      .set(i(), 0)
+      .set(j(), 0)
+      .ife(d["state"], 0)
+        .set(pc(), "tick")
+    .label("tock")
+      .set(d["state"], 0)
+      .ife(d["tock_data" + j()], 0)
+        .rfi()
+      .sti(d[kVideoMemoryBegin + i()], d["tock_data" + j()])
+      .set(pc(), "tock")
+    .label("tick")
+      .set(d["state"], 1)
+      .ife(d["tick_data" + j()], 0)
+        .rfi()
+      .sti(d[kVideoMemoryBegin + i()], d["tick_data" + j()])
+      .set(pc(), "tick")
+    .label("tick_data")
+      .data("tick")
+    .label("tock_data")
+      .data("tock")
+    .Assemble(cpu.memory_begin(), cpu.memory_end());
+
+  return 0;
+
   bool quit = false;
   while (!quit) {
     move(0, 0);

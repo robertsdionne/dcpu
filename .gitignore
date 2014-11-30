@@ -4,6 +4,7 @@ java/dcpu/generated/
 libraries/protobuf-2.4.1/java/target/
 source/generated/
 xcshareddata/
+xcuserdata/
 *.swp
 /Debug
 /.cproject

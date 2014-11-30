@@ -39,8 +39,8 @@ namespace dcpu {
     kIfUnder = proto::Opcode_Basic_IFU,
     kAddWithCarry = proto::Opcode_Basic_ADX,
     kSubtractWithCarry = proto::Opcode_Basic_SBX,
-    kSetAndIncrement = proto::Opcode_Basic_STI,
-    kSetAndDecrement = proto::Opcode_Basic_STD
+    kSetThenIncrement = proto::Opcode_Basic_STI,
+    kSetThenDecrement = proto::Opcode_Basic_STD
   };
 
   enum class AdvancedOpcode {

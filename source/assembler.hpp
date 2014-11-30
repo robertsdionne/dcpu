@@ -27,8 +27,6 @@ namespace dcpu {
   private:
     Word DetermineStatementSize(const proto::Statement &statement) const;
 
-    Word DetermineDataSize(const proto::Data &data) const;
-
     Word DetermineInstructionSize(const proto::Instruction &instruction) const;
 
     Word DetermineOperandSize(const proto::Operand &operand) const;

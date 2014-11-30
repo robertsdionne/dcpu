@@ -113,6 +113,7 @@ namespace dcpu {
           stack_pointer += 1;
           break;
         }
+        // TODO(robertsdionne): kInterruptAddToQueue
         case AdvancedOpcode::kHardwareNumberConnected: {
           MaybeAssignResult(operand_a_address, static_cast<Word>(hardware.size()));
           break;
@@ -164,32 +165,38 @@ namespace dcpu {
       unsigned int result;
       signed int signed_result;
       switch (basic_opcode) {
-        case BasicOpcode::kBasicReserved:
+        case BasicOpcode::kBasicReserved: {
           break;
-        case BasicOpcode::kSet:
+        }
+        case BasicOpcode::kSet: {
           MaybeAssignResult(operand_b_address, operand_a_value);
           break;
-        case BasicOpcode::kAdd:
+        }
+        case BasicOpcode::kAdd: {
           result = operand_b_value + operand_a_value;
           extra = result >> 16;
           MaybeAssignResult(operand_b_address, result);
           break;
-        case BasicOpcode::kSubtract:
+        }
+        case BasicOpcode::kSubtract: {
           extra = operand_b_value < operand_a_value;
           MaybeAssignResult(operand_b_address, operand_b_value - operand_a_value);
           break;
-        case BasicOpcode::kMultiply:
+        }
+        case BasicOpcode::kMultiply: {
           result = operand_b_value * operand_a_value;
           extra = result >> 16;
           MaybeAssignResult(operand_b_address, result);
           break;
-        case BasicOpcode::kMultiplySigned:
+        }
+        case BasicOpcode::kMultiplySigned: {
           signed_result = static_cast<SignedWord>(operand_b_value) *
               static_cast<SignedWord>(operand_a_value);
           extra = signed_result >> 16;
           MaybeAssignResult(operand_b_address, static_cast<Word>(signed_result));
           break;
-        case BasicOpcode::kDivide:
+        }
+        case BasicOpcode::kDivide: {
           if (operand_a_value) {
             extra = 0;
             MaybeAssignResult(operand_b_address, operand_b_value / operand_a_value);
@@ -198,7 +205,8 @@ namespace dcpu {
             MaybeAssignResult(operand_b_address, 0);
           }
           break;
-        case BasicOpcode::kDivideSigned:
+        }
+        case BasicOpcode::kDivideSigned: {
           if (operand_a_value) {
             extra = 0;
             MaybeAssignResult(operand_b_address, static_cast<Word>(
@@ -209,75 +217,106 @@ namespace dcpu {
             MaybeAssignResult(operand_b_address, 0);
           }
           break;
-        case BasicOpcode::kModulo:
+        }
+        case BasicOpcode::kModulo: {
           MaybeAssignResult(operand_b_address, operand_b_value % operand_a_value);
           break;
-        case BasicOpcode::kBinaryAnd:
+        }
+        // TODO(robertsdionne): kModuloSigned
+        case BasicOpcode::kBinaryAnd: {
           MaybeAssignResult(operand_b_address, operand_b_value & operand_a_value);
           break;
-        case BasicOpcode::kBinaryOr:
+        }
+        case BasicOpcode::kBinaryOr: {
           MaybeAssignResult(operand_b_address, operand_b_value | operand_a_value);
           break;
-        case BasicOpcode::kBinaryExclusiveOr:
+        }
+        case BasicOpcode::kBinaryExclusiveOr: {
           MaybeAssignResult(operand_b_address, operand_b_value ^ operand_a_value);
           break;
-        case BasicOpcode::kShiftRight:
+        }
+        case BasicOpcode::kShiftRight: {
           result = operand_b_value >> operand_a_value;
           extra = operand_b_value << (0x10 - operand_a_value);
           MaybeAssignResult(operand_b_address, result);
           break;
-        case BasicOpcode::kArithmeticShiftRight:
+        }
+        case BasicOpcode::kArithmeticShiftRight: {
           signed_result = static_cast<SignedWord>(operand_b_value) >> operand_a_value;
           extra = operand_b_value << (0x10 - operand_a_value);
           MaybeAssignResult(operand_b_address, static_cast<Word>(signed_result));
           break;
-        case BasicOpcode::kShiftLeft:
+        }
+        case BasicOpcode::kShiftLeft: {
           result = operand_b_value << operand_a_value;
           extra = result >> 16;
           MaybeAssignResult(operand_b_address, result);
           break;
-        case BasicOpcode::kIfBitSet:
+        }
+        case BasicOpcode::kIfBitSet: {
           if ((operand_b_value & operand_a_value) == 0) {
             ExecuteInstruction(/* skip */ true);
           }
           break;
-        case BasicOpcode::kIfClear:
+        }
+        case BasicOpcode::kIfClear: {
           if ((operand_b_value & operand_a_value) != 0) {
             ExecuteInstruction(/* skip */ true);
           }
           break;
-        case BasicOpcode::kIfEqual:
+        }
+        case BasicOpcode::kIfEqual: {
           if (operand_b_value != operand_a_value) {
             ExecuteInstruction(/* skip */ true);
           }
           break;
-        case BasicOpcode::kIfNotEqual:
+        }
+        case BasicOpcode::kIfNotEqual: {
           if (operand_b_value == operand_a_value) {
             ExecuteInstruction(/* skip */ true);
           }
           break;
-        case BasicOpcode::kIfGreaterThan:
+        }
+        case BasicOpcode::kIfGreaterThan: {
           if (operand_b_value <= operand_a_value) {
             ExecuteInstruction(/* skip */ true);
           }
           break;
-        case BasicOpcode::kIfAbove:
+        }
+        case BasicOpcode::kIfAbove: {
           if (static_cast<SignedWord>(operand_b_value)
               <= static_cast<SignedWord>(operand_a_value)) {
             ExecuteInstruction(/* skip */ true);
           }
           break;
-        case BasicOpcode::kIfLessThan:
+        }
+        case BasicOpcode::kIfLessThan: {
           if (operand_b_value >= operand_a_value) {
             ExecuteInstruction(/* skip */ true);
           }
           break;
-        case BasicOpcode::kIfUnder:
+        }
+        case BasicOpcode::kIfUnder: {
           if (static_cast<SignedWord>(operand_b_value)
               >= static_cast<SignedWord>(operand_a_value)) {
             ExecuteInstruction(/* skip */ true);
           }
           break;
+        }
+        // TODO(robertsdionne): kAddWithCarry
+        // TODO(robertsdionne): kSubtractWithCarry
+        case BasicOpcode::kSetThenIncrement: {
+          MaybeAssignResult(operand_b_address, operand_a_value);
+          register_i += 1;
+          register_j += 1;
+          break;
+        }
+        case BasicOpcode::kSetThenDecrement: {
+          MaybeAssignResult(operand_b_address, operand_a_value);
+          register_i -= 1;
+          register_j -= 1;
+          break;
+        }
         default: break;
       }
     }

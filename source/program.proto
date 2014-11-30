@@ -20,7 +20,7 @@ message Statement {
   optional Type type = 1;
   optional Instruction instruction = 2;
   optional string label = 3;
-  optional Data data = 4;
+  optional sint32 data = 4;
   optional string comment = 5;
   optional uint32 space = 6;
 }
@@ -109,14 +109,4 @@ message Operand {
   optional Register register = 2;
   optional sint32 value = 3;
   optional string label = 4;
-}
-
-message Data {
-  enum Type {
-    STRING = 0;
-    BYTES = 1;
-  }
-  optional Type type = 1;
-  optional string string = 2;
-  optional bytes bytes = 3;
 }

@@ -49,21 +49,9 @@ namespace dcpu {
       }
       return DetermineInstructionSize(statement.instruction());
     } else if (statement.type() == proto::Statement_Type_DATA) {
-      return DetermineDataSize(statement.data());
+      return 1;
     } else {
       return 0;
-    }
-  }
-
-  Word Assembler::DetermineDataSize(const proto::Data &data) const {
-    if (!data.has_type()) {
-      std::cout << "Encountered data without type!" << std::endl;
-      return 0;
-    }
-    if (data.type() == proto::Data_Type_STRING) {
-      return data.string().size();
-    } else {
-      return data.bytes().size();
     }
   }
 
