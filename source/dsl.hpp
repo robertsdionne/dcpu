@@ -28,33 +28,33 @@ namespace dcpu {
 
     using namespace proto;
 
-    proto::Operand a();
+    extern proto::Operand a;
 
-    proto::Operand b();
+    extern proto::Operand b;
 
-    proto::Operand c();
+    extern proto::Operand c;
 
-    proto::Operand x();
+    extern proto::Operand x;
 
-    proto::Operand y();
+    extern proto::Operand y;
 
-    proto::Operand z();
+    extern proto::Operand z;
 
-    proto::Operand i();
+    extern proto::Operand i;
 
-    proto::Operand j();
+    extern proto::Operand j;
 
-    proto::Operand sp();
+    extern proto::Operand sp;
 
-    proto::Operand pc();
+    extern proto::Operand pc;
 
-    proto::Operand ex();
+    extern proto::Operand ex;
 
-    proto::Operand push();
+    extern proto::Operand push;
 
-    proto::Operand pop();
+    extern proto::Operand pop;
 
-    proto::Operand peek();
+    extern proto::Operand peek;
 
     proto::Operand pick(const std::string &label);
 
@@ -69,6 +69,10 @@ namespace dcpu {
     proto::Operand operator +(proto::Operand a, const std::string &label);
 
     proto::Operand operator +(proto::Operand a, Word literal);
+
+    static proto::Operand MakeRegister(Operand_Register register_);
+
+    static proto::Operand MakeSpecialRegister(Operand_Type type);
 
     class Dsl {
     public:

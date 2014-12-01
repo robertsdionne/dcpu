@@ -85,8 +85,8 @@ TEST(DcpuTest, ExecuteInstruction_set_register_with_register) {
   };
 
   Dsl d;
-  d.set(b(), 1)
-    .set(a(), b())
+  d.set(b, 1)
+    .set(a, b)
     .Assemble(cpu.memory_begin());
 
   for (auto i = 0; i < sizeof(program) / sizeof(Word); ++i) {
@@ -108,8 +108,8 @@ TEST(DcpuTest, ExecuteInstruction_set_register_with_last_register) {
   };
 
   Dsl d;
-  d.set(j(), 1)
-    .set(a(), j())
+  d.set(j, 1)
+    .set(a, j)
     .Assemble(cpu.memory_begin());
 
   for (auto i = 0; i < sizeof(program) / sizeof(Word); ++i) {
@@ -134,8 +134,8 @@ TEST(DcpuTest, ExecuteInstruction_set_register_with_location_in_register) {
 
   Dsl d;
   d.set(d[0x1000], 13)
-    .set(b(), 0x1000)
-    .set(a(), d[b()])
+    .set(b, 0x1000)
+    .set(a, d[b])
     .Assemble(cpu.memory_begin());
 
   for (auto i = 0; i < sizeof(program) / sizeof(Word); ++i) {
@@ -159,8 +159,8 @@ TEST(DcpuTest, ExecuteInstruction_set_register_with_location_in_last_register) {
 
   Dsl d;
   d.set(d[0x1000], 13)
-    .set(j(), 0x1000)
-    .set(a(), d[j()])
+    .set(j, 0x1000)
+    .set(a, d[j])
     .Assemble(cpu.memory_begin());
 
   for (auto i = 0; i < sizeof(program) / sizeof(Word); ++i) {
@@ -185,8 +185,8 @@ TEST(DcpuTest,
 
   Dsl d;
   d.set(d[0x100A], 13)
-    .set(b(), 0xA)
-    .set(a(), d[0x1000+ b()])
+    .set(b, 0xA)
+    .set(a, d[0x1000+ b])
     .Assemble(cpu.memory_begin());
 
   for (auto i = 0; i < sizeof(program) / sizeof(Word); ++i) {
@@ -211,8 +211,8 @@ TEST(DcpuTest,
 
   Dsl d;
   d.set(d[0x100A], 13)
-    .set(j(), 0xA)
-    .set(a(), d[0x1000 + j()])
+    .set(j, 0xA)
+    .set(a, d[0x1000 + j])
     .Assemble(cpu.memory_begin());
 
   for (auto i = 0; i < sizeof(program) / sizeof(Word); ++i) {
@@ -233,8 +233,8 @@ TEST(DcpuTest, ExecuteInstruction_set_register_with_pop) {
   };
 
   Dsl d;
-  d.set(push(), 13)
-    .set(a(), pop())
+  d.set(push, 13)
+    .set(a, pop)
     .Assemble(cpu.memory_begin());
 
   for (auto i = 0; i < sizeof(program) / sizeof(Word); ++i) {
@@ -258,8 +258,8 @@ TEST(DcpuTest, ExecuteInstruction_set_register_with_peek) {
   };
 
   Dsl d;
-  d.set(push(), 13)
-    .set(a(), peek())
+  d.set(push, 13)
+    .set(a, peek)
     .Assemble(cpu.memory_begin());
 
   for (auto i = 0; i < sizeof(program) / sizeof(Word); ++i) {
@@ -285,9 +285,9 @@ TEST(DcpuTest, ExecuteInstruction_set_register_with_pick) {
   };
 
   Dsl d;
-  d.set(push(), 13)
-    .set(push(), 14)
-    .set(a(), pick(0x1))
+  d.set(push, 13)
+    .set(push, 14)
+    .set(a, pick(0x1))
     .Assemble(cpu.memory_begin());
 
   for (auto i = 0; i < sizeof(program) / sizeof(Word); ++i) {
@@ -311,8 +311,8 @@ TEST(DcpuTest, ExecuteInstruction_set_register_with_stack_pointer) {
   };
 
   Dsl d;
-  d.set(push(), 13)
-    .set(a(), sp())
+  d.set(push, 13)
+    .set(a, sp)
     .Assemble(cpu.memory_begin());
 
   for (auto i = 0; i < sizeof(program) / sizeof(Word); ++i) {
@@ -335,8 +335,8 @@ TEST(DcpuTest, ExecuteInstruction_set_register_with_program_counter) {
   };
 
   Dsl d;
-  d.set(a(), a())
-    .set(a(), pc())
+  d.set(a, a)
+    .set(a, pc)
     .Assemble(cpu.memory_begin());
 
   for (auto i = 0; i < sizeof(program) / sizeof(Word); ++i) {
@@ -357,8 +357,8 @@ TEST(DcpuTest, ExecuteInstruction_set_register_with_overflow) {
   };
 
   Dsl d;
-  d.set(ex(), 13)
-    .set(a(), ex())
+  d.set(ex, 13)
+    .set(a, ex)
     .Assemble(cpu.memory_begin());
 
   for (auto i = 0; i < sizeof(program) / sizeof(Word); ++i) {
@@ -380,7 +380,7 @@ TEST(DcpuTest, ExecuteInstruction_set_register_with_location) {
 
   Dsl d;
   d.set(d[0x1000], 13)
-    .set(a(), d[0x1000])
+    .set(a, d[0x1000])
     .Assemble(cpu.memory_begin());
 
   for (auto i = 0; i < sizeof(program) / sizeof(Word); ++i) {
@@ -399,7 +399,7 @@ TEST(DcpuTest, ExecuteInstruction_set_register_with_high_literal) {
   };
 
   Dsl d;
-  d.set(a(), 0x1001)
+  d.set(a, 0x1001)
     .Assemble(cpu.memory_begin());
 
   for (auto i = 0; i < sizeof(program) / sizeof(Word); ++i) {
@@ -418,7 +418,7 @@ TEST(DcpuTest, ExecuteInstruction_set_register_with_low_literal) {
   };
 
   Dsl d;
-  d.set(a(), 1)
+  d.set(a, 1)
     .Assemble(cpu.memory_begin());
 
   for (auto i = 0; i < sizeof(program) / sizeof(Word); ++i) {
@@ -437,7 +437,7 @@ TEST(DcpuTest, ExecuteInstruction_set_last_register_with_low_literal) {
   };
 
   Dsl d;
-  d.set(j(), 1)
+  d.set(j, 1)
     .Assemble(cpu.memory_begin());
 
   for (auto i = 0; i < sizeof(program) / sizeof(Word); ++i) {
@@ -459,8 +459,8 @@ TEST(DcpuTest, ExecuteInstruction_set_location_in_register_with_low_literal) {
   };
 
   Dsl d;
-  d.set(a(), 0x1000)
-    .set(d[a()], 13)
+  d.set(a, 0x1000)
+    .set(d[a], 13)
     .Assemble(cpu.memory_begin());
 
   for (auto i = 0; i < sizeof(program) / sizeof(Word); ++i) {
@@ -482,8 +482,8 @@ TEST(DcpuTest,
   };
 
   Dsl d;
-  d.set(j(), 0x1000)
-    .set(d[j()], 13)
+  d.set(j, 0x1000)
+    .set(d[j], 13)
     .Assemble(cpu.memory_begin());
 
   for (auto i = 0; i < sizeof(program) / sizeof(Word); ++i) {
@@ -505,8 +505,8 @@ TEST(DcpuTest,
   };
 
   Dsl d;
-  d.set(a(), 0xA)
-    .set(d[0x1000 + a()], 13)
+  d.set(a, 0xA)
+    .set(d[0x1000 + a], 13)
     .Assemble(cpu.memory_begin());
 
   for (auto i = 0; i < sizeof(program) / sizeof(Word); ++i) {
@@ -531,9 +531,9 @@ TEST(DcpuTest,
   };
 
   Dsl d;
-  d.set(a(), 0xA)
-    .set(d[0x1000 + a()], 13)
-    .set(d[0x2000 + a()], d[0x1000 + a()])
+  d.set(a, 0xA)
+    .set(d[0x1000 + a], 13)
+    .set(d[0x2000 + a], d[0x1000 + a])
     .Assemble(cpu.memory_begin());
 
   for (auto i = 0; i < sizeof(program) / sizeof(Word); ++i) {
@@ -555,8 +555,8 @@ TEST(DcpuTest,
   };
 
   Dsl d;
-  d.set(j(), 0xA)
-    .set(d[0x1000 + j()], 13)
+  d.set(j, 0xA)
+    .set(d[0x1000 + j], 13)
     .Assemble(cpu.memory_begin());
 
   for (auto i = 0; i < sizeof(program) / sizeof(Word); ++i) {
@@ -575,7 +575,7 @@ TEST(DcpuTest, ExecuteInstruction_set_push_with_low_literal) {
   };
 
   Dsl d;
-  d.set(push(), 13)
+  d.set(push, 13)
     .Assemble(cpu.memory_begin());
 
   for (auto i = 0; i < sizeof(program) / sizeof(Word); ++i) {
@@ -596,8 +596,8 @@ TEST(DcpuTest, ExecuteInstruction_set_push_with_pop) {
   };
 
   Dsl d;
-  d.set(push(), 13)
-    .set(push(), pop())
+  d.set(push, 13)
+    .set(push, pop)
     .Assemble(cpu.memory_begin());
 
   for (auto i = 0; i < sizeof(program) / sizeof(Word); ++i) {
@@ -619,8 +619,8 @@ TEST(DcpuTest, ExecuteInstruction_set_peek_with_low_literal) {
   };
 
   Dsl d;
-  d.set(push(), 13)
-    .set(peek(), 14)
+  d.set(push, 13)
+    .set(peek, 14)
     .Assemble(cpu.memory_begin());
 
   for (auto i = 0; i < sizeof(program) / sizeof(Word); ++i) {
@@ -643,8 +643,8 @@ TEST(DcpuTest, ExecuteInstruction_set_pick_with_low_literal) {
   };
 
   Dsl d;
-  d.set(push(), 12)
-    .set(push(), 13)
+  d.set(push, 12)
+    .set(push, 13)
     .set(pick(0x1), 14)
     .Assemble(cpu.memory_begin());
 
@@ -665,7 +665,7 @@ TEST(DcpuTest, ExecuteInstruction_set_stack_pointer_with_low_literal) {
   };
 
   Dsl d;
-  d.set(sp(), 13)
+  d.set(sp, 13)
     .Assemble(cpu.memory_begin());
 
   for (auto i = 0; i < sizeof(program) / sizeof(Word); ++i) {
@@ -684,7 +684,7 @@ TEST(DcpuTest, ExecuteInstruction_set_program_counter_with_low_literal) {
   };
 
   Dsl d;
-  d.set(pc(), 13)
+  d.set(pc, 13)
     .Assemble(cpu.memory_begin());
 
   for (auto i = 0; i < sizeof(program) / sizeof(Word); ++i) {
@@ -703,7 +703,7 @@ TEST(DcpuTest, ExecuteInstruction_set_overflow_with_low_literal) {
   };
 
   Dsl d;
-  d.set(ex(), 13)
+  d.set(ex, 13)
     .Assemble(cpu.memory_begin());
 
   for (auto i = 0; i < sizeof(program) / sizeof(Word); ++i) {
@@ -756,8 +756,8 @@ TEST(DcpuTest, ExecuteInstruction_add_register_with_low_literal) {
   };
 
   Dsl d;
-  d.set(a(), 13)
-    .add(a(), 14)
+  d.set(a, 13)
+    .add(a, 14)
     .Assemble(cpu.memory_begin());
 
   for (auto i = 0; i < sizeof(program) / sizeof(Word); ++i) {
@@ -779,8 +779,8 @@ TEST(DcpuTest, ExecuteInstruction_add_register_with_overflow) {
   };
 
   Dsl d;
-  d.set(a(), 0xFFFF)
-    .add(a(), 0xFFFF)
+  d.set(a, 0xFFFF)
+    .add(a, 0xFFFF)
     .Assemble(cpu.memory_begin());
 
   for (auto i = 0; i < sizeof(program) / sizeof(Word); ++i) {
@@ -802,8 +802,8 @@ TEST(DcpuTest, ExecuteInstruction_subtract_register_with_low_literal) {
   };
 
   Dsl d;
-  d.set(a(), 30)
-    .sub(a(), 16)
+  d.set(a, 30)
+    .sub(a, 16)
     .Assemble(cpu.memory_begin());
 
   for (auto i = 0; i < sizeof(program) / sizeof(Word); ++i) {
@@ -825,8 +825,8 @@ TEST(DcpuTest, ExecuteInstruction_subtract_register_with_underflow) {
   };
 
   Dsl d;
-  d.set(a(), 16)
-    .sub(a(), 30)
+  d.set(a, 16)
+    .sub(a, 30)
     .Assemble(cpu.memory_begin());
 
   for (auto i = 0; i < sizeof(program) / sizeof(Word); ++i) {
@@ -848,8 +848,8 @@ TEST(DcpuTest, ExecuteInstruction_multiply_register_with_low_literal) {
   };
 
   Dsl d;
-  d.set(a(), 16)
-    .mul(a(), 30)
+  d.set(a, 16)
+    .mul(a, 30)
     .Assemble(cpu.memory_begin());
 
   for (auto i = 0; i < sizeof(program) / sizeof(Word); ++i) {
@@ -871,8 +871,8 @@ TEST(DcpuTest, ExecuteInstruction_multiply_register_with_overflow) {
   };
 
   Dsl d;
-  d.set(a(), 0xFFFF)
-    .mul(a(), 0xFFFF)
+  d.set(a, 0xFFFF)
+    .mul(a, 0xFFFF)
     .Assemble(cpu.memory_begin());
 
   for (auto i = 0; i < sizeof(program) / sizeof(Word); ++i) {
@@ -894,8 +894,8 @@ TEST(DcpuTest, ExecuteInstruction_divide_register_with_low_literal) {
   };
 
   Dsl d;
-  d.set(a(), 30)
-    .div(a(), 16)
+  d.set(a, 30)
+    .div(a, 16)
     .Assemble(cpu.memory_begin());
 
   for (auto i = 0; i < sizeof(program) / sizeof(Word); ++i) {
@@ -917,8 +917,8 @@ TEST(DcpuTest, ExecuteInstruction_divide_register_by_zero) {
   };
 
   Dsl d;
-  d.set(a(), 30)
-    .div(a(), 0)
+  d.set(a, 30)
+    .div(a, 0)
     .Assemble(cpu.memory_begin());
 
   for (auto i = 0; i < sizeof(program) / sizeof(Word); ++i) {
@@ -940,8 +940,8 @@ TEST(DcpuTest, ExecuteInstruction_modulo_register_with_low_literal) {
   };
 
   Dsl d;
-  d.set(a(), 30)
-    .mod(a(), 11)
+  d.set(a, 30)
+    .mod(a, 11)
     .Assemble(cpu.memory_begin());
 
   for (auto i = 0; i < sizeof(program) / sizeof(Word); ++i) {
@@ -962,8 +962,8 @@ TEST(DcpuTest, ExecuteInstruction_shift_left_register_with_low_literal) {
   };
 
   Dsl d;
-  d.set(a(), 30)
-    .shl(a(), 2)
+  d.set(a, 30)
+    .shl(a, 2)
     .Assemble(cpu.memory_begin());
 
   for (auto i = 0; i < sizeof(program) / sizeof(Word); ++i) {
@@ -985,8 +985,8 @@ TEST(DcpuTest, ExecuteInstruction_shift_left_register_with_overflow) {
   };
 
   Dsl d;
-  d.set(a(), 0xFFFF)
-    .shl(a(), 2)
+  d.set(a, 0xFFFF)
+    .shl(a, 2)
     .Assemble(cpu.memory_begin());
 
   for (auto i = 0; i < sizeof(program) / sizeof(Word); ++i) {
@@ -1008,8 +1008,8 @@ TEST(DcpuTest, ExecuteInstruction_shift_right_register_with_low_literal) {
   };
 
   Dsl d;
-  d.set(a(), 0xFFF0)
-    .shr(a(), 2)
+  d.set(a, 0xFFF0)
+    .shr(a, 2)
     .Assemble(cpu.memory_begin());
 
   for (auto i = 0; i < sizeof(program) / sizeof(Word); ++i) {
@@ -1031,8 +1031,8 @@ TEST(DcpuTest, ExecuteInstruction_shift_right_register_with_underflow) {
   };
 
   Dsl d;
-  d.set(a(), 0xFFFF)
-    .shr(a(), 2)
+  d.set(a, 0xFFFF)
+    .shr(a, 2)
     .Assemble(cpu.memory_begin());
 
   for (auto i = 0; i < sizeof(program) / sizeof(Word); ++i) {
@@ -1054,8 +1054,8 @@ TEST(DcpuTest, ExecuteInstruction_and_register_with_low_literal) {
   };
 
   Dsl d;
-  d.set(a(), 0xF0F0)
-    .and_(a(), 0x00FF)
+  d.set(a, 0xF0F0)
+    .and_(a, 0x00FF)
     .Assemble(cpu.memory_begin());
 
   for (auto i = 0; i < sizeof(program) / sizeof(Word); ++i) {
@@ -1076,8 +1076,8 @@ TEST(DcpuTest, ExecuteInstruction_or_register_with_low_literal) {
   };
 
   Dsl d;
-  d.set(a(), 0xF0F0)
-    .bor(a(), 0x00FF)
+  d.set(a, 0xF0F0)
+    .bor(a, 0x00FF)
     .Assemble(cpu.memory_begin());
 
   for (auto i = 0; i < sizeof(program) / sizeof(Word); ++i) {
@@ -1098,8 +1098,8 @@ TEST(DcpuTest, ExecuteInstruction_xor_register_with_low_literal) {
   };
 
   Dsl d;
-  d.set(a(), 0xF0F0)
-    .xor_(a(), 0x00FF)
+  d.set(a, 0xF0F0)
+    .xor_(a, 0x00FF)
     .Assemble(cpu.memory_begin());
 
   for (auto i = 0; i < sizeof(program) / sizeof(Word); ++i) {
@@ -1124,10 +1124,10 @@ TEST(DcpuTest, ExecuteInstruction_if_equal_register_with_equal_low_literal) {
   };
 
   Dsl d;
-  d.set(a(), 15)
-    .ife(a(), 15)
-      .set(push(), 13)
-    .set(push(), 14)
+  d.set(a, 15)
+    .ife(a, 15)
+      .set(push, 13)
+    .set(push, 14)
     .Assemble(cpu.memory_begin());
 
   for (auto i = 0; i < sizeof(program) / sizeof(Word); ++i) {
@@ -1152,10 +1152,10 @@ TEST(DcpuTest, ExecuteInstruction_if_equal_register_with_unequal_low_literal) {
   };
 
   Dsl d;
-  d.set(a(), 15)
-    .ife(a(), 0)
-      .set(push(), 13)
-    .set(push(), 14)
+  d.set(a, 15)
+    .ife(a, 0)
+      .set(push, 13)
+    .set(push, 14)
     .Assemble(cpu.memory_begin());
 
   for (auto i = 0; i < sizeof(program) / sizeof(Word); ++i) {
@@ -1180,10 +1180,10 @@ TEST(DcpuTest, ExecuteInstruction_if_not_equal_register_with_unequal_low_literal
   };
 
   Dsl d;
-  d.set(a(), 15)
-    .ifn(a(), 0)
-      .set(push(), 13)
-    .set(push(), 14)
+  d.set(a, 15)
+    .ifn(a, 0)
+      .set(push, 13)
+    .set(push, 14)
     .Assemble(cpu.memory_begin());
 
   for (auto i = 0; i < sizeof(program) / sizeof(Word); ++i) {
@@ -1208,10 +1208,10 @@ TEST(DcpuTest, ExecuteInstruction_if_not_equal_register_with_equal_low_literal) 
   };
 
   Dsl d;
-  d.set(a(), 15)
-    .ifn(a(), 15)
-      .set(push(), 13)
-    .set(push(), 14)
+  d.set(a, 15)
+    .ifn(a, 15)
+      .set(push, 13)
+    .set(push, 14)
     .Assemble(cpu.memory_begin());
 
   for (auto i = 0; i < sizeof(program) / sizeof(Word); ++i) {
@@ -1236,10 +1236,10 @@ TEST(DcpuTest, ExecuteInstruction_if_greater_than_register_with_lesser_low_liter
   };
 
   Dsl d;
-  d.set(a(), 30)
-    .ifg(a(), 15)
-      .set(push(), 13)
-    .set(push(), 14)
+  d.set(a, 30)
+    .ifg(a, 15)
+      .set(push, 13)
+    .set(push, 14)
     .Assemble(cpu.memory_begin());
 
   for (auto i = 0; i < sizeof(program) / sizeof(Word); ++i) {
@@ -1264,10 +1264,10 @@ TEST(DcpuTest, ExecuteInstruction_if_greater_than_register_with_greater_low_lite
   };
 
   Dsl d;
-  d.set(a(), 15)
-    .ifg(a(), 30)
-      .set(push(), 13)
-    .set(push(), 14)
+  d.set(a, 15)
+    .ifg(a, 30)
+      .set(push, 13)
+    .set(push, 14)
     .Assemble(cpu.memory_begin());
 
   for (auto i = 0; i < sizeof(program) / sizeof(Word); ++i) {
@@ -1292,10 +1292,10 @@ TEST(DcpuTest, ExecuteInstruction_if_both_register_with_common_bits_low_literal)
   };
 
   Dsl d;
-  d.set(a(), 0x1E)
-    .ifb(a(), 0x10)
-      .set(push(), 13)
-    .set(push(), 14)
+  d.set(a, 0x1E)
+    .ifb(a, 0x10)
+      .set(push, 13)
+    .set(push, 14)
     .Assemble(cpu.memory_begin());
 
   for (auto i = 0; i < sizeof(program) / sizeof(Word); ++i) {
@@ -1320,10 +1320,10 @@ TEST(DcpuTest, ExecuteInstruction_if_both_register_with_uncommon_bits_low_litera
   };
 
   Dsl d;
-  d.set(a(), 0x0F)
-    .ifb(a(), 0x10)
-      .set(push(), 13)
-    .set(push(), 14)
+  d.set(a, 0x0F)
+    .ifb(a, 0x10)
+      .set(push, 13)
+    .set(push, 14)
     .Assemble(cpu.memory_begin());
 
   for (auto i = 0; i < sizeof(program) / sizeof(Word); ++i) {
@@ -1351,11 +1351,11 @@ TEST(DcpuTest, ExecuteInstruction_jump_sub_routine) {
 
   Dsl d;
   d.jsr("subroutine")
-    .set(a(), 13)
-    .sub(pc(), 1)
+    .set(a, 13)
+    .sub(pc, 1)
     .label("subroutine")
-      .set(b(), 14)
-      .set(pc(), pop())
+      .set(b, 14)
+      .set(pc, pop)
     .Assemble(cpu.memory_begin());
 
   for (auto i = 0; i < sizeof(program) / sizeof(Word); ++i) {

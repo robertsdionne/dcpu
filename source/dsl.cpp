@@ -11,95 +11,33 @@ namespace dcpu {
 
   namespace dsl {
 
-    proto::Operand a() {
-      proto::Operand result;
-      result.set_type(Operand_Type_REGISTER);
-      result.set_register_(Operand_Register_A);
-      return result;
-    }
+    proto::Operand a = MakeRegister(Operand_Register_A);
 
-    proto::Operand b() {
-      proto::Operand result;
-      result.set_type(Operand_Type_REGISTER);
-      result.set_register_(Operand_Register_B);
-      return result;
-    }
+    proto::Operand b = MakeRegister(Operand_Register_B);
 
-    proto::Operand c() {
-      proto::Operand result;
-      result.set_type(Operand_Type_REGISTER);
-      result.set_register_(Operand_Register_C);
-      return result;
-    }
+    proto::Operand c = MakeRegister(Operand_Register_C);
 
-    proto::Operand x() {
-      proto::Operand result;
-      result.set_type(Operand_Type_REGISTER);
-      result.set_register_(Operand_Register_X);
-      return result;
-    }
+    proto::Operand x = MakeRegister(Operand_Register_X);
 
-    proto::Operand y() {
-      proto::Operand result;
-      result.set_type(Operand_Type_REGISTER);
-      result.set_register_(Operand_Register_Y);
-      return result;
-    }
+    proto::Operand y = MakeRegister(Operand_Register_Y);
 
-    proto::Operand z() {
-      proto::Operand result;
-      result.set_type(Operand_Type_REGISTER);
-      result.set_register_(Operand_Register_Z);
-      return result;
-    }
+    proto::Operand z = MakeRegister(Operand_Register_Z);
 
-    proto::Operand i() {
-      proto::Operand result;
-      result.set_type(Operand_Type_REGISTER);
-      result.set_register_(Operand_Register_I);
-      return result;
-    }
+    proto::Operand i = MakeRegister(Operand_Register_I);
 
-    proto::Operand j() {
-      proto::Operand result;
-      result.set_type(Operand_Type_REGISTER);
-      result.set_register_(Operand_Register_J);
-      return result;
-    }
+    proto::Operand j = MakeRegister(Operand_Register_J);
 
-    proto::Operand sp() {
-      proto::Operand result;
-      result.set_type(Operand_Type_STACK_POINTER);
-      return result;
-    }
+    proto::Operand sp = MakeSpecialRegister(Operand_Type_STACK_POINTER);
 
-    proto::Operand pc() {
-      proto::Operand result;
-      result.set_type(Operand_Type_PROGRAM_COUNTER);
-      return result;
-    }
+    proto::Operand pc = MakeSpecialRegister(Operand_Type_PROGRAM_COUNTER);
 
-    proto::Operand ex() {
-      proto::Operand result;
-      result.set_type(Operand_Type_EXTRA);
-      return result;
-    }
+    proto::Operand ex = MakeSpecialRegister(Operand_Type_EXTRA);
 
-    proto::Operand push() {
-      proto::Operand result;
-      result.set_type(Operand_Type_PUSH_POP);
-      return result;
-    }
+    proto::Operand push = MakeSpecialRegister(Operand_Type_PUSH_POP);
 
-    proto::Operand pop() {
-      return push();
-    }
+    proto::Operand pop = MakeSpecialRegister(Operand_Type_PUSH_POP);
 
-    proto::Operand peek() {
-      proto::Operand result;
-      result.set_type(Operand_Type_PEEK);
-      return result;
-    }
+    proto::Operand peek = MakeSpecialRegister(Operand_Type_PEEK);
 
     proto::Operand pick(const std::string &label) {
       proto::Operand result;
@@ -112,6 +50,19 @@ namespace dcpu {
       proto::Operand result;
       result.set_type(Operand_Type_PICK);
       result.set_value(literal);
+      return result;
+    }
+
+    proto::Operand MakeRegister(Operand_Register register_) {
+      proto::Operand result;
+      result.set_type(Operand_Type_REGISTER);
+      result.set_register_(register_);
+      return result;
+    }
+
+    proto::Operand MakeSpecialRegister(Operand_Type type) {
+      proto::Operand result;
+      result.set_type(type);
       return result;
     }
 
