@@ -10,8 +10,6 @@
 		4616A86C177A727C00367EF6 /* libncurses.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4616A86B177A727C00367EF6 /* libncurses.dylib */; };
 		4616A871177A733B00367EF6 /* gtest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4616A831177A708600367EF6 /* gtest.framework */; };
 		4616A872177A735900367EF6 /* gtest_main.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4616A3B3177A708500367EF6 /* gtest_main.cc */; };
-		4616A875177A73AE00367EF6 /* disassembler_test.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4616A873177A73AE00367EF6 /* disassembler_test.cc */; };
-		4616A876177A73AE00367EF6 /* dcpu_test.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4616A874177A73AE00367EF6 /* dcpu_test.cc */; };
 		4616A887177A779100367EF6 /* descriptor.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4616A668177A708600367EF6 /* descriptor.cc */; };
 		4616A888177A779100367EF6 /* descriptor.pb.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4616A66A177A708600367EF6 /* descriptor.pb.cc */; };
 		4616A889177A779100367EF6 /* descriptor_database.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4616A66D177A708600367EF6 /* descriptor_database.cc */; };
@@ -77,6 +75,8 @@
 		4616A8D7177A793900367EF6 /* python_generator.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4616A65F177A708600367EF6 /* python_generator.cc */; };
 		4616A8D8177A793900367EF6 /* subprocess.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4616A662177A708600367EF6 /* subprocess.cc */; };
 		4616A8DA177A793900367EF6 /* zip_writer.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4616A666177A708600367EF6 /* zip_writer.cc */; };
+		462AA2DF1A2C176D00421B6F /* dcpu_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 462AA2DD1A2C176D00421B6F /* dcpu_test.cpp */; };
+		462AA2E01A2C176D00421B6F /* disassembler_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 462AA2DE1A2C176D00421B6F /* disassembler_test.cpp */; };
 		465BDAB81A26DDCC00C45D82 /* assembler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 46DF0B741A26D8C500712A52 /* assembler.cpp */; };
 		465BDAB91A26DDCC00C45D82 /* dcpu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 46DF0B761A26D8C500712A52 /* dcpu.cpp */; };
 		465BDABA1A26DDCC00C45D82 /* disassembler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 46DF0B781A26D8C500712A52 /* disassembler.cpp */; };
@@ -1154,11 +1154,11 @@
 		4616A6EC177A708600367EF6 /* test_plugin.vcproj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = test_plugin.vcproj; sourceTree = "<group>"; };
 		4616A6ED177A708600367EF6 /* tests.vcproj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = tests.vcproj; sourceTree = "<group>"; };
 		4616A86B177A727C00367EF6 /* libncurses.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libncurses.dylib; path = usr/lib/libncurses.dylib; sourceTree = SDKROOT; };
-		4616A873177A73AE00367EF6 /* disassembler_test.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = disassembler_test.cc; sourceTree = "<group>"; };
-		4616A874177A73AE00367EF6 /* dcpu_test.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = dcpu_test.cc; sourceTree = "<group>"; };
 		4616A877177A755C00367EF6 /* tests */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = tests; sourceTree = BUILT_PRODUCTS_DIR; };
 		4616A87E177A76B300367EF6 /* libprotobuf.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libprotobuf.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		4616A8A8177A78C500367EF6 /* protoc */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = protoc; sourceTree = BUILT_PRODUCTS_DIR; };
+		462AA2DD1A2C176D00421B6F /* dcpu_test.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = dcpu_test.cpp; sourceTree = "<group>"; };
+		462AA2DE1A2C176D00421B6F /* disassembler_test.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = disassembler_test.cpp; sourceTree = "<group>"; };
 		464D2BB9177A7AE400113BAC /* dcpu */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = dcpu; sourceTree = BUILT_PRODUCTS_DIR; };
 		465BDADD1A26FA5D00C45D82 /* clock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = clock.cpp; sourceTree = "<group>"; };
 		465BDAF91A26FA6800C45D82 /* clock.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = clock.hpp; sourceTree = "<group>"; };
@@ -1279,8 +1279,8 @@
 		4616A335177A706E00367EF6 /* tests */ = {
 			isa = PBXGroup;
 			children = (
-				4616A874177A73AE00367EF6 /* dcpu_test.cc */,
-				4616A873177A73AE00367EF6 /* disassembler_test.cc */,
+				462AA2DD1A2C176D00421B6F /* dcpu_test.cpp */,
+				462AA2DE1A2C176D00421B6F /* disassembler_test.cpp */,
 			);
 			path = tests;
 			sourceTree = "<group>";
@@ -3220,9 +3220,9 @@
 				465BDAB91A26DDCC00C45D82 /* dcpu.cpp in Sources */,
 				465BDABA1A26DDCC00C45D82 /* disassembler.cpp in Sources */,
 				4616A872177A735900367EF6 /* gtest_main.cc in Sources */,
+				462AA2E01A2C176D00421B6F /* disassembler_test.cpp in Sources */,
 				46E0ED271A28EFA4001814A0 /* dsl.cpp in Sources */,
-				4616A875177A73AE00367EF6 /* disassembler_test.cc in Sources */,
-				4616A876177A73AE00367EF6 /* dcpu_test.cc in Sources */,
+				462AA2DF1A2C176D00421B6F /* dcpu_test.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
