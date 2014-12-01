@@ -7,6 +7,21 @@
 
 namespace dcpu {
 
+  #define BASIC_OPCODE(opcode) template <typename A>\
+    Dsl &opcode(proto::Operand b, A a) {\
+      return Instruction(Opcode_Basic_##opcode, b, a);\
+    }
+
+  #define ADVANCED_OPCODE(opcode) template <typename A>\
+    Dsl &opcode(A a) {\
+      return Instruction(Opcode_Advanced_##opcode, a);\
+    }
+
+  #define ADVANCED_OPCODE_IGNORE_ARGUMENT(opcode)\
+    Dsl &opcode() {\
+      return Instruction(Opcode_Advanced_##opcode, 0);\
+    }
+
   using Word = unsigned short;
 
   namespace dsl {
@@ -80,184 +95,43 @@ namespace dcpu {
 
       Dsl &data(const std::string &string);
 
-      template <typename A>
-      Dsl &set(proto::Operand b, A a) {
-        return Instruction(Opcode_Basic_SET, b, a);
-      }
+      BASIC_OPCODE(set);
+      BASIC_OPCODE(add);
+      BASIC_OPCODE(sub);
+      BASIC_OPCODE(mul);
+      BASIC_OPCODE(mli);
+      BASIC_OPCODE(div);
+      BASIC_OPCODE(dvi);
+      BASIC_OPCODE(mod);
+      BASIC_OPCODE(mdi);
+      BASIC_OPCODE(and_);
+      BASIC_OPCODE(bor);
+      BASIC_OPCODE(xor_);
+      BASIC_OPCODE(shr);
+      BASIC_OPCODE(asr);
+      BASIC_OPCODE(shl);
+      BASIC_OPCODE(ifb);
+      BASIC_OPCODE(ifc);
+      BASIC_OPCODE(ife);
+      BASIC_OPCODE(ifn);
+      BASIC_OPCODE(ifg);
+      BASIC_OPCODE(ifa);
+      BASIC_OPCODE(ifl);
+      BASIC_OPCODE(ifu);
+      BASIC_OPCODE(adx);
+      BASIC_OPCODE(sbx);
+      BASIC_OPCODE(sti);
+      BASIC_OPCODE(std);
 
-      template <typename A>
-      Dsl &add(proto::Operand b, A a) {
-        return Instruction(Opcode_Basic_ADD, b, a);
-      }
-
-      template <typename A>
-      Dsl &sub(proto::Operand b, A a) {
-        return Instruction(Opcode_Basic_SUB, b, a);
-      }
-
-      template <typename A>
-      Dsl &mul(proto::Operand b, A a) {
-        return Instruction(Opcode_Basic_MUL, b, a);
-      }
-
-      template <typename A>
-      Dsl &mli(proto::Operand b, A a) {
-        return Instruction(Opcode_Basic_MLI, b, a);
-      }
-
-      template <typename A>
-      Dsl &div(proto::Operand b, A a) {
-        return Instruction(Opcode_Basic_DIV, b, a);
-      }
-
-      template <typename A>
-      Dsl &dvi(proto::Operand b, A a) {
-        return Instruction(Opcode_Basic_DVI, b, a);
-      }
-
-      template <typename A>
-      Dsl &mod(proto::Operand b, A a) {
-        return Instruction(Opcode_Basic_MOD, b, a);
-      }
-
-      template <typename A>
-      Dsl &mdi(proto::Operand b, A a) {
-        return Instruction(Opcode_Basic_MDI, b, a);
-      }
-
-      template <typename A>
-      Dsl &and_(proto::Operand b, A a) {
-        return Instruction(Opcode_Basic_AND, b, a);
-      }
-
-      template <typename A>
-      Dsl &bor(proto::Operand b, A a) {
-        return Instruction(Opcode_Basic_BOR, b, a);
-      }
-
-      template <typename A>
-      Dsl &xor_(proto::Operand b, A a) {
-        return Instruction(Opcode_Basic_XOR, b, a);
-      }
-
-      template <typename A>
-      Dsl &shr(proto::Operand b, A a) {
-        return Instruction(Opcode_Basic_SHR, b, a);
-      }
-
-      template <typename A>
-      Dsl &asr(proto::Operand b, A a) {
-        return Instruction(Opcode_Basic_ASR, b, a);
-      }
-
-      template <typename A>
-      Dsl &shl(proto::Operand b, A a) {
-        return Instruction(Opcode_Basic_SHL, b, a);
-      }
-
-      template <typename A>
-      Dsl &ifb(proto::Operand b, A a) {
-        return Instruction(Opcode_Basic_IFB, b, a);
-      }
-
-      template <typename A>
-      Dsl &ifc(proto::Operand b, A a) {
-        return Instruction(Opcode_Basic_IFC, b, a);
-      }
-
-      template <typename A>
-      Dsl &ife(proto::Operand b, A a) {
-        return Instruction(Opcode_Basic_IFE, b, a);
-      }
-
-      template <typename A>
-      Dsl &ifn(proto::Operand b, A a) {
-        return Instruction(Opcode_Basic_IFN, b, a);
-      }
-
-      template <typename A>
-      Dsl &ifg(proto::Operand b, A a) {
-        return Instruction(Opcode_Basic_IFG, b, a);
-      }
-
-      template <typename A>
-      Dsl &ifa(proto::Operand b, A a) {
-        return Instruction(Opcode_Basic_IFA, b, a);
-      }
-
-      template <typename A>
-      Dsl &ifl(proto::Operand b, A a) {
-        return Instruction(Opcode_Basic_IFL, b, a);
-      }
-
-      template <typename A>
-      Dsl &ifu(proto::Operand b, A a) {
-        return Instruction(Opcode_Basic_IFU, b, a);
-      }
-
-      template <typename A>
-      Dsl &adx(proto::Operand b, A a) {
-        return Instruction(Opcode_Basic_ADX, b, a);
-      }
-
-      template <typename A>
-      Dsl &sbx(proto::Operand b, A a) {
-        return Instruction(Opcode_Basic_SBX, b, a);
-      }
-
-      template <typename A>
-      Dsl &sti(proto::Operand b, A a) {
-        return Instruction(Opcode_Basic_STI, b, a);
-      }
-
-      template <typename A>
-      Dsl &std(proto::Operand b, A a) {
-        return Instruction(Opcode_Basic_STD, b, a);
-      }
-
-      template <typename A>
-      Dsl &jsr(A a) {
-        return Instruction(Opcode_Advanced_JSR, a);
-      }
-
-      template <typename A>
-      Dsl &int_(A a) {
-        return Instruction(Opcode_Advanced_INT, a);
-      }
-
-      template <typename A>
-      Dsl &iag(A a) {
-        return Instruction(Opcode_Advanced_IAG, a);
-      }
-
-      template <typename A>
-      Dsl &ias(A a) {
-        return Instruction(Opcode_Advanced_IAS, a);
-      }
-
-      Dsl &rfi() {
-        return Instruction(Opcode_Advanced_RFI, 0);
-      }
-
-      template <typename A>
-      Dsl &iaq(A a) {
-        return Instruction(Opcode_Advanced_IAQ, a);
-      }
-
-      template <typename A>
-      Dsl &hwn(A a) {
-        return Instruction(Opcode_Advanced_HWN, a);
-      }
-
-      template <typename A>
-      Dsl &hwq(A a) {
-        return Instruction(Opcode_Advanced_HWQ, a);
-      }
-
-      template <typename A>
-      Dsl &hwi(A a) {
-        return Instruction(Opcode_Advanced_HWI, a);
-      }
+      ADVANCED_OPCODE(jsr);
+      ADVANCED_OPCODE(int_);
+      ADVANCED_OPCODE(iag);
+      ADVANCED_OPCODE(ias);
+      ADVANCED_OPCODE_IGNORE_ARGUMENT(rfi);
+      ADVANCED_OPCODE(iaq);
+      ADVANCED_OPCODE(hwn);
+      ADVANCED_OPCODE(hwq);
+      ADVANCED_OPCODE(hwi);
 
       void Assemble(Word *const memory_begin);
 
