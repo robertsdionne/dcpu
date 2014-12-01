@@ -28,9 +28,6 @@ namespace dcpu {
         label_address += DetermineStatementSize(statement);
       }
     }
-    for (auto i = labels.begin(); i != labels.end(); ++i) {
-      std::cout << i->first << ": 0x" << std::hex << i->second << std::dec << std::endl;
-    }
     std::vector<Word> binary;
     for (int i = 0; i < program.statement_size(); ++i) {
       auto statement = program.statement(i);

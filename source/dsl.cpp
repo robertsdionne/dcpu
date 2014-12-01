@@ -214,9 +214,6 @@ namespace dcpu {
     void Dsl::Assemble(Word *const memory_begin) {
       Assembler assembler;
       assembler.Assemble(program, memory_begin);
-      auto out = new google::protobuf::io::OstreamOutputStream(&std::cout);
-      google::protobuf::TextFormat::Print(program, out);
-      delete out;
       program.Clear();
     }
 
