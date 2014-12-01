@@ -35,10 +35,6 @@ namespace dcpu {
 
     proto::Operand ex();
 
-    proto::Operand label(const std::string &label);
-
-    proto::Operand value(Word value);
-
     proto::Operand operator +(proto::Operand a, proto::Operand b);
 
     proto::Operand operator +(const std::string &label, proto::Operand b);

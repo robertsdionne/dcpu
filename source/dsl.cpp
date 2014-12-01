@@ -85,20 +85,6 @@ namespace dcpu {
       return result;
     }
 
-    proto::Operand label(const std::string &label) {
-      proto::Operand result;
-      result.set_type(Operand_Type_LITERAL);
-      result.set_label(label);
-      return result;
-    }
-
-    proto::Operand value(Word value) {
-      proto::Operand result;
-      result.set_type(Operand_Type_LITERAL);
-      result.set_value(value);
-      return result;
-    }
-
     proto::Operand operator +(proto::Operand a, proto::Operand b) {
       assert((Operand_Type_LITERAL == a.type() && Operand_Type_REGISTER == b.type())
           || (Operand_Type_REGISTER == a.type() && Operand_Type_LITERAL == b.type()));
