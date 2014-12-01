@@ -35,6 +35,16 @@ namespace dcpu {
 
     proto::Operand ex();
 
+    proto::Operand push();
+
+    proto::Operand pop();
+
+    proto::Operand peek();
+
+    proto::Operand pick(const std::string &label);
+
+    proto::Operand pick(Word n);
+
     proto::Operand operator +(proto::Operand a, proto::Operand b);
 
     proto::Operand operator +(const std::string &label, proto::Operand b);
@@ -249,7 +259,7 @@ namespace dcpu {
         return Instruction(Opcode_Advanced_HWI, a);
       }
 
-      void Assemble(const Word *const memory_begin, const Word *const memory_end);
+      void Assemble(Word *const memory_begin);
 
     private:
       inline Dsl &Instruction(proto::Opcode::Basic basic, proto::Operand b, proto::Operand a) {

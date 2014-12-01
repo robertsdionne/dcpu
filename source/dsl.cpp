@@ -85,6 +85,36 @@ namespace dcpu {
       return result;
     }
 
+    proto::Operand push() {
+      proto::Operand result;
+      result.set_type(Operand_Type_PUSH_POP);
+      return result;
+    }
+
+    proto::Operand pop() {
+      return push();
+    }
+
+    proto::Operand peek() {
+      proto::Operand result;
+      result.set_type(Operand_Type_PEEK);
+      return result;
+    }
+
+    proto::Operand pick(const std::string &label) {
+      proto::Operand result;
+      result.set_type(Operand_Type_PICK);
+      result.set_label(label);
+      return result;
+    }
+
+    proto::Operand pick(Word literal) {
+      proto::Operand result;
+      result.set_type(Operand_Type_PICK);
+      result.set_value(literal);
+      return result;
+    }
+
     proto::Operand operator +(proto::Operand a, proto::Operand b) {
       assert((Operand_Type_LITERAL == a.type() && Operand_Type_REGISTER == b.type())
           || (Operand_Type_REGISTER == a.type() && Operand_Type_LITERAL == b.type()));
@@ -181,7 +211,9 @@ namespace dcpu {
       return *this;
     }
 
-    void Dsl::Assemble(const Word *const memory_begin, const Word *const memory_end) {
+    void Dsl::Assemble(Word *const memory_begin) {
+      Assembler assembler;
+      assembler.Assemble(program, memory_begin);
       auto out = new google::protobuf::io::OstreamOutputStream(&std::cout);
       google::protobuf::TextFormat::Print(program, out);
       delete out;

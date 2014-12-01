@@ -14,6 +14,8 @@ using namespace dcpu::dsl;
 constexpr Word kVideoMemoryBegin = 0x8000;
 
 int main(int argument_count, char *arguments[]) {
+  initscr();
+
   Dcpu cpu;
   Clock clock;
   cpu.Connect(&clock);
@@ -27,32 +29,37 @@ int main(int argument_count, char *arguments[]) {
     .set(b(), 13)
     .hwi(0)
     .sub(pc(), 1)
+
     .label("state")
       .data(0)
+
     .label("handler")
       .set(i(), 0)
       .set(j(), 0)
       .ife(d["state"], 0)
         .set(pc(), "tick")
+
     .label("tock")
       .set(d["state"], 0)
       .ife(d["tock_data" + j()], 0)
         .rfi()
       .sti(d[kVideoMemoryBegin + i()], d["tock_data" + j()])
       .set(pc(), "tock")
+
     .label("tick")
       .set(d["state"], 1)
       .ife(d["tick_data" + j()], 0)
         .rfi()
       .sti(d[kVideoMemoryBegin + i()], d["tick_data" + j()])
       .set(pc(), "tick")
+
     .label("tick_data")
       .data("tick")
+
     .label("tock_data")
       .data("tock")
-    .Assemble(cpu.memory_begin(), cpu.memory_end());
 
-  return 0;
+    .Assemble(cpu.memory_begin());
 
   bool quit = false;
   while (!quit) {
