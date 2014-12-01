@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "0460"
+   LastUpgradeVersion = "0610"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -17,7 +17,7 @@
                BlueprintIdentifier = "3B238F5F0E828B5400846E11"
                BuildableName = "Check"
                BlueprintName = "Check"
-               ReferencedContainer = "container:gtest.xcodeproj">
+               ReferencedContainer = "container:../../protobuf-2.4.1/gtest/xcode/gtest.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -39,6 +39,15 @@
       ignoresPersistentStateOnLaunch = "NO"
       debugDocumentVersioning = "YES"
       allowLocationSimulation = "YES">
+      <MacroExpansion>
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "3B238F5F0E828B5400846E11"
+            BuildableName = "Check"
+            BlueprintName = "Check"
+            ReferencedContainer = "container:../../protobuf-2.4.1/gtest/xcode/gtest.xcodeproj">
+         </BuildableReference>
+      </MacroExpansion>
       <AdditionalOptions>
       </AdditionalOptions>
    </LaunchAction>
