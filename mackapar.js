@@ -254,7 +254,6 @@ var setup = function() {
 var update = function() {
   dcpu.memory = randomUint16Array();
   display.update();
-  console.log(display.currentState);
 
   drawable = display.lineView(gl);
   gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
