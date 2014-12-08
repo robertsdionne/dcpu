@@ -61,10 +61,10 @@ namespace dcpu {
   }
 
   std::ostream &operator <<(std::ostream &out, Token token) {
-    return out << "{" << std::endl
-    << "  .type = " << token.type << std::endl
-    << "  .value = \"" << token.value << "\"" << std::endl
-    << "}";
+    return out << "Token {" << std::endl
+        << "  type: " << token.type << std::endl
+        << "  value: \"" << token.value << "\"" << std::endl
+        << "}";
   }
 
   Lexer::Lexer(const std::string &input) : input(input), position(input.begin()) {}
