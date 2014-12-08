@@ -7,6 +7,7 @@ set(
   dsl.cpp
   disassembler.cpp
   dsl.cpp
+  lexer.cpp
   parser.cpp
   generated/program.pb.cc
 )
