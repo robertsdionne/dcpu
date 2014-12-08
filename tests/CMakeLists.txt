@@ -6,4 +6,4 @@ add_executable(
   disassembler_test.cpp
 )
 
-target_link_libraries(alltests dcpu_library gtest gtest_main protobuf)
+target_link_libraries(alltests dcpu_library gtest gtest_main libprotobuf.a)

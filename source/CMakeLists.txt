@@ -22,4 +22,4 @@ add_library(dcpu_library ${DCPU_SOURCES})
 
 add_executable(dcpu main.cpp ${DCPU_SOURCES})
 
-target_link_libraries(dcpu protobuf ncurses)
+target_link_libraries(dcpu libprotobuf.a ncurses)
