@@ -2,9 +2,9 @@
 /bin
 binary/
 build/
-*.cmake
 CMakeCache.txt
 CMakeFiles/
+cmake_install.cmake
 /.cproject
 /Debug
 .deps/
