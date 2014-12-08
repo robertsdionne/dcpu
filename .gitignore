@@ -33,6 +33,7 @@ libraries/protobuf/test-driver
 Makefile
 Makefile.in
 *.o
+*.o-*
 *.pb.cc
 *.pb.h
 *.pc
