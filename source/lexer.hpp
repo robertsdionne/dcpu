@@ -75,9 +75,15 @@ namespace dcpu {
     Token SeeToken(std::string::const_iterator *new_position = nullptr);
 
   private:
-    void MaybeAdvance(const std::smatch &match, std::string::const_iterator *new_position);
+    inline void MaybeAdvance(const std::smatch &match, std::string::const_iterator *new_position) {
+      if (new_position) {
+        *new_position = match.suffix().first;
+      }
+    }
 
-    bool Matches(const std::regex &regex, std::smatch *match);
+    inline bool Matches(const std::regex &regex, std::smatch *match) {
+      return std::regex_search(position, input.end(), *match, regex) && !match->prefix().length();
+    }
 
   private:
     const std::string &input;

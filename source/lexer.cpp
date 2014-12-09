@@ -150,14 +150,4 @@ namespace dcpu {
     }
   }
 
-  void Lexer::MaybeAdvance(const std::smatch &match, std::string::const_iterator *new_position) {
-    if (new_position) {
-      *new_position = match.suffix().first;
-    }
-  }
-
-  bool Lexer::Matches(const std::regex &regex, std::smatch *match) {
-    return std::regex_search(position, input.end(), *match, regex) && !match->prefix().length();
-  }
-
 }  // namespace dcpu
