@@ -76,7 +76,7 @@ namespace dcpu {
     return result;
   }
 
-  Token Lexer::SeeToken(std::string::const_iterator *new_position) {
+  Token Lexer::SeeToken(std::string::const_iterator *new_position) const {
     using Type = Token::Type;
     auto match = std::smatch();
     if (Matches(kAdvancedOpcodeRegex, &match)) {
