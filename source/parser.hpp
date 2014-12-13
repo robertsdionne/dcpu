@@ -1,6 +1,8 @@
 #ifndef DCPU_PARSER_HPP_
 #define DCPU_PARSER_HPP_
 
+#include <string>
+
 #include "generated/program.pb.h"
 
 namespace dcpu {
@@ -15,10 +17,13 @@ namespace dcpu {
     bool ParseProgram(proto::Program *program);
 
   private:
+    int ConvertHexadecimalValue(const std::string &value);
+    void MaybeEatWhitespace();
     bool ParseData(proto::Statement *data);
     bool ParseInstruction(proto::Statement *instruction);
     bool ParseInstruction(proto::Instruction *instruction);
     bool ParseLabel(proto::Statement *label);
+    bool ParseOperand(proto::Operand *operand);
     bool ParseStatement(proto::Statement *statement);
 
   private:

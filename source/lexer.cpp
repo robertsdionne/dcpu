@@ -73,6 +73,7 @@ namespace dcpu {
     auto new_position = std::string::const_iterator();
     auto result = SeeToken(&new_position);
     position = new_position;
+    std::cout << "Eating " << result << std::endl;
     return result;
   }
 
