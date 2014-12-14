@@ -6,12 +6,6 @@
 
 namespace dcpu {
 
-  using namespace proto;
-  using Type = Token::Type;
-
-  Parser::Parser(Lexer &lexer) : lexer(lexer) {}
-
-
   //
   // Goal: Parse the following program:
   //
@@ -20,10 +14,16 @@ namespace dcpu {
   //   .data 0x0001
   //
 
+  using namespace proto;
+  using Type = Token::Type;
+
+  Parser::Parser(Lexer &lexer) : lexer(lexer) {}
+
   bool Parser::ParseProgram(Program *program) {
     std::cout << "ParseProgram" << std::endl;
     *program = Program();
-    while (Type::kInvalid != lexer.SeeToken().type) {
+    while (Type::kExhausted != lexer.SeeToken().type
+        && Type::kInvalid != lexer.SeeToken().type) {
       auto statement = proto::Statement();
       if (ParseStatement(&statement)) {
         program->add_statement()->CopyFrom(statement);

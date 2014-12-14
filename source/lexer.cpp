@@ -79,6 +79,9 @@ namespace dcpu {
 
   Token Lexer::SeeToken(std::string::const_iterator *new_position) const {
     using Type = Token::Type;
+    if (position == input.cend()) {
+      return Token{Type::kExhausted};
+    }
     auto match = std::smatch();
     if (Matches(kAdvancedOpcodeRegex, &match)) {
       MaybeAdvance(match, new_position);

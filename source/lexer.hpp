@@ -17,6 +17,7 @@ namespace dcpu {
       kComment,
       kData,
       kDecimal,
+      kExhausted,
       kHexadecimal,
       kIdentifier,
       kInvalid,
