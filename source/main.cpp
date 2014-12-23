@@ -25,6 +25,7 @@ int main(int argument_count, char *arguments[]) {
   auto application = rsd::GlfwApplication{
     argument_count, arguments, 1024, 768, 7, "DCPU", renderer, mouse
   };
+  application.Run();
 
   // auto source = std::string(R"(
   // # comments
