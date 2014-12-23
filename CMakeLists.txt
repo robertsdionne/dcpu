@@ -11,10 +11,10 @@ include_directories(
   SYSTEM
   libraries/gtest-1.7.0/include
   libraries/protobuf/src
+  libraries/rsd/include
   libraries/rsd/libraries/glfw/include
   libraries/rsd/libraries/glm
   libraries/rsd/libraries/glxw
-  libraries/rsd/source
 )
 
 include(ExternalProject)
