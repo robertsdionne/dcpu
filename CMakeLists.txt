@@ -2,13 +2,19 @@ cmake_minimum_required(VERSION 2.8.12)
 project(dcpu CXX)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -stdlib=libc++ -g")
+add_definitions(-DGL_GLEXT_PROTOTYPES)
 
 add_subdirectory(libraries/gtest-1.7.0)
+add_subdirectory(libraries/rsd)
 
 include_directories(
   SYSTEM
   libraries/gtest-1.7.0/include
   libraries/protobuf/src
+  libraries/rsd/libraries/glfw/include
+  libraries/rsd/libraries/glm
+  libraries/rsd/libraries/glxw
+  libraries/rsd/source
 )
 
 include(ExternalProject)
