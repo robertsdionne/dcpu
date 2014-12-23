@@ -14,7 +14,7 @@ include_directories(
   libraries/rsd/include
   libraries/rsd/libraries/glfw/include
   libraries/rsd/libraries/glm
-  libraries/rsd/libraries/glxw
+  libraries/rsd/libraries/glxw/include
 )
 
 include(ExternalProject)
