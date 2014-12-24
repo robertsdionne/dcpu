@@ -9,6 +9,7 @@ set(
   disassembler.cpp
   dsl.cpp
   lexer.cpp
+  mackaparsuspendedparticleexciterdisplay.cpp
   parser.cpp
   generated/program.pb.cc
 )
