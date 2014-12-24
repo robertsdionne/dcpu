@@ -1,29 +1,43 @@
-///////////////////////////////////////////////////////////////////////////////////////////////////
-// OpenGL Mathematics Copyright (c) 2005 - 2014 G-Truc Creation (www.g-truc.net)
-///////////////////////////////////////////////////////////////////////////////////////////////////
-// Created : 2008-08-31
-// Updated : 2008-08-31
-// Licence : This source is under MIT License
-// File    : test/core/type_mat4x4.cpp
-///////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////
+/// OpenGL Mathematics (glm.g-truc.net)
+///
+/// Copyright (c) 2005 - 2014 G-Truc Creation (www.g-truc.net)
+/// Permission is hereby granted, free of charge, to any person obtaining a copy
+/// of this software and associated documentation files (the "Software"), to deal
+/// in the Software without restriction, including without limitation the rights
+/// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+/// copies of the Software, and to permit persons to whom the Software is
+/// furnished to do so, subject to the following conditions:
+/// 
+/// The above copyright notice and this permission notice shall be included in
+/// all copies or substantial portions of the Software.
+/// 
+/// Restrictions:
+///		By making use of the Software for military purposes, you choose to make
+///		a Bunny unhappy.
+/// 
+/// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+/// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+/// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+/// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+/// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+/// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+/// THE SOFTWARE.
+///
+/// @file test/core/core_type_mat4x4.cpp
+/// @date 2008-08-31 / 2014-11-25
+/// @author Christophe Riccio
+///////////////////////////////////////////////////////////////////////////////////
 
-#define GLM_FORCE_RADIANS
 #include <glm/gtc/epsilon.hpp>
 #include <glm/matrix.hpp>
 #include <glm/mat4x4.hpp>
 #include <cstdio>
 #include <vector>
 
-void print(glm::dmat4 const & Mat0)
-{
-	printf("mat4(\n");
-	printf("\tvec4(%2.9f, %2.9f, %2.9f, %2.9f)\n", Mat0[0][0], Mat0[0][1], Mat0[0][2], Mat0[0][3]);
-	printf("\tvec4(%2.9f, %2.9f, %2.9f, %2.9f)\n", Mat0[1][0], Mat0[1][1], Mat0[1][2], Mat0[1][3]);
-	printf("\tvec4(%2.9f, %2.9f, %2.9f, %2.9f)\n", Mat0[2][0], Mat0[2][1], Mat0[2][2], Mat0[2][3]);
-	printf("\tvec4(%2.9f, %2.9f, %2.9f, %2.9f))\n\n", Mat0[3][0], Mat0[3][1], Mat0[3][2], Mat0[3][3]);
-}
 
-void print(glm::mat4 const & Mat0)
+template <typename genType>
+void print(genType const & Mat0)
 {
 	printf("mat4(\n");
 	printf("\tvec4(%2.9f, %2.9f, %2.9f, %2.9f)\n", Mat0[0][0], Mat0[0][1], Mat0[0][2], Mat0[0][3]);
@@ -189,6 +203,14 @@ int test_ctr()
 {
 	int Error(0);
 
+#if GLM_HAS_TRIVIAL_QUERIES
+	//Error += std::is_trivially_default_constructible<glm::mat4>::value ? 0 : 1;
+	//Error += std::is_trivially_copy_assignable<glm::mat4>::value ? 0 : 1;
+	Error += std::is_trivially_copyable<glm::mat4>::value ? 0 : 1;
+	//Error += std::is_copy_constructible<glm::mat4>::value ? 0 : 1;
+	//Error += std::has_trivial_copy_constructor<glm::mat4>::value ? 0 : 1;
+#endif
+
 #if(GLM_HAS_INITIALIZER_LISTS)
 	glm::mat4 m0(
 		glm::vec4(0, 1, 2, 3), 
@@ -243,6 +265,15 @@ int test_ctr()
 	return Error;
 }
 
+int perf_mul()
+{
+	int Error = 0;
+
+
+
+	return Error;
+}
+
 int main()
 {
 	int Error = 0;
@@ -252,6 +283,8 @@ int main()
 	Error += test_inverse_mat4x4();
 	Error += test_operators();
 	Error += test_inverse();
+
+	Error += perf_mul();
 
 	return Error;
 }

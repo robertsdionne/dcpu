@@ -1,20 +1,41 @@
-///////////////////////////////////////////////////////////////////////////////////////////////////
-// OpenGL Mathematics Copyright (c) 2005 - 2014 G-Truc Creation (www.g-truc.net)
-///////////////////////////////////////////////////////////////////////////////////////////////////
-// Created : 2013-10-25
-// Updated : 2014-01-11
-// Licence : This source is under MIT licence
-// File    : test/gtx/euler_angle.cpp
-///////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////
+/// OpenGL Mathematics (glm.g-truc.net)
+///
+/// Copyright (c) 2005 - 2014 G-Truc Creation (www.g-truc.net)
+/// Permission is hereby granted, free of charge, to any person obtaining a copy
+/// of this software and associated documentation files (the "Software"), to deal
+/// in the Software without restriction, including without limitation the rights
+/// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+/// copies of the Software, and to permit persons to whom the Software is
+/// furnished to do so, subject to the following conditions:
+/// 
+/// The above copyright notice and this permission notice shall be included in
+/// all copies or substantial portions of the Software.
+/// 
+/// Restrictions:
+///		By making use of the Software for military purposes, you choose to make
+///		a Bunny unhappy.
+/// 
+/// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+/// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+/// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+/// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+/// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+/// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+/// THE SOFTWARE.
+///
+/// @file test/gtx/gtx_euler_angle.cpp
+/// @date 2013-10-25 / 2014-11-25
+/// @author Christophe Riccio
+///////////////////////////////////////////////////////////////////////////////////
 
 // Code sample from Filippo Ramaciotti
 
-#define GLM_FORCE_RADIANS
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/epsilon.hpp>
 #include <glm/gtx/string_cast.hpp>
 #include <glm/gtx/euler_angles.hpp>
-#include <iostream>
+#include <cstdio>
 
 namespace test_eulerAngleX
 {
@@ -303,17 +324,17 @@ namespace test_eulerAngleYXZ
 
 		glm::fmat4 rotationInvertedY  = glm::eulerAngleY(-1.f*first) * glm::eulerAngleX(second) * glm::eulerAngleZ(third); 
 		glm::fmat4 rotationDumb = glm::fmat4(); 
-		rotationDumb = glm::rotate(rotationDumb, first, glm::fvec3(0,1,0)); 
-		rotationDumb = glm::rotate(rotationDumb, second, glm::fvec3(1,0,0)); 
-		rotationDumb = glm::rotate(rotationDumb, third, glm::fvec3(0,0,1)); 
+		rotationDumb = glm::rotate(rotationDumb, first, glm::fvec3(0,1,0));
+		rotationDumb = glm::rotate(rotationDumb, second, glm::fvec3(1,0,0));
+		rotationDumb = glm::rotate(rotationDumb, third, glm::fvec3(0,0,1));
 
-		std::cout << glm::to_string(glm::fmat3(rotationEuler)) << std::endl; 
-		std::cout << glm::to_string(glm::fmat3(rotationDumb)) << std::endl; 
-		std::cout << glm::to_string(glm::fmat3(rotationInvertedY )) << std::endl; 
+		std::printf("%s\n", glm::to_string(glm::fmat3(rotationEuler)).c_str());
+		std::printf("%s\n", glm::to_string(glm::fmat3(rotationDumb)).c_str());
+		std::printf("%s\n", glm::to_string(glm::fmat3(rotationInvertedY)).c_str());
 
-		std::cout <<"\nRESIDUAL\n"; 
-		std::cout << glm::to_string(glm::fmat3(rotationEuler-(rotationDumb))) << std::endl; 
-		std::cout << glm::to_string(glm::fmat3(rotationEuler-(rotationInvertedY ))) << std::endl;
+		std::printf("\nRESIDUAL\n");
+		std::printf("%s\n", glm::to_string(glm::fmat3(rotationEuler-(rotationDumb))).c_str());
+		std::printf("%s\n", glm::to_string(glm::fmat3(rotationEuler-(rotationInvertedY))).c_str());
 
 		return 0;
 	}

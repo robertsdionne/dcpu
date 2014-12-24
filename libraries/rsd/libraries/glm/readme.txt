@@ -1,13 +1,39 @@
 ================================================================================
 OpenGL Mathematics (GLM)
 --------------------------------------------------------------------------------
-glm.g-truc.net
-glm@g-truc.net
+GLM is licensed under The Happy Bunny License and MIT License
+
+================================================================================
+The Happy Bunny License (Modified MIT License)
+--------------------------------------------------------------------------------
+Copyright (c) 2005 - 2014 G-Truc Creation
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+Restrictions:
+ By making use of the Software for military purposes, you choose to make a
+ Bunny unhappy.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
 
 ================================================================================
 The MIT License
 --------------------------------------------------------------------------------
-Copyright (c) 2005 - 2014 G-Truc Creation (www.g-truc.net)
+Copyright (c) 2005 - 2014 G-Truc Creation
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -35,6 +61,92 @@ GLM is a header only library, there is nothing to build, just include it.
 
 More informations in GLM manual:
 http://glm.g-truc.net/glm.pdf
+
+================================================================================
+GLM 0.9.6.1: 2014-12-10
+--------------------------------------------------------------------------------
+Features:
+- Added GLM_LANG_CXX14_FLAG and GLM_LANG_CXX1Z_FLAG language feature flags
+- Added C++14 detection
+
+Improvements:
+- Clean up GLM_MESSAGES compilation log to report only detected capabilities
+
+Fixes:
+- Fixed scalar uaddCarry build error with Cuda #276
+- Fixed C++11 explicit conversion operators detection #282
+- Fixed missing explicit convertion when using integer log2 with *vec1 types
+- Fixed 64 bits integer GTX_string_cast to_string on VC 32 bit compiler 
+- Fixed Android build issue, STL C++11 is not supported by the NDK #284
+- Fixed unsupported _BitScanForward64 and _BitScanReverse64 in VC10
+- Fixed Visual C++ 32 bit build #283
+- Fixed GLM_FORCE_SIZE_FUNC pragma message
+- Fixed C++98 only build
+- Fixed conflict between GTX_compatibility and GTC_quaternion #286
+- Fixed C++ language restriction using GLM_FORCE_CXX**
+
+================================================================================
+GLM 0.9.6.0: 2014-11-30
+--------------------------------------------------------------------------------
+Features:
+- Exposed template vector and matrix types in 'glm' namespace #239, #244
+- Added GTX_scalar_multiplication for C++ 11 compiler only #242
+- Added GTX_range for C++ 11 compiler only #240
+- Added closestPointOnLine function for tvec2 to GTX_closest_point #238
+- Added GTC_vec1 extension, *vec1 support to *vec* types
+- Updated GTX_associated_min_max with vec1 support
+- Added support of precision and integers to linearRand #230
+- Added Integer types support to GTX_string_cast #249
+- Added vec3 slerp #237
+- Added GTX_common with isdenomal #223
+- Added GLM_FORCE_SIZE_FUNC to replace .length() by .size() #245
+- Added GLM_FORCE_NO_CTOR_INIT
+- Added 'uninitialize' to explicitly not initialize a GLM type
+- Added GTC_bitfield extension, promoted GTX_bit
+- Added GTC_integer extension, promoted GTX_bit and GTX_integer
+- Added GTC_round extension, promoted GTX_bit
+- Added GLM_FORCE_EXPLICIT_CTOR to require explicit type conversions #269
+- Added GTX_type_aligned for aligned vector, matrix and quaternion types
+
+Improvements:
+- Rely on C++11 to implement isinf and isnan
+- Removed GLM_FORCE_CUDA, Cuda is implicitly detected
+- Separated Apple Clang and LLVM compiler detection
+- Used pragma once
+- Undetected C++ compiler automatically compile with GLM_FORCE_CXX98 and 
+  GLM_FORCE_PURE
+- Added not function (from GLSL specification) on VC12
+- Optimized bitfieldReverse and bitCount functions
+- Optimized findLSB and findMSB functions.
+- Optimized matrix-vector multiple performance with Cuda #257, #258
+- Reduced integer type redifinitions #233
+- Rewrited of GTX_fast_trigonometry #264 #265
+- Made types trivially copyable #263
+- Removed <iostream> in GLM tests
+- Used std features within GLM without redeclaring
+- Optimized cot function #272
+- Optimized sign function #272
+- Added explicit cast from quat to mat3 and mat4 #275
+
+Fixes:
+- Fixed std::nextafter not supported with C++11 on Android #217
+- Fixed missing value_type for dual quaternion
+- Fixed return type of dual quaternion length
+- Fixed infinite loop in isfinite function with GCC #221
+- Fixed Visual Studio 14 compiler warnings
+- Fixed implicit conversion from another tvec2 type to another tvec2 #241
+- Fixed lack of consistency of quat and dualquat constructors
+- Fixed uaddCarray #253
+- Fixed float comparison warnings #270
+
+Deprecation:
+- Removed degrees for function parameters
+- Removed GLM_FORCE_RADIANS, active by default
+- Removed VC 2005 / 8 and 2008 / 9 support
+- Removed GCC 3.4 to 4.3 support
+- Removed LLVM GCC support
+- Removed LLVM 2.6 to 3.1 support
+- Removed CUDA 3.0 to 3.2 support
 
 ================================================================================
 GLM 0.9.5.4: 2014-06-21
