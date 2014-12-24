@@ -1,6 +1,7 @@
 #ifndef RSD_GLFWAPPLICATION_HPP_
 #define RSD_GLFWAPPLICATION_HPP_
 
+#include <GLXW/glxw.h>
 #include <GLFW/glfw3.h>
 #include <string>
 
