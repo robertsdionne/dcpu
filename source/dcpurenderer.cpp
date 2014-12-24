@@ -78,6 +78,7 @@ namespace dcpu {
     // dcpu.ExecuteInstructions(1666);
     display.Execute();
 
+    // TODO(robertsdionne): implement the logic in DCPU-16.
     x += vx;
     y += vy;
     z += vz;
