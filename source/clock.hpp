@@ -7,7 +7,7 @@
 #include "hardware.hpp"
 
 namespace dcpu {
-  
+
   class Clock : public Hardware {
   public:
     static constexpr float kClockFrequency = 60.0;
@@ -23,11 +23,17 @@ namespace dcpu {
 
     void Execute() override;
 
-    unsigned int GetId() const override;
+    inline unsigned int GetId() const override {
+      return kId;
+    }
 
-    unsigned int GetManufacturerId() const override;
+    inline unsigned int GetManufacturerId() const override {
+      return kManufacturerId;
+    }
 
-    Word GetVersion() const override;
+    inline Word GetVersion() const override {
+      return kVersion;
+    }
 
     void HandleHardwareInterrupt() override;
 
