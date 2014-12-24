@@ -3,7 +3,7 @@ project(rsd)
 
 add_definitions(-DGL_GLEXT_PROTOTYPES)
 
-add_subdirectory(libraries/glfw)
+add_subdirectory(libraries/glfw EXCLUDE_FROM_ALL)
 add_subdirectory(libraries/glxw EXCLUDE_FROM_ALL)
 
 if (NOT WIN32)
