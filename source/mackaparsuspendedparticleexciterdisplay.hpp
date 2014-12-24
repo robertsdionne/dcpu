@@ -1,6 +1,8 @@
 #ifndef DCPU_MACKAPARSUSPENDEDPARTICLEEXCITERDISPLAY_HPP_
 #define DCPU_MACKAPARSUSPENDEDPARTICLEEXCITERDISPLAY_HPP_
 
+#include <drawable.hpp>
+
 #include "hardware.hpp"
 
 namespace dcpu {
@@ -30,6 +32,8 @@ namespace dcpu {
 
     virtual ~MackaparSuspendedParticleExciterDisplay() = default;
 
+    rsd::Drawable BeamView();
+
     inline void Connect(Dcpu *dcpu) override {
       this->dcpu = dcpu;
     }
@@ -51,6 +55,8 @@ namespace dcpu {
     void HandleHardwareInterrupt() override;
 
     void Poll(Word *register_b, Word *register_c);
+
+    rsd::Drawable LineView();
 
     void Map(Word register_x, Word register_y);
 

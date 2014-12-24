@@ -10,6 +10,9 @@
 #include <vertexarray.hpp>
 #include <vertexformat.hpp>
 
+#include "dcpu.hpp"
+#include "mackaparsuspendedparticleexciterdisplay.hpp"
+
 namespace dcpu {
 
   class DcpuRenderer : public rsd::Renderer {
@@ -25,12 +28,13 @@ namespace dcpu {
     void Render() override;
 
   private:
+    Dcpu dcpu;
+    MackaparSuspendedParticleExciterDisplay display;
     rsd::Shader vertex_shader, fragment_shader;
     rsd::Program program;
     rsd::VertexFormat vertex_format;
-    rsd::VertexArray beam_vertex_array, vertex_array;
-    rsd::Buffer beam_buffer, buffer;
-    rsd::Drawable beam_drawable, drawable;
+    rsd::VertexArray beam_vertex_array, line_vertex_array;
+    rsd::Buffer beam_buffer, line_buffer;
     glm::mat4 model_view, projection;
   };
 
