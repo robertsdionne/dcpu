@@ -14,9 +14,11 @@ namespace rsd {
 
   GlfwApplication::GlfwApplication(
       int argument_count, char *arguments[], int width, int height, int samples,
-      const std::string &title, Renderer &renderer, Mouse &mouse)
+      const std::string &title, Renderer &renderer, Mouse &mouse,
+      int context_version_major, int context_version_minor)
   : window(nullptr), argument_count(argument_count), arguments(arguments), width(width),
-  height(height), samples(samples), title(title), renderer(renderer), mouse(mouse) {
+  height(height), samples(samples), title(title), renderer(renderer), mouse(mouse),
+  context_version_major(context_version_major), context_version_minor(context_version_minor) {
     instance = this;
   }
 
@@ -67,8 +69,8 @@ namespace rsd {
 
   int GlfwApplication::Run() {
     CHECK_STATE(glfwInit() != -1);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, context_version_major);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, context_version_minor);
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     if (samples) {

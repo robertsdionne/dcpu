@@ -15,7 +15,8 @@ namespace rsd {
   class GlfwApplication : public Application {
   public:
     GlfwApplication(int argument_count, char *arguments[], int width, int height, int samples,
-                    const std::string &title, Renderer &renderer, Mouse &mouse);
+                    const std::string &title, Renderer &renderer, Mouse &mouse,
+                    int context_version_major = 4, int context_version_minor = 1);
 
     virtual ~GlfwApplication();
 
@@ -38,6 +39,7 @@ namespace rsd {
     const std::string title;
     Renderer &renderer;
     Mouse &mouse;
+    int context_version_major, context_version_minor;
   };
 
 }  // namespace rsd
