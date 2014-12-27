@@ -2,6 +2,7 @@
 
 #include "dcpu.hpp"
 #include "hardware.hpp"
+#include "mackaparsuspendedparticleexciterdisplay.hpp"
 
 namespace dcpu {
 
@@ -357,7 +358,7 @@ namespace dcpu {
       return address(register_value(static_cast<int>(operand)));
     } else if (Operand::kLocationOffsetByRegisterA <= operand && operand < Operand::kPushPop) {
       Word *const result =
-          address(*address(program_counter)) + register_value(static_cast<int>(operand));
+          address(*address(program_counter) + register_value(static_cast<int>(operand)));
       program_counter += 1;
       return result;
     } else if (operand == Operand::kPushPop) {
