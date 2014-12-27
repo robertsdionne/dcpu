@@ -42,7 +42,8 @@ var randomUint16Array = function() {
   if (x > 223) {
     x = 223;
     vx *= -1;
-  }if (y < 0) {
+  }
+  if (y < 0) {
     y = 0;
     vy *= -1;
   }
