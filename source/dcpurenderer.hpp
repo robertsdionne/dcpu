@@ -38,8 +38,6 @@ namespace dcpu {
     rsd::VertexArray beam_vertex_array, line_vertex_array;
     rsd::Buffer beam_buffer, line_buffer;
     glm::mat4 model_view, projection;
-
-    short x = 0, y = 0, z = 0, vx = 1, vy = 2, vz = 3;
   };
 
 }  // namespace dcpu

@@ -19,14 +19,13 @@ namespace dcpu {
     auto count = 0;
     auto alpha = 1.0f / std::sqrt(number_of_vertices) / 2.0f;
     for (auto i = 0; i < number_of_vertices; ++i) {
-      auto word1 = dcpu->memory_begin()[2 * i + 1];
-      auto word3 = dcpu->memory_begin()[2 * i + 3];
+      Word *memory_map = dcpu->address(memory_map_offset);
+      auto word1 = memory_map[2 * i + 1];
+      auto word3 = memory_map[2 * i + 3];
       auto color0 = (word1 >> kColorShift) & kColorMask;
       auto color1 = (word3 >> kColorShift) & kColorMask;
-      auto v0 = BuildVertex(
-          dcpu->memory_begin()[2 * i + 0], dcpu->memory_begin()[2 * i + 1], alpha);
-      auto v1 = BuildVertex(
-          dcpu->memory_begin()[2 * i + 2], dcpu->memory_begin()[2 * i + 3], alpha);
+      auto v0 = BuildVertex(memory_map[2 * i + 0], memory_map[2 * i + 1], alpha);
+      auto v1 = BuildVertex(memory_map[2 * i + 2], memory_map[2 * i + 3], alpha);
       auto v0_black = Vertex{v0.x, v0.y, v0.z, 0.0f, 0.0f, 0.0f, v0.a};
       auto v1_black = Vertex{v1.x, v1.y, v1.z, 0.0f, 0.0f, 0.0f, v1.a};
       for (auto c = 1; c <= 4; c <<= 1) {
@@ -103,7 +102,8 @@ namespace dcpu {
   rsd::Drawable MackaparSuspendedParticleExciterDisplay::LineView() {
     auto data = std::vector<float>{};
     for (auto i = 0; i < number_of_vertices; ++i) {
-      auto vertex = BuildVertex(dcpu->memory_begin()[2 * i], dcpu->memory_begin()[2 * i + 1]);
+      Word *memory_map = dcpu->address(memory_map_offset);
+      auto vertex = BuildVertex(memory_map[2 * i], memory_map[2 * i + 1]);
       data.insert(data.cend(), {
         vertex.x, vertex.y, vertex.z, vertex.r, vertex.g, vertex.b, vertex.a
       });
