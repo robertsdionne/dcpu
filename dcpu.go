@@ -284,6 +284,25 @@ type DCPU struct {
 	Memory           [MemorySize]uint16
 }
 
+// Basic builds a basic instruction with operands b and a.
+func Basic(opcode BasicOpcode, b OperandB, a OperandA) (instruction uint16) {
+	instruction = uint16(opcode) | uint16(b<<BasicValueShiftB) | uint16(a<<BasicValueShiftA)
+	return
+}
+
+// Special builds a special instruction with operand a.
+func Special(opcode SpecialOpcode, a OperandA) (instruction uint16) {
+	instruction = uint16(opcode<<SpecialOpcodeShift) | uint16(a<<SpecialValueShiftA)
+	return
+}
+
+// ExecuteInstructions executes multiple instructions.
+func (d *DCPU) ExecuteInstructions(count int) {
+	for i := 0; i < count; i++ {
+		d.ExecuteInstruction(false)
+	}
+}
+
 // ExecuteInstruction executes a single instruction.
 func (d *DCPU) ExecuteInstruction(skip bool) {
 	stackPointerBackup := d.StackPointer
