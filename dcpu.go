@@ -4,8 +4,8 @@ package dcpu
 type (
 	BasicOpcode   uint16
 	SpecialOpcode uint16
-	OperandAValue OperandBValue
-	OperandBValue uint16
+	OperandA      OperandB
+	OperandB      uint16
 )
 
 // Basic opcodes.
@@ -113,135 +113,135 @@ const (
 // Values for operands.
 const (
 	// RegisterA signifies register A.
-	RegisterA OperandBValue = iota
+	RegisterA OperandB = iota
 	// RegisterB signifies register B.
-	RegisterB OperandBValue = iota
+	RegisterB OperandB = iota
 	// RegisterC signifies register C.
-	RegisterC OperandBValue = iota
+	RegisterC OperandB = iota
 	// RegisterX signifies register X.
-	RegisterX OperandBValue = iota
+	RegisterX OperandB = iota
 	// RegisterY signifies register Y.
-	RegisterY OperandBValue = iota
+	RegisterY OperandB = iota
 	// RegisterZ signifies register Z.
-	RegisterZ OperandBValue = iota
+	RegisterZ OperandB = iota
 	// RegisterI signifies register I.
-	RegisterI OperandBValue = iota
+	RegisterI OperandB = iota
 	// RegisterJ signifies register J.
-	RegisterJ OperandBValue = iota
+	RegisterJ OperandB = iota
 	// LocationInRegisterA signifies location [A].
-	LocationInRegisterA OperandBValue = iota
+	LocationInRegisterA OperandB = iota
 	// LocationInRegisterB signifies location [B].
-	LocationInRegisterB OperandBValue = iota
+	LocationInRegisterB OperandB = iota
 	// LocationInRegisterC signifies location [C].
-	LocationInRegisterC OperandBValue = iota
+	LocationInRegisterC OperandB = iota
 	// LocationInRegisterX signifies location [X].
-	LocationInRegisterX OperandBValue = iota
+	LocationInRegisterX OperandB = iota
 	// LocationInRegisterY signifies location [Y].
-	LocationInRegisterY OperandBValue = iota
+	LocationInRegisterY OperandB = iota
 	// LocationInRegisterZ signifies location [Z].
-	LocationInRegisterZ OperandBValue = iota
+	LocationInRegisterZ OperandB = iota
 	// LocationInRegisterI signifies location [I].
-	LocationInRegisterI OperandBValue = iota
+	LocationInRegisterI OperandB = iota
 	// LocationInRegisterI signifies location [J].
-	LocationInRegisterJ OperandBValue = iota
+	LocationInRegisterJ OperandB = iota
 	// LocationOffsetByRegisterA signifies location [A + next word].
-	LocationOffsetByRegisterA OperandBValue = iota
+	LocationOffsetByRegisterA OperandB = iota
 	// LocationOffsetByRegisterB signifies location [B + next word].
-	LocationOffsetByRegisterB OperandBValue = iota
+	LocationOffsetByRegisterB OperandB = iota
 	// LocationOffsetByRegisterC signifies location [C + next word].
-	LocationOffsetByRegisterC OperandBValue = iota
+	LocationOffsetByRegisterC OperandB = iota
 	// LocationOffsetByRegisterX signifies location [X + next word].
-	LocationOffsetByRegisterX OperandBValue = iota
+	LocationOffsetByRegisterX OperandB = iota
 	// LocationOffsetByRegisterY signifies location [Y + next word].
-	LocationOffsetByRegisterY OperandBValue = iota
+	LocationOffsetByRegisterY OperandB = iota
 	// LocationOffsetByRegisterZ signifies location [Z + next word].
-	LocationOffsetByRegisterZ OperandBValue = iota
+	LocationOffsetByRegisterZ OperandB = iota
 	// LocationOffsetByRegisterI signifies location [I + next word].
-	LocationOffsetByRegisterI OperandBValue = iota
+	LocationOffsetByRegisterI OperandB = iota
 	// LocationOffsetByRegisterJ signifies location [J + next word].
-	LocationOffsetByRegisterJ OperandBValue = iota
+	LocationOffsetByRegisterJ OperandB = iota
 	// Push signifies [--SP] for operand b.
 	// Pop signifies [SP++] for operand a.
 	// PushOrPop signifies either Push or Pop depending upon context.
-	Push, Pop, PushOrPop OperandBValue = iota, iota, iota
+	Push, Pop, PushOrPop OperandB = iota, iota, iota
 	// Peek signifies [SP].
-	Peek OperandBValue = iota
+	Peek OperandB = iota
 	// Pick signifies [SP + next word].
-	Pick OperandBValue = iota
+	Pick OperandB = iota
 	// StackPointer signifies SP.
-	StackPointer OperandBValue = iota
+	StackPointer OperandB = iota
 	// ProgramCounter signifies PC.
-	ProgramCounter OperandBValue = iota
+	ProgramCounter OperandB = iota
 	// Extra signifies EX.
-	Extra OperandBValue = iota
+	Extra OperandB = iota
 	// Location signifies [next word].
-	Location OperandBValue = iota
+	Location OperandB = iota
 	// Literal signifies the next word, literally.
-	Literal OperandBValue = iota
+	Literal OperandB = iota
 	// LiteralNegative1 signifies 0xffff.
-	LiteralNegative1 OperandAValue = iota
+	LiteralNegative1 OperandA = iota
 	// Literal0 signifies 0x0.
-	Literal0 OperandAValue = iota
+	Literal0 OperandA = iota
 	// Literal1 signifies 0x1.
-	Literal1 OperandAValue = iota
+	Literal1 OperandA = iota
 	// Literal2 signifies 0x2.
-	Literal2 OperandAValue = iota
+	Literal2 OperandA = iota
 	// Literal3 signifies 0x3.
-	Literal3 OperandAValue = iota
+	Literal3 OperandA = iota
 	// Literal4 signifies 0x4.
-	Literal4 OperandAValue = iota
+	Literal4 OperandA = iota
 	// Literal5 signifies 0x5.
-	Literal5 OperandAValue = iota
+	Literal5 OperandA = iota
 	// Literal6 signifies 0x6.
-	Literal6 OperandAValue = iota
+	Literal6 OperandA = iota
 	// Literal7 signifies 0x7.
-	Literal7 OperandAValue = iota
+	Literal7 OperandA = iota
 	// Literal8 signifies 0x8.
-	Literal8 OperandAValue = iota
+	Literal8 OperandA = iota
 	// Literal9 signifies 0x9.
-	Literal9 OperandAValue = iota
+	Literal9 OperandA = iota
 	// Literal10 signifies 0xa.
-	Literal10 OperandAValue = iota
+	Literal10 OperandA = iota
 	// Literal11 signifies 0xb.
-	Literal11 OperandAValue = iota
+	Literal11 OperandA = iota
 	// Literal12 signifies 0xc.
-	Literal12 OperandAValue = iota
+	Literal12 OperandA = iota
 	// Literal12 signifies 0xd.
-	Literal13 OperandAValue = iota
+	Literal13 OperandA = iota
 	// Literal14 signifies 0xe.
-	Literal14 OperandAValue = iota
+	Literal14 OperandA = iota
 	// Literal15 signifies 0xf.
-	Literal15 OperandAValue = iota
+	Literal15 OperandA = iota
 	// Literal16 signifies 0x10.
-	Literal16 OperandAValue = iota
+	Literal16 OperandA = iota
 	// Literal17 signifies 0x11.
-	Literal17 OperandAValue = iota
+	Literal17 OperandA = iota
 	// Literal18 signifies 0x12.
-	Literal18 OperandAValue = iota
+	Literal18 OperandA = iota
 	// Literal19 signifies 0x13.
-	Literal19 OperandAValue = iota
+	Literal19 OperandA = iota
 	// Literal20 signifies 0x14.
-	Literal20 OperandAValue = iota
+	Literal20 OperandA = iota
 	// Literal21 signifies 0x15.
-	Literal21 OperandAValue = iota
+	Literal21 OperandA = iota
 	// Literal22 signifies 0x16.
-	Literal22 OperandAValue = iota
+	Literal22 OperandA = iota
 	// Literal23 signifies 0x17.
-	Literal23 OperandAValue = iota
+	Literal23 OperandA = iota
 	// Literal24 signifies 0x18.
-	Literal24 OperandAValue = iota
+	Literal24 OperandA = iota
 	// Literal25 signifies 0x19.
-	Literal25 OperandAValue = iota
+	Literal25 OperandA = iota
 	// Literal26 signifies 0x1a.
-	Literal26 OperandAValue = iota
+	Literal26 OperandA = iota
 	// Literal27 signifies 0x1b.
-	Literal27 OperandAValue = iota
+	Literal27 OperandA = iota
 	// Literal28 signifies 0x1c.
-	Literal28 OperandAValue = iota
+	Literal28 OperandA = iota
 	// Literal29 signifies 0x1d.
-	Literal29 OperandAValue = iota
+	Literal29 OperandA = iota
 	// Literal30 signifies 0x1e.
-	Literal30 OperandAValue = iota
+	Literal30 OperandA = iota
 )
 
 const (
@@ -292,15 +292,15 @@ func (d *DCPU) ExecuteInstruction(skip bool) {
 	basicOpcode := BasicOpcode(instruction & BasicOpcodeMask)
 
 	if basicOpcode != BasicReserved {
-		operandA := OperandAValue((instruction & BasicValueMaskA) >> BasicValueShiftA)
-		operandB := OperandBValue((instruction & BasicValueMaskB) >> BasicValueShiftB)
+		operandA := OperandA((instruction & BasicValueMaskA) >> BasicValueShiftA)
+		operandB := OperandB((instruction & BasicValueMaskB) >> BasicValueShiftB)
 
 		operandAAddress, operandAValue := d.getOperandAddressOrLiteral(operandA, false)
 		if operandAAddress != nil {
 			operandAValue = uint32(*operandAAddress)
 		}
 
-		operandBAddress, operandBValue := d.getOperandAddressOrLiteral(OperandAValue(operandB), true)
+		operandBAddress, operandBValue := d.getOperandAddressOrLiteral(OperandA(operandB), true)
 		if operandBAddress != nil {
 			operandBValue = uint32(*operandBAddress)
 		}
@@ -347,9 +347,9 @@ func (d *DCPU) ExecuteInstruction(skip bool) {
 }
 
 func (d *DCPU) getOperandAddressOrLiteral(
-	operandTypeA OperandAValue, assignable bool) (address *uint16, literal uint32) {
+	operandTypeA OperandA, assignable bool) (address *uint16, literal uint32) {
 
-	operandTypeB := OperandBValue(operandTypeA)
+	operandTypeB := OperandB(operandTypeA)
 	push := operandTypeB == PushOrPop && assignable
 	pop := operandTypeB == PushOrPop && !assignable
 
@@ -402,7 +402,7 @@ func (d *DCPU) getOperandAddressOrLiteral(
 	return
 }
 
-func (d *DCPU) registerAddress(registerIndex OperandBValue) (address *uint16) {
+func (d *DCPU) registerAddress(registerIndex OperandB) (address *uint16) {
 	switch registerIndex {
 	case RegisterA:
 		address = &d.RegisterA
@@ -424,7 +424,7 @@ func (d *DCPU) registerAddress(registerIndex OperandBValue) (address *uint16) {
 	return
 }
 
-func (d *DCPU) registerValue(registerIndex OperandBValue) (value uint16) {
+func (d *DCPU) registerValue(registerIndex OperandB) (value uint16) {
 	switch registerIndex {
 	case RegisterA:
 		value = d.RegisterA
