@@ -29,6 +29,8 @@ const (
 	DivideSigned
 	// Modulo sets b to b % a. If a is 0, sets b to 0 instead.
 	Modulo
+	// ModuloSigned is like Modulo, but treats a and b as signed.
+	ModuloSigned
 	// BinaryAnd sets b to b & a.
 	BinaryAnd
 	// BinaryOr sets b to b | a.
@@ -159,11 +161,9 @@ const (
 	// LocationOffsetByRegisterJ signifies location [J + next word].
 	LocationOffsetByRegisterJ
 	// Push signifies [--SP] for operand b.
-	Push
 	// Pop signifies [SP++] for operand a.
-	Pop = Push
 	// PushOrPop signifies either Push or Pop depending upon context.
-	PushOrPop = Push
+	Push, Pop, PushOrPop = iota, iota, iota
 	// Peek signifies [SP].
 	Peek = iota
 	// Pick signifies [SP + next word].
