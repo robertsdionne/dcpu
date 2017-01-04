@@ -1,6 +1,12 @@
 // Package dcpu implements an emulator for Notch's DCPU 1.7 specification.
 package dcpu
 
+import (
+	"fmt"
+	"log"
+	"unsafe"
+)
+
 type (
 	BasicOpcode   uint16
 	SpecialOpcode uint16
@@ -296,11 +302,23 @@ func Special(opcode SpecialOpcode, a OperandA) (instruction uint16) {
 	return
 }
 
+// Load copies a sequence of instructions (a program) into memory.
+func (d *DCPU) Load(instructions []uint16) {
+	copy(d.Memory[:], instructions)
+}
+
 // ExecuteInstructions executes multiple instructions.
 func (d *DCPU) ExecuteInstructions(count int) {
 	for i := 0; i < count; i++ {
+		log.Println(*d)
 		d.ExecuteInstruction(false)
 	}
+	log.Println(*d)
+}
+
+func (d DCPU) String() string {
+	return fmt.Sprintln("A:", d.RegisterA, "B:", d.RegisterB, "J:", d.RegisterJ, "PC:", d.ProgramCounter, "SP:", d.StackPointer,
+		"[0:10]", d.Memory[0:10], "[0x100a]", d.Memory[0x100a], "[0x200a]", d.Memory[0x200a])
 }
 
 // ExecuteInstruction executes a single instruction.
@@ -323,6 +341,19 @@ func (d *DCPU) ExecuteInstruction(skip bool) {
 		if operandBAddress != nil {
 			operandBValue = uint32(*operandBAddress)
 		}
+
+		log.Println("instruction", instruction)
+		log.Println("basicOpcode", basicOpcode)
+
+		log.Println("operandB", operandB)
+		log.Println("operandBAddress", int(uintptr(unsafe.Pointer(operandBAddress)))-int(uintptr(unsafe.Pointer(&d.Memory))))
+		log.Println("operandBValue", operandBValue)
+
+		log.Println("operandA", operandA)
+		log.Println("operandAAddress", int(uintptr(unsafe.Pointer(operandAAddress)))-int(uintptr(unsafe.Pointer(&d.Memory))))
+		log.Println("operandAValue", operandAValue)
+
+		log.Println()
 
 		if skip {
 			d.StackPointer = stackPointerBackup
@@ -373,14 +404,14 @@ func (d *DCPU) getOperandAddressOrLiteral(
 	pop := operandTypeB == PushOrPop && !assignable
 
 	switch {
-	case operandTypeB < LocationInRegisterA:
+	case operandTypeB <= RegisterJ:
 		address = d.registerAddress(operandTypeB)
 
-	case operandTypeB < LocationOffsetByRegisterA:
+	case operandTypeB <= LocationInRegisterJ:
 		address = &d.Memory[d.registerValue(operandTypeB)]
 
-	case operandTypeB < PushOrPop:
-		address = &d.Memory[d.ProgramCounter+d.registerValue(operandTypeB)]
+	case operandTypeB <= LocationOffsetByRegisterJ:
+		address = &d.Memory[d.Memory[d.ProgramCounter]+d.registerValue(operandTypeB)]
 		d.ProgramCounter++
 
 	case push:
@@ -445,21 +476,21 @@ func (d *DCPU) registerAddress(registerIndex OperandB) (address *uint16) {
 
 func (d *DCPU) registerValue(registerIndex OperandB) (value uint16) {
 	switch registerIndex {
-	case RegisterA:
+	case RegisterA, LocationInRegisterA, LocationOffsetByRegisterA:
 		value = d.RegisterA
-	case RegisterB:
+	case RegisterB, LocationInRegisterB, LocationOffsetByRegisterB:
 		value = d.RegisterB
-	case RegisterC:
+	case RegisterC, LocationInRegisterC, LocationOffsetByRegisterC:
 		value = d.RegisterC
-	case RegisterX:
+	case RegisterX, LocationInRegisterX, LocationOffsetByRegisterX:
 		value = d.RegisterX
-	case RegisterY:
+	case RegisterY, LocationInRegisterY, LocationOffsetByRegisterY:
 		value = d.RegisterY
-	case RegisterZ:
+	case RegisterZ, LocationInRegisterZ, LocationOffsetByRegisterZ:
 		value = d.RegisterZ
-	case RegisterI:
+	case RegisterI, LocationInRegisterI, LocationOffsetByRegisterI:
 		value = d.RegisterI
-	case RegisterJ:
+	case RegisterJ, LocationInRegisterJ, LocationOffsetByRegisterJ:
 		value = d.RegisterJ
 	}
 	return
