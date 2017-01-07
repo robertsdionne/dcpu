@@ -252,7 +252,7 @@ func (d *DCPU) ExecuteInstruction(skip bool) {
 			d.returnFromInterrupt()
 
 		case InterruptAddToQueue:
-			d.interruptAddToQueue(a)
+			d.QueueInterrupts = a > 0
 
 		case HardwareNumberConnected:
 			d.set(pa, uint16(len(d.Hardware)))
