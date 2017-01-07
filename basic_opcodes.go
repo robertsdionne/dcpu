@@ -1,4 +1,3 @@
-// Package dcpu implements an emulator for Notch's DCPU 1.7 specification.
 package dcpu
 
 type BasicOpcode uint16
