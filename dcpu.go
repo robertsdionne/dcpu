@@ -387,7 +387,7 @@ func (d *DCPU) ExecuteInstruction(skip bool) {
 			d.maybeAssignResult(operandBAddress, result)
 
 		case MultiplySigned:
-			result := int32(operandBValue) * int32(operandAValue)
+			result := int32(int16(operandBValue)) * int32(int16(operandAValue))
 			d.Extra = uint16(result >> 16)
 			d.maybeAssignResult(operandBAddress, uint32(result))
 
