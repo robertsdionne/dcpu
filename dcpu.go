@@ -269,6 +269,15 @@ const (
 	SpecialValueShiftA = BasicValueShiftA
 )
 
+// Hardware represents peripheral devices that may interact with a DCPU.
+type Hardware interface {
+	Execute()
+	GetID() uint32
+	GetManufacturerID() uint32
+	GetVersion() uint16
+	HandleHardwareInterrupt()
+}
+
 // DCPU represents the state of a DCPU machine.
 type DCPU struct {
 	RegisterA        uint16
@@ -283,7 +292,10 @@ type DCPU struct {
 	StackPointer     uint16
 	Extra            uint16
 	InterruptAddress uint16
+	InterruptQueue   []uint16
+	QueueInterrupts  bool
 	Memory           [MemorySize]uint16
+	Hardware         []Hardware
 }
 
 // Basic builds a basic instruction with operands b and a.
@@ -319,6 +331,11 @@ func (d DCPU) String() string {
 
 // ExecuteInstruction executes a single instruction.
 func (d *DCPU) ExecuteInstruction(skip bool) {
+	if !skip && !d.QueueInterrupts && len(d.InterruptQueue) > 0 {
+		d.maybeTriggerInterrupt(d.InterruptQueue[0])
+		d.InterruptQueue = d.InterruptQueue[1:]
+	}
+
 	stackPointerBackup := d.StackPointer
 	instruction := d.Memory[d.ProgramCounter]
 	d.ProgramCounter++
@@ -504,8 +521,107 @@ func (d *DCPU) ExecuteInstruction(skip bool) {
 			d.RegisterJ--
 		}
 	} else {
-		// TODO(robertsdionne): Finish special opcode cases.
+		specialOpcode := SpecialOpcode(instruction & SpecialOpcodeMask)
+		operandA := OperandA((instruction & SpecialValueMaskA) >> SpecialValueShiftA)
+		assignable := specialOpcode == InterruptAddressGet || specialOpcode == HardwareNumberConnected
+
+		operandAAddress, operandAValue := d.getOperandAddressOrLiteral(operandA, assignable)
+		if operandAAddress != nil {
+			operandAValue = uint32(*operandAAddress)
+		}
+
+		if skip {
+			d.StackPointer = stackPointerBackup
+			return
+		}
+
+		switch specialOpcode {
+		case SpecialReserved:
+			return
+
+		case JumpSubRoutine:
+			d.StackPointer--
+			d.Memory[d.StackPointer] = d.ProgramCounter
+			d.ProgramCounter = uint16(operandAValue)
+
+		case InterruptTrigger:
+			d.Interrupt(uint16(operandAValue))
+
+		case InterruptAddressGet:
+			d.maybeAssignResult(operandAAddress, uint32(d.InterruptAddress))
+
+		case InterruptAddressSet:
+			d.InterruptAddress = uint16(operandAValue)
+
+		case ReturnFromInterrupt:
+			d.RegisterA = d.Memory[d.StackPointer]
+			d.StackPointer++
+			d.ProgramCounter = d.Memory[d.StackPointer]
+			d.StackPointer++
+			d.QueueInterrupts = false
+
+		case InterruptAddToQueue:
+			switch {
+			case operandAValue == 0:
+				d.QueueInterrupts = false
+			default:
+				d.QueueInterrupts = true
+			}
+
+		case HardwareNumberConnected:
+			d.maybeAssignResult(operandAAddress, uint32(len(d.Hardware)))
+
+		case HardwareQuery:
+			switch {
+			case int(operandAValue) < len(d.Hardware):
+				hardwareID := d.Hardware[operandAValue].GetID()
+				d.RegisterA = uint16(hardwareID)
+				d.RegisterB = uint16(hardwareID >> 16)
+
+				d.RegisterC = d.Hardware[operandAValue].GetVersion()
+
+				manufacturerID := d.Hardware[operandAValue].GetManufacturerID()
+				d.RegisterX = uint16(manufacturerID)
+				d.RegisterY = uint16(manufacturerID >> 16)
+
+			default:
+				d.RegisterA = 0
+				d.RegisterB = 0
+				d.RegisterC = 0
+				d.RegisterX = 0
+				d.RegisterY = 0
+			}
+
+		case HardwareInterrupt:
+			if int(operandAValue) < len(d.Hardware) {
+				d.Hardware[operandAValue].HandleHardwareInterrupt()
+			}
+		}
 	}
+}
+
+func (d *DCPU) Interrupt(message uint16) {
+	switch {
+	case d.QueueInterrupts:
+		d.InterruptQueue = append(d.InterruptQueue, message)
+
+	default:
+		d.maybeTriggerInterrupt(message)
+	}
+}
+
+func (d *DCPU) maybeTriggerInterrupt(message uint16) {
+	if d.InterruptAddress == 0 {
+		return
+	}
+
+	d.QueueInterrupts = true
+	d.StackPointer--
+	d.Memory[d.StackPointer] = d.ProgramCounter
+	d.StackPointer--
+	d.Memory[d.StackPointer] = d.RegisterA
+	d.ProgramCounter = d.InterruptAddress
+	d.RegisterA = message
 }
 
 func (d *DCPU) getOperandAddressOrLiteral(
