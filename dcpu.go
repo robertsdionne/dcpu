@@ -471,7 +471,11 @@ func (d *DCPU) ExecuteInstruction(skip bool) {
 				d.ExecuteInstruction( /* skip */ true)
 			}
 
-		// TODO(robertsdionne): case IfAbove:
+		case IfAbove:
+			above := int16(operandBValue) > int16(operandAValue)
+			if !above {
+				d.ExecuteInstruction( /* skip */ true)
+			}
 
 		case IfLessThan:
 			lessThan := operandBValue < operandAValue
@@ -479,7 +483,11 @@ func (d *DCPU) ExecuteInstruction(skip bool) {
 				d.ExecuteInstruction( /* skip */ true)
 			}
 
-			// TODO(robertsdionne): case IfUnder:
+		case IfUnder:
+			under := int16(operandBValue) < int16(operandAValue)
+			if !under {
+				d.ExecuteInstruction( /* skip */ true)
+			}
 
 			// TODO(robertsdionne): case AddWithCarry:
 
