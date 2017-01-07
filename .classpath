@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<classpath>
-	<classpathentry kind="src" path="java"/>
-	<classpathentry kind="lib" path="libraries/antlr-4.0/antlr-4.0-complete.jar"/>
-	<classpathentry kind="lib" path="libraries/protobuf-2.4.1/java/protobuf-java-2.4.1.jar"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="output" path="bin"/>
-</classpath>
