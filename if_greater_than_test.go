@@ -18,6 +18,7 @@ func TestExecuteInstructions_ifGreaterThanRegisterWithLesserSmallLiteral(t *test
 
 	dcpu.ExecuteInstructions(3)
 	assert.EqualValues(t, 13, dcpu.Memory[dcpu.StackPointer])
+	assert.EqualValues(t, 0xffff, dcpu.StackPointer)
 }
 
 func TestExecuteInstructions_ifGreaterThanRegisterWithGreaterSmallLiteral(t *testing.T) {
@@ -32,4 +33,5 @@ func TestExecuteInstructions_ifGreaterThanRegisterWithGreaterSmallLiteral(t *tes
 
 	dcpu.ExecuteInstructions(3)
 	assert.EqualValues(t, 14, dcpu.Memory[dcpu.StackPointer])
+	assert.EqualValues(t, 0xffff, dcpu.StackPointer)
 }

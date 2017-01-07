@@ -353,6 +353,12 @@ func (d *DCPU) ExecuteInstruction(skip bool) {
 
 		if skip {
 			d.StackPointer = stackPointerBackup
+
+			switch basicOpcode {
+			case IfBitSet, IfClear, IfEqual, IfNotEqual, IfGreaterThan, IfAbove, IfLessThan, IfUnder:
+				d.ExecuteInstruction( /* skip */ true)
+			}
+
 			return
 		}
 
