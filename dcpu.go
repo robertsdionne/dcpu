@@ -432,34 +432,40 @@ func (d *DCPU) ExecuteInstruction(skip bool) {
 			d.maybeAssignResult(operandBAddress, result)
 
 		case IfBitSet:
-			if !((operandBValue & operandAValue) != 0) {
+			bitSet := (operandAValue & operandBValue) != 0
+			if !bitSet {
 				d.ExecuteInstruction( /* skip */ true)
 			}
 
 		case IfClear:
-			if !((operandBValue & operandAValue) == 0) {
+			clear := (operandBValue & operandAValue) == 0
+			if !clear {
 				d.ExecuteInstruction( /* skip */ true)
 			}
 
 		case IfEqual:
-			if !(operandBValue == operandAValue) {
+			equal := operandBValue == operandAValue
+			if !equal {
 				d.ExecuteInstruction( /* skip */ true)
 			}
 
 		case IfNotEqual:
-			if !(operandBValue != operandAValue) {
+			notEqual := operandBValue != operandAValue
+			if !notEqual {
 				d.ExecuteInstruction( /* skip */ true)
 			}
 
 		case IfGreaterThan:
-			if !(operandBValue > operandAValue) {
+			greaterThan := operandBValue > operandAValue
+			if !greaterThan {
 				d.ExecuteInstruction( /* skip */ true)
 			}
 
 		// TODO(robertsdionne): case IfAbove:
 
 		case IfLessThan:
-			if !(operandBValue < operandAValue) {
+			lessThan := operandBValue < operandAValue
+			if !lessThan {
 				d.ExecuteInstruction( /* skip */ true)
 			}
 
