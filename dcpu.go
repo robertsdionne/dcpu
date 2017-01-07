@@ -403,7 +403,17 @@ func (d *DCPU) ExecuteInstruction(skip bool) {
 				d.maybeAssignResult(operandBAddress, result)
 			}
 
-		// TODO(robertsdionne): case DivideSigned:
+		case DivideSigned:
+			switch int16(operandAValue) {
+			case 0:
+				d.Extra = 1
+				d.maybeAssignResult(operandBAddress, 0)
+
+			default:
+				result := int32(int16(operandBValue) / int16(operandAValue))
+				d.Extra = 0
+				d.maybeAssignResult(operandBAddress, uint32(result))
+			}
 
 		case Modulo:
 			d.maybeAssignResult(operandBAddress, operandBValue%operandAValue)
