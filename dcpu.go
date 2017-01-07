@@ -489,13 +489,19 @@ func (d *DCPU) ExecuteInstruction(skip bool) {
 				d.ExecuteInstruction( /* skip */ true)
 			}
 
-			// TODO(robertsdionne): case AddWithCarry:
+		// TODO(robertsdionne): case AddWithCarry:
 
-			// TODO(robertsdionne): case SubtractWithCarry:
+		// TODO(robertsdionne): case SubtractWithCarry:
 
-			// TODO(robertsdionne): case SetThenIncrement:
+		case SetThenIncrement:
+			d.maybeAssignResult(operandBAddress, operandAValue)
+			d.RegisterI++
+			d.RegisterJ++
 
-			// TODO(robertsdionne): case SetThenDecrement:
+		case SetThenDecrement:
+			d.maybeAssignResult(operandBAddress, operandBValue)
+			d.RegisterI--
+			d.RegisterJ--
 		}
 	} else {
 		// TODO(robertsdionne): Finish special opcode cases.
