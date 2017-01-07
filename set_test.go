@@ -9,7 +9,7 @@ import (
 func TestExecuteInstructions_setRegisterWithRegister(t *testing.T) {
 	dcpu := DCPU{}
 
-	dcpu.Load([]uint16{
+	dcpu.Load(0, []uint16{
 		Basic(Set, RegisterB, Literal1),
 		Basic(Set, RegisterA, OperandA(RegisterB)),
 	})
@@ -22,7 +22,7 @@ func TestExecuteInstructions_setRegisterWithRegister(t *testing.T) {
 func TestExecuteInstructions_setRegisterWithLastRegister(t *testing.T) {
 	dcpu := DCPU{}
 
-	dcpu.Load([]uint16{
+	dcpu.Load(0, []uint16{
 		Basic(Set, RegisterJ, Literal1),
 		Basic(Set, RegisterA, OperandA(RegisterJ)),
 	})
@@ -35,7 +35,7 @@ func TestExecuteInstructions_setRegisterWithLastRegister(t *testing.T) {
 func TestExecuteInstructions_setRegisterWithLocationInRegister(t *testing.T) {
 	dcpu := DCPU{}
 
-	dcpu.Load([]uint16{
+	dcpu.Load(0, []uint16{
 		Basic(Set, Location, Literal13), 0x1000,
 		Basic(Set, RegisterB, OperandA(Literal)), 0x1000,
 		Basic(Set, RegisterA, OperandA(LocationInRegisterB)),
@@ -49,7 +49,7 @@ func TestExecuteInstructions_setRegisterWithLocationInRegister(t *testing.T) {
 func TestExecuteInstructions_setRegisterWithLocationInLastRegister(t *testing.T) {
 	dcpu := DCPU{}
 
-	dcpu.Load([]uint16{
+	dcpu.Load(0, []uint16{
 		Basic(Set, Location, Literal13), 0x1000,
 		Basic(Set, RegisterJ, OperandA(Literal)), 0x1000,
 		Basic(Set, RegisterA, OperandA(LocationInRegisterJ)),
@@ -63,7 +63,7 @@ func TestExecuteInstructions_setRegisterWithLocationInLastRegister(t *testing.T)
 func TestExecuteInstructions_setRegisterWithLocationOffsetByRegister(t *testing.T) {
 	dcpu := DCPU{}
 
-	dcpu.Load([]uint16{
+	dcpu.Load(0, []uint16{
 		Basic(Set, Location, Literal13), 0x100a,
 		Basic(Set, RegisterB, OperandA(Literal10)),
 		Basic(Set, RegisterA, OperandA(LocationOffsetByRegisterB)), 0x1000,
@@ -77,7 +77,7 @@ func TestExecuteInstructions_setRegisterWithLocationOffsetByRegister(t *testing.
 func TestExecuteInstructions_setRegisterWithLocationOffsetByLastRegister(t *testing.T) {
 	dcpu := DCPU{}
 
-	dcpu.Load([]uint16{
+	dcpu.Load(0, []uint16{
 		Basic(Set, Location, Literal13), 0x100a,
 		Basic(Set, RegisterJ, OperandA(Literal10)),
 		Basic(Set, RegisterA, OperandA(LocationOffsetByRegisterJ)), 0x1000,
@@ -91,7 +91,7 @@ func TestExecuteInstructions_setRegisterWithLocationOffsetByLastRegister(t *test
 func TestExecuteInstructions_setRegisterWithPop(t *testing.T) {
 	dcpu := DCPU{}
 
-	dcpu.Load([]uint16{
+	dcpu.Load(0, []uint16{
 		Basic(Set, Push, OperandA(Literal13)),
 		Basic(Set, RegisterA, OperandA(Pop)),
 	})
@@ -109,7 +109,7 @@ func TestExecuteInstructions_setRegisterWithPop(t *testing.T) {
 func TestExecuteInstructions_setRegisterWithPeek(t *testing.T) {
 	dcpu := DCPU{}
 
-	dcpu.Load([]uint16{
+	dcpu.Load(0, []uint16{
 		Basic(Set, Push, OperandA(Literal13)),
 		Basic(Set, RegisterA, OperandA(Peek)),
 	})
@@ -127,7 +127,7 @@ func TestExecuteInstructions_setRegisterWithPeek(t *testing.T) {
 func TestExecuteInstructions_setRegisterWithPick(t *testing.T) {
 	dcpu := DCPU{}
 
-	dcpu.Load([]uint16{
+	dcpu.Load(0, []uint16{
 		Basic(Set, Push, OperandA(Literal13)),
 		Basic(Set, Push, OperandA(Literal14)),
 		Basic(Set, RegisterA, OperandA(Pick)), 0x1,
@@ -145,7 +145,7 @@ func TestExecuteInstructions_setRegisterWithPick(t *testing.T) {
 func TestExecuteInstructions_setRegisterWithStackPointer(t *testing.T) {
 	dcpu := DCPU{}
 
-	dcpu.Load([]uint16{
+	dcpu.Load(0, []uint16{
 		Basic(Set, Push, OperandA(Literal13)),
 		Basic(Set, RegisterA, OperandA(StackPointer)),
 	})
@@ -161,7 +161,7 @@ func TestExecuteInstructions_setRegisterWithStackPointer(t *testing.T) {
 func TestExecuteInstructions_setRegisterWithProgramCounter(t *testing.T) {
 	dcpu := DCPU{}
 
-	dcpu.Load([]uint16{
+	dcpu.Load(0, []uint16{
 		0x0,
 		Basic(Set, RegisterA, OperandA(ProgramCounter)),
 	})
@@ -173,7 +173,7 @@ func TestExecuteInstructions_setRegisterWithProgramCounter(t *testing.T) {
 func TestExecuteInstructions_setRegisterWithExtra(t *testing.T) {
 	dcpu := DCPU{}
 
-	dcpu.Load([]uint16{
+	dcpu.Load(0, []uint16{
 		Basic(Set, Extra, OperandA(Literal13)),
 		Basic(Set, RegisterA, OperandA(Extra)),
 	})
@@ -185,7 +185,7 @@ func TestExecuteInstructions_setRegisterWithExtra(t *testing.T) {
 func TestExecuteInstructions_setRegisterWithLocation(t *testing.T) {
 	dcpu := DCPU{}
 
-	dcpu.Load([]uint16{
+	dcpu.Load(0, []uint16{
 		Basic(Set, Location, OperandA(Literal13)), 0x1000,
 		Basic(Set, RegisterA, OperandA(Location)), 0x1000,
 	})
@@ -197,7 +197,7 @@ func TestExecuteInstructions_setRegisterWithLocation(t *testing.T) {
 func TestExecuteInstructions_setRegisterWithLargeLiteral(t *testing.T) {
 	dcpu := DCPU{}
 
-	dcpu.Load([]uint16{
+	dcpu.Load(0, []uint16{
 		Basic(Set, RegisterA, OperandA(Literal)), 0x1001,
 	})
 
@@ -208,7 +208,7 @@ func TestExecuteInstructions_setRegisterWithLargeLiteral(t *testing.T) {
 func TestExecuteInstructions_setRegisterWithSmallLiteral(t *testing.T) {
 	dcpu := DCPU{}
 
-	dcpu.Load([]uint16{
+	dcpu.Load(0, []uint16{
 		Basic(Set, RegisterA, OperandA(Literal1)),
 	})
 
@@ -219,7 +219,7 @@ func TestExecuteInstructions_setRegisterWithSmallLiteral(t *testing.T) {
 func TestExecuteInstructions_setLastRegisterWithSmallLiteral(t *testing.T) {
 	dcpu := DCPU{}
 
-	dcpu.Load([]uint16{
+	dcpu.Load(0, []uint16{
 		Basic(Set, RegisterJ, OperandA(Literal1)),
 	})
 
@@ -230,7 +230,7 @@ func TestExecuteInstructions_setLastRegisterWithSmallLiteral(t *testing.T) {
 func TestExecuteInstructions_setLocationInRegisterWithSmallLiteral(t *testing.T) {
 	dcpu := DCPU{}
 
-	dcpu.Load([]uint16{
+	dcpu.Load(0, []uint16{
 		Basic(Set, RegisterA, OperandA(Literal)), 0x1000,
 		Basic(Set, LocationInRegisterA, OperandA(Literal13)),
 	})
@@ -242,7 +242,7 @@ func TestExecuteInstructions_setLocationInRegisterWithSmallLiteral(t *testing.T)
 func TestExecuteInstructions_setLocationInLastRegisterWithSmallLiteral(t *testing.T) {
 	dcpu := DCPU{}
 
-	dcpu.Load([]uint16{
+	dcpu.Load(0, []uint16{
 		Basic(Set, RegisterJ, OperandA(Literal)), 0x1000,
 		Basic(Set, LocationInRegisterJ, OperandA(Literal13)),
 	})
@@ -254,7 +254,7 @@ func TestExecuteInstructions_setLocationInLastRegisterWithSmallLiteral(t *testin
 func TestExecuteInstructions_setLocationOffsetByRegisterWithSmallLiteral(t *testing.T) {
 	dcpu := DCPU{}
 
-	dcpu.Load([]uint16{
+	dcpu.Load(0, []uint16{
 		Basic(Set, RegisterA, OperandA(Literal10)),
 		Basic(Set, LocationOffsetByRegisterA, OperandA(Literal13)), 0x1000,
 	})
@@ -266,7 +266,7 @@ func TestExecuteInstructions_setLocationOffsetByRegisterWithSmallLiteral(t *test
 func TestExecuteInstructions_setLocationOffsetByLastRegisterWithSmallLiteral(t *testing.T) {
 	dcpu := DCPU{}
 
-	dcpu.Load([]uint16{
+	dcpu.Load(0, []uint16{
 		Basic(Set, RegisterJ, OperandA(Literal10)),
 		Basic(Set, LocationOffsetByRegisterJ, OperandA(Literal13)), 0x1000,
 	})
@@ -278,7 +278,7 @@ func TestExecuteInstructions_setLocationOffsetByLastRegisterWithSmallLiteral(t *
 func TestExecuteInstructions_setLocationOffsetByRegisterWithLocationOffsetByRegister(t *testing.T) {
 	dcpu := DCPU{}
 
-	dcpu.Load([]uint16{
+	dcpu.Load(0, []uint16{
 		Basic(Set, RegisterA, OperandA(Literal10)),
 		Basic(Set, LocationOffsetByRegisterA, OperandA(Literal13)), 0x1000,
 		Basic(Set, LocationOffsetByRegisterA, OperandA(LocationOffsetByRegisterA)), 0x1000, 0x2000,
@@ -291,7 +291,7 @@ func TestExecuteInstructions_setLocationOffsetByRegisterWithLocationOffsetByRegi
 func TestExecuteInstructions_setPushWithSmallLiteral(t *testing.T) {
 	dcpu := DCPU{}
 
-	dcpu.Load([]uint16{
+	dcpu.Load(0, []uint16{
 		Basic(Set, Push, OperandA(Literal13)),
 	})
 
@@ -302,7 +302,7 @@ func TestExecuteInstructions_setPushWithSmallLiteral(t *testing.T) {
 func TestExecuteInstructions_setPushWithPop(t *testing.T) {
 	dcpu := DCPU{}
 
-	dcpu.Load([]uint16{
+	dcpu.Load(0, []uint16{
 		Basic(Set, Push, OperandA(Literal13)),
 		Basic(Set, Push, OperandA(Pop)),
 	})
@@ -315,7 +315,7 @@ func TestExecuteInstructions_setPushWithPop(t *testing.T) {
 func TestExecuteInstructions_setPeekWithSmallLiteral(t *testing.T) {
 	dcpu := DCPU{}
 
-	dcpu.Load([]uint16{
+	dcpu.Load(0, []uint16{
 		Basic(Set, Push, OperandA(Literal13)),
 		Basic(Set, Peek, OperandA(Literal14)),
 	})
@@ -327,7 +327,7 @@ func TestExecuteInstructions_setPeekWithSmallLiteral(t *testing.T) {
 func TestExecuteInstructions_setPickWithSmallLiteral(t *testing.T) {
 	dcpu := DCPU{}
 
-	dcpu.Load([]uint16{
+	dcpu.Load(0, []uint16{
 		Basic(Set, Push, OperandA(Literal12)),
 		Basic(Set, Push, OperandA(Literal13)),
 		Basic(Set, Pick, OperandA(Literal14)), 0x1,
@@ -341,7 +341,7 @@ func TestExecuteInstructions_setPickWithSmallLiteral(t *testing.T) {
 func TestExecuteInstructions_setStackPointerWithSmallLiteral(t *testing.T) {
 	dcpu := DCPU{}
 
-	dcpu.Load([]uint16{
+	dcpu.Load(0, []uint16{
 		Basic(Set, StackPointer, OperandA(Literal13)),
 	})
 
@@ -352,7 +352,7 @@ func TestExecuteInstructions_setStackPointerWithSmallLiteral(t *testing.T) {
 func TestExecuteInstructions_setProgramCounterWithSmallLiteral(t *testing.T) {
 	dcpu := DCPU{}
 
-	dcpu.Load([]uint16{
+	dcpu.Load(0, []uint16{
 		Basic(Set, ProgramCounter, OperandA(Literal13)),
 	})
 
@@ -363,7 +363,7 @@ func TestExecuteInstructions_setProgramCounterWithSmallLiteral(t *testing.T) {
 func TestExecuteInstructions_setExtraWithSmallLiteral(t *testing.T) {
 	dcpu := DCPU{}
 
-	dcpu.Load([]uint16{
+	dcpu.Load(0, []uint16{
 		Basic(Set, Extra, OperandA(Literal13)),
 	})
 
@@ -374,7 +374,7 @@ func TestExecuteInstructions_setExtraWithSmallLiteral(t *testing.T) {
 func TestExecuteInstructions_setLocationWithSmallLiteral(t *testing.T) {
 	dcpu := DCPU{}
 
-	dcpu.Load([]uint16{
+	dcpu.Load(0, []uint16{
 		Basic(Set, Location, OperandA(Literal13)), 0x1000,
 	})
 
@@ -385,7 +385,7 @@ func TestExecuteInstructions_setLocationWithSmallLiteral(t *testing.T) {
 func TestExecuteInstructions_setLiteralWithSmallLiteral(t *testing.T) {
 	dcpu := DCPU{}
 
-	dcpu.Load([]uint16{
+	dcpu.Load(0, []uint16{
 		Basic(Set, Literal, OperandA(Literal13)), 0x1000,
 	})
 

@@ -9,7 +9,7 @@ import (
 func TestExecuteInstructions_shiftRightRegisterWithSmallLiteral(t *testing.T) {
 	dcpu := DCPU{}
 
-	dcpu.Load([]uint16{
+	dcpu.Load(0, []uint16{
 		Basic(Set, RegisterA, OperandA(Literal)), 0xFFF0,
 		Basic(ShiftRight, RegisterA, OperandA(Literal2)),
 	})
@@ -22,7 +22,7 @@ func TestExecuteInstructions_shiftRightRegisterWithSmallLiteral(t *testing.T) {
 func TestExecuteInstructions_shiftRightRegisterWithUnderflow(t *testing.T) {
 	dcpu := DCPU{}
 
-	dcpu.Load([]uint16{
+	dcpu.Load(0, []uint16{
 		Basic(Set, RegisterA, OperandA(LiteralNegative1)),
 		Basic(ShiftRight, RegisterA, OperandA(Literal2)),
 	})

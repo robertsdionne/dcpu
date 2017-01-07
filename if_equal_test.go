@@ -9,7 +9,7 @@ import (
 func TestExecuteInstructions_ifEqualRegisterWithEqualSmallLiteral(t *testing.T) {
 	dcpu := DCPU{}
 
-	dcpu.Load([]uint16{
+	dcpu.Load(0, []uint16{
 		Basic(Set, RegisterA, OperandA(Literal15)),
 		Basic(IfEqual, RegisterA, OperandA(Literal15)),
 		Basic(Set, Push, OperandA(Literal13)),
@@ -24,7 +24,7 @@ func TestExecuteInstructions_ifEqualRegisterWithEqualSmallLiteral(t *testing.T) 
 func TestExecuteInstructions_ifEqualRegisterWithUnequalSmallLiteral(t *testing.T) {
 	dcpu := DCPU{}
 
-	dcpu.Load([]uint16{
+	dcpu.Load(0, []uint16{
 		Basic(Set, RegisterA, OperandA(Literal15)),
 		Basic(IfEqual, RegisterA, OperandA(Literal0)),
 		Basic(Set, Push, OperandA(Literal13)),
@@ -39,7 +39,7 @@ func TestExecuteInstructions_ifEqualRegisterWithUnequalSmallLiteral(t *testing.T
 func TestExecuteInstructions_ifEqualSkipsConditionalsWhenNotEqual(t *testing.T) {
 	dcpu := DCPU{}
 
-	dcpu.Load([]uint16{
+	dcpu.Load(0, []uint16{
 		Basic(Set, RegisterA, OperandA(Literal15)),
 		Basic(IfEqual, RegisterA, OperandA(Literal0)),
 		Basic(IfEqual, RegisterB, OperandA(Literal0)),
@@ -55,7 +55,7 @@ func TestExecuteInstructions_ifEqualSkipsConditionalsWhenNotEqual(t *testing.T) 
 func TestExecuteInstructions_ifEqualDoesNotSkipConditionalsWhenEqual(t *testing.T) {
 	dcpu := DCPU{}
 
-	dcpu.Load([]uint16{
+	dcpu.Load(0, []uint16{
 		Basic(Set, RegisterA, OperandA(Literal15)),
 		Basic(IfEqual, RegisterA, OperandA(Literal15)),
 		Basic(IfEqual, RegisterB, OperandA(Literal0)),

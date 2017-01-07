@@ -9,7 +9,7 @@ import (
 func TestExecuteInstructions_divideSignedRegisterWithSmallLiteral(t *testing.T) {
 	dcpu := DCPU{}
 
-	dcpu.Load([]uint16{
+	dcpu.Load(0, []uint16{
 		Basic(Set, RegisterA, OperandA(Literal16)),
 		Basic(DivideSigned, RegisterA, OperandA(Literal)), 0xfffe,
 	})
@@ -22,7 +22,7 @@ func TestExecuteInstructions_divideSignedRegisterWithSmallLiteral(t *testing.T) 
 func TestExecuteInstructions_divideSignedByZero(t *testing.T) {
 	dcpu := DCPU{}
 
-	dcpu.Load([]uint16{
+	dcpu.Load(0, []uint16{
 		Basic(Set, RegisterA, OperandA(Literal30)),
 		Basic(DivideSigned, RegisterA, OperandA(Literal0)),
 	})

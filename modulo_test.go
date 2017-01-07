@@ -9,7 +9,7 @@ import (
 func TestExecuteInstructions_moduloRegisterWithSmallLiteral(t *testing.T) {
 	dcpu := DCPU{}
 
-	dcpu.Load([]uint16{
+	dcpu.Load(0, []uint16{
 		Basic(Set, RegisterA, OperandA(Literal30)),
 		Basic(Modulo, RegisterA, OperandA(Literal11)),
 	})

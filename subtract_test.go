@@ -9,7 +9,7 @@ import (
 func TestExecuteInstructions_subtractRegisterWithSmallLiteral(t *testing.T) {
 	dcpu := DCPU{}
 
-	dcpu.Load([]uint16{
+	dcpu.Load(0, []uint16{
 		Basic(Set, RegisterA, OperandA(Literal30)),
 		Basic(Subtract, RegisterA, OperandA(Literal16)),
 	})
@@ -22,7 +22,7 @@ func TestExecuteInstructions_subtractRegisterWithSmallLiteral(t *testing.T) {
 func TestExecuteInstructions_subtractRegisterWithUnderflow(t *testing.T) {
 	dcpu := DCPU{}
 
-	dcpu.Load([]uint16{
+	dcpu.Load(0, []uint16{
 		Basic(Set, RegisterA, OperandA(Literal16)),
 		Basic(Subtract, RegisterA, OperandA(Literal30)),
 	})

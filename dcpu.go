@@ -68,8 +68,8 @@ func Special(opcode SpecialOpcode, a OperandA) (instruction uint16) {
 }
 
 // Load copies a sequence of instructions (a program) into memory.
-func (d *DCPU) Load(instructions []uint16) {
-	copy(d.Memory[:], instructions)
+func (d *DCPU) Load(start uint16, instructions []uint16) {
+	copy(d.Memory[start:], instructions)
 }
 
 // ExecuteInstructions executes multiple instructions.
@@ -83,7 +83,7 @@ func (d *DCPU) ExecuteInstructions(count int) {
 
 func (d DCPU) String() string {
 	return fmt.Sprintln("A:", d.RegisterA, "B:", d.RegisterB, "J:", d.RegisterJ, "PC:", d.ProgramCounter, "SP:", d.StackPointer,
-		"[0:10]", d.Memory[0:10], "[0x100a]", d.Memory[0x100a], "[0x200a]", d.Memory[0x200a])
+		"[0:10]", d.Memory[0:10], "[0x100a]", d.Memory[0x100a], "[0x200a]", d.Memory[0x200a], "Q", d.QueueInterrupts)
 }
 
 // ExecuteInstruction executes a single instruction.
@@ -218,7 +218,7 @@ func (d *DCPU) ExecuteInstruction(skip bool) {
 			d.setThenDecrement(pb, b)
 		}
 	} else {
-		specialOpcode := SpecialOpcode(instruction & SpecialOpcodeMask)
+		specialOpcode := SpecialOpcode((instruction & SpecialOpcodeMask) >> SpecialOpcodeShift)
 		operandA := OperandA((instruction & SpecialValueMaskA) >> SpecialValueShiftA)
 		assignable := specialOpcode == InterruptAddressGet || specialOpcode == HardwareNumberConnected
 

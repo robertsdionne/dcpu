@@ -9,7 +9,7 @@ import (
 func TestExecuteInstructions_ifLessThanRegisterWithLesserSmallLiteral(t *testing.T) {
 	dcpu := DCPU{}
 
-	dcpu.Load([]uint16{
+	dcpu.Load(0, []uint16{
 		Basic(Set, RegisterA, OperandA(Literal30)),
 		Basic(IfLessThan, RegisterA, OperandA(Literal15)),
 		Basic(Set, Push, OperandA(Literal13)),
@@ -24,7 +24,7 @@ func TestExecuteInstructions_ifLessThanRegisterWithLesserSmallLiteral(t *testing
 func TestExecuteInstructions_ifLessThanRegisterWithGreaterSmallLiteral(t *testing.T) {
 	dcpu := DCPU{}
 
-	dcpu.Load([]uint16{
+	dcpu.Load(0, []uint16{
 		Basic(Set, RegisterA, OperandA(Literal15)),
 		Basic(IfLessThan, RegisterA, OperandA(Literal30)),
 		Basic(Set, Push, OperandA(Literal13)),

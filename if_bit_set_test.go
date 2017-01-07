@@ -9,7 +9,7 @@ import (
 func TestExecuteInstructions_ifBitSetRegisterWithCommonBitsSmallLiteral(t *testing.T) {
 	dcpu := DCPU{}
 
-	dcpu.Load([]uint16{
+	dcpu.Load(0, []uint16{
 		Basic(Set, RegisterA, OperandA(Literal30)),
 		Basic(IfBitSet, RegisterA, OperandA(Literal16)),
 		Basic(Set, Push, OperandA(Literal13)),
@@ -24,7 +24,7 @@ func TestExecuteInstructions_ifBitSetRegisterWithCommonBitsSmallLiteral(t *testi
 func TestExecuteInstructions_ifBitSetRegisterWithoutCommonBitsSmallLiteral(t *testing.T) {
 	dcpu := DCPU{}
 
-	dcpu.Load([]uint16{
+	dcpu.Load(0, []uint16{
 		Basic(Set, RegisterA, OperandA(Literal15)),
 		Basic(IfBitSet, RegisterA, OperandA(Literal16)),
 		Basic(Set, Push, OperandA(Literal13)),

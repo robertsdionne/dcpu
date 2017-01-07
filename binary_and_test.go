@@ -9,7 +9,7 @@ import (
 func TestExecuteInstructions_binaryAndRegisterWithSmallLiteral(t *testing.T) {
 	dcpu := DCPU{}
 
-	dcpu.Load([]uint16{
+	dcpu.Load(0, []uint16{
 		Basic(Set, RegisterA, OperandA(Literal)), 0xf0f0,
 		Basic(BinaryAnd, RegisterA, OperandA(Literal)), 0x00ff,
 	})

@@ -9,7 +9,7 @@ import (
 func TestExecuteInstructions_multiplyRegisterWithSmallLiteral(t *testing.T) {
 	dcpu := DCPU{}
 
-	dcpu.Load([]uint16{
+	dcpu.Load(0, []uint16{
 		Basic(Set, RegisterA, OperandA(Literal16)),
 		Basic(Multiply, RegisterA, OperandA(Literal30)),
 	})
@@ -22,7 +22,7 @@ func TestExecuteInstructions_multiplyRegisterWithSmallLiteral(t *testing.T) {
 func TestExecuteInstructions_multiplyRegisterWithOverflow(t *testing.T) {
 	dcpu := DCPU{}
 
-	dcpu.Load([]uint16{
+	dcpu.Load(0, []uint16{
 		Basic(Set, RegisterA, OperandA(LiteralNegative1)),
 		Basic(Multiply, RegisterA, OperandA(LiteralNegative1)),
 	})
