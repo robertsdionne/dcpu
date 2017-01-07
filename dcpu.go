@@ -471,7 +471,13 @@ func (d *DCPU) ExecuteInstruction(skip bool) {
 
 			// TODO(robertsdionne): case IfUnder:
 
-			// TODO(robertsdionne): Finish basic opcode cases.
+			// TODO(robertsdionne): case AddWithCarry:
+
+			// TODO(robertsdionne): case SubtractWithCarry:
+
+			// TODO(robertsdionne): case SetThenIncrement:
+
+			// TODO(robertsdionne): case SetThenDecrement:
 		}
 	} else {
 		// TODO(robertsdionne): Finish special opcode cases.
