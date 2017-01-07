@@ -1,11 +1,7 @@
 // Package dcpu implements an emulator for Notch's DCPU 1.7 specification.
 package dcpu
 
-import (
-	"fmt"
-	"log"
-	"unsafe"
-)
+import "fmt"
 
 type (
 	BasicOpcode   uint16
@@ -310,10 +306,10 @@ func (d *DCPU) Load(instructions []uint16) {
 // ExecuteInstructions executes multiple instructions.
 func (d *DCPU) ExecuteInstructions(count int) {
 	for i := 0; i < count; i++ {
-		log.Println(*d)
+		// log.Println(*d)
 		d.ExecuteInstruction(false)
 	}
-	log.Println(*d)
+	// log.Println(*d)
 }
 
 func (d DCPU) String() string {
@@ -342,18 +338,18 @@ func (d *DCPU) ExecuteInstruction(skip bool) {
 			operandBValue = uint32(*operandBAddress)
 		}
 
-		log.Println("instruction", instruction)
-		log.Println("basicOpcode", basicOpcode)
-
-		log.Println("operandB", operandB)
-		log.Println("operandBAddress", int(uintptr(unsafe.Pointer(operandBAddress)))-int(uintptr(unsafe.Pointer(&d.Memory))))
-		log.Println("operandBValue", operandBValue)
-
-		log.Println("operandA", operandA)
-		log.Println("operandAAddress", int(uintptr(unsafe.Pointer(operandAAddress)))-int(uintptr(unsafe.Pointer(&d.Memory))))
-		log.Println("operandAValue", operandAValue)
-
-		log.Println()
+		// log.Println("instruction", instruction)
+		// log.Println("basicOpcode", basicOpcode)
+		//
+		// log.Println("operandB", operandB)
+		// log.Println("operandBAddress", int(uintptr(unsafe.Pointer(operandBAddress)))-int(uintptr(unsafe.Pointer(&d.Memory))))
+		// log.Println("operandBValue", operandBValue)
+		//
+		// log.Println("operandA", operandA)
+		// log.Println("operandAAddress", int(uintptr(unsafe.Pointer(operandAAddress)))-int(uintptr(unsafe.Pointer(&d.Memory))))
+		// log.Println("operandAValue", operandAValue)
+		//
+		// log.Println()
 
 		if skip {
 			d.StackPointer = stackPointerBackup
@@ -388,6 +384,80 @@ func (d *DCPU) ExecuteInstruction(skip bool) {
 			result := int32(operandBValue) * int32(operandAValue)
 			d.Extra = uint16(result >> 16)
 			d.maybeAssignResult(operandBAddress, uint32(result))
+
+		case Divide:
+			switch operandAValue {
+			case 0:
+				d.Extra = 1
+				d.maybeAssignResult(operandBAddress, 0)
+
+			default:
+				result := operandBValue / operandAValue
+				d.Extra = 0
+				d.maybeAssignResult(operandBAddress, result)
+			}
+
+		// TODO(robertsdionne): case DivideSigned:
+
+		case Modulo:
+			d.maybeAssignResult(operandBAddress, operandBValue%operandAValue)
+
+		// TODO(robertsdionne): case ModuloSigned:
+
+		case BinaryAnd:
+			d.maybeAssignResult(operandBAddress, operandBValue&operandAValue)
+
+		case BinaryOr:
+			d.maybeAssignResult(operandBAddress, operandBValue|operandAValue)
+
+		case BinaryExclusiveOr:
+			d.maybeAssignResult(operandBAddress, operandBValue^operandAValue)
+
+		case ShiftRight:
+			result := operandBValue >> operandAValue
+			d.Extra = uint16(operandBValue << (0x10 - operandAValue))
+			d.maybeAssignResult(operandBAddress, result)
+
+		// TODO(robertsdionne): case ArithmeticShiftRight:
+
+		case ShiftLeft:
+			result := operandBValue << operandAValue
+			d.Extra = uint16(result >> 16)
+			d.maybeAssignResult(operandBAddress, result)
+
+		case IfBitSet:
+			if !((operandBValue & operandAValue) != 0) {
+				d.ExecuteInstruction( /* skip */ true)
+			}
+
+		case IfClear:
+			if !((operandBValue & operandAValue) == 0) {
+				d.ExecuteInstruction( /* skip */ true)
+			}
+
+		case IfEqual:
+			if !(operandBValue == operandAValue) {
+				d.ExecuteInstruction( /* skip */ true)
+			}
+
+		case IfNotEqual:
+			if !(operandBValue != operandAValue) {
+				d.ExecuteInstruction( /* skip */ true)
+			}
+
+		case IfGreaterThan:
+			if !(operandBValue > operandAValue) {
+				d.ExecuteInstruction( /* skip */ true)
+			}
+
+		// TODO(robertsdionne): case IfAbove:
+
+		case IfLessThan:
+			if !(operandBValue < operandAValue) {
+				d.ExecuteInstruction( /* skip */ true)
+			}
+
+			// TODO(robertsdionne): case IfUnder:
 
 			// TODO(robertsdionne): Finish basic opcode cases.
 		}
