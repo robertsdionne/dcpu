@@ -18,8 +18,8 @@ type Clock struct {
 const (
 	duration  = time.Second / frequency
 	frequency = 60
-	id        = 0x12d0b402
-	version   = 0x0001
+	ID        = 0x12d0b402
+	Version   = 0x0001
 )
 
 const (
@@ -45,7 +45,7 @@ func (c *Clock) Execute(dcpu *dcpu.DCPU) {
 
 // GetID returns the Clock id.
 func (c *Clock) GetID() uint32 {
-	return id
+	return ID
 }
 
 // GetManufacturerID returns the Clock manufacturer id.
@@ -55,7 +55,7 @@ func (c *Clock) GetManufacturerID() uint32 {
 
 // GetVersion returns the Clock version.
 func (c *Clock) GetVersion() uint16 {
-	return version
+	return Version
 }
 
 // HandleHardwareInterrupt handles messages from the DCPU.

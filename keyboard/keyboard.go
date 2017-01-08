@@ -16,8 +16,8 @@ type Keyboard struct {
 }
 
 const (
-	id      = 0x30cf7406
-	version = 0x0001
+	ID      = 0x30cf7406
+	Version = 0x0001
 )
 
 const (
@@ -38,7 +38,7 @@ func (k *Keyboard) Execute(dcpu *dcpu.DCPU) {
 }
 
 func (k *Keyboard) GetID() uint32 {
-	return id
+	return ID
 }
 
 func (k *Keyboard) GetManufacturerID() uint32 {
@@ -46,7 +46,7 @@ func (k *Keyboard) GetManufacturerID() uint32 {
 }
 
 func (k *Keyboard) GetVersion() uint16 {
-	return version
+	return Version
 }
 
 func (k *Keyboard) HandleHardwareInterrupt(dcpu *dcpu.DCPU) {
