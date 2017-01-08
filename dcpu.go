@@ -1,7 +1,12 @@
 // Package dcpu implements an emulator for Notch's DCPU 1.7 specification.
 package dcpu
 
-import "fmt"
+import (
+	"fmt"
+	"log"
+	"time"
+	"unicode/utf16"
+)
 
 const (
 	// MemorySize is the total size of the DCPU memory array.
@@ -24,16 +29,11 @@ const (
 	SpecialValueMaskA = BasicValueMaskA
 	// SpecialValueShiftA is used to extract the shifted value of operand a.
 	SpecialValueShiftA = BasicValueShiftA
+	// DebugOpcodeMask is used to extract the debug opcode.
+	DebugOpcodeMask = BasicValueMaskA
+	// DebugOpcodeShift is used to extract the shifted debug opcode.
+	DebugOpcodeShift = BasicValueShiftA
 )
-
-// Hardware represents peripheral devices that may interact with a DCPU.
-type Hardware interface {
-	Execute()
-	GetID() uint32
-	GetManufacturerID() uint32
-	GetVersion() uint16
-	HandleHardwareInterrupt()
-}
 
 // DCPU represents the state of a DCPU machine.
 type DCPU struct {
@@ -51,6 +51,7 @@ type DCPU struct {
 	InterruptAddress uint16
 	InterruptQueue   []uint16
 	QueueInterrupts  bool
+	InstructionCount uint16
 	Memory           [MemorySize]uint16
 	Hardware         []Hardware
 }
@@ -67,9 +68,32 @@ func Special(opcode SpecialOpcode, a OperandA) (instruction uint16) {
 	return
 }
 
+// Debug builds a debug instruction.
+func Debug(opcode DebugOpcode) (instruction uint16) {
+	instruction = uint16(opcode << DebugOpcodeShift)
+	return
+}
+
 // Load copies a sequence of instructions (a program) into memory.
 func (d *DCPU) Load(start uint16, instructions []uint16) {
 	copy(d.Memory[start:], instructions)
+}
+
+// LoadString copies a string into memory as utf16.
+func (d *DCPU) LoadString(start uint16, message string) {
+	d.Load(start, []uint16{uint16(len(message))})
+	d.Load(start+1, utf16.Encode([]rune(message)))
+}
+
+// Execute runs the DCPU machine and all connected hardware.
+func (d *DCPU) Execute() {
+	for {
+		d.ExecuteInstruction(false)
+		for i := range d.Hardware {
+			d.Hardware[i].Execute()
+		}
+		time.Sleep(10 * time.Microsecond)
+	}
 }
 
 // ExecuteInstructions executes multiple instructions.
@@ -82,8 +106,34 @@ func (d *DCPU) ExecuteInstructions(count int) {
 }
 
 func (d DCPU) String() string {
-	return fmt.Sprintln("A:", d.RegisterA, "B:", d.RegisterB, "J:", d.RegisterJ, "PC:", d.ProgramCounter, "SP:", d.StackPointer,
-		"[0:10]", d.Memory[0:10], "[0x100a]", d.Memory[0x100a], "[0x200a]", d.Memory[0x200a], "Q", d.QueueInterrupts)
+	state := []interface{}{}
+	state = append(state,
+		d.RegisterA, d.RegisterB, d.RegisterC,
+		d.RegisterX, d.RegisterY, d.RegisterZ,
+		d.RegisterI, d.RegisterJ,
+		d.ProgramCounter, d.StackPointer, d.Extra,
+		d.InterruptAddress, len(d.InterruptQueue), d.QueueInterrupts,
+		len(d.Hardware), d.InstructionCount,
+	)
+	for _, value := range d.Memory[0x0000:0x0020] {
+		state = append(state, value)
+	}
+	for _, value := range d.Memory[0x1000:0x1020] {
+		state = append(state, value)
+	}
+	return fmt.Sprintf(`A: %#04x B: %#04x C: %#04x X: %#04x Y: %#04x Z: %#04x I: %#04x J: %#04x
+                    PC %#04x SP %#04x EX %#04x IA %#04x IQ %#04x Q: % 6v HW %#04x IC %#04x
+
+     [0x0000:0x0008]   %#04x    %#04x    %#04x    %#04x    %#04x    %#04x    %#04x    %#04x
+     [0x0008:0x0010]   %#04x    %#04x    %#04x    %#04x    %#04x    %#04x    %#04x    %#04x
+     [0x0010:0x0018]   %#04x    %#04x    %#04x    %#04x    %#04x    %#04x    %#04x    %#04x
+     [0x0018:0x0020]   %#04x    %#04x    %#04x    %#04x    %#04x    %#04x    %#04x    %#04x
+
+     [0x1000:0x1008]   %#04x    %#04x    %#04x    %#04x    %#04x    %#04x    %#04x    %#04x
+     [0x1008:0x1010]   %#04x    %#04x    %#04x    %#04x    %#04x    %#04x    %#04x    %#04x
+     [0x1010:0x1018]   %#04x    %#04x    %#04x    %#04x    %#04x    %#04x    %#04x    %#04x
+     [0x1018:0x1020]   %#04x    %#04x    %#04x    %#04x    %#04x    %#04x    %#04x    %#04x
+`, state...)
 }
 
 // ExecuteInstruction executes a single instruction.
@@ -93,10 +143,15 @@ func (d *DCPU) ExecuteInstruction(skip bool) {
 		d.InterruptQueue = d.InterruptQueue[1:]
 	}
 
+	if !skip {
+		d.InstructionCount++
+	}
+
 	stackPointerBackup := d.StackPointer
 	instruction := d.Memory[d.ProgramCounter]
 	d.ProgramCounter++
 	basicOpcode := BasicOpcode(instruction & BasicOpcodeMask)
+	specialOpcode := SpecialOpcode((instruction & SpecialOpcodeMask) >> SpecialOpcodeShift)
 
 	if basicOpcode != BasicReserved {
 		operandA := OperandA((instruction & BasicValueMaskA) >> BasicValueShiftA)
@@ -217,8 +272,7 @@ func (d *DCPU) ExecuteInstruction(skip bool) {
 		case SetThenDecrement:
 			d.setThenDecrement(pb, b)
 		}
-	} else {
-		specialOpcode := SpecialOpcode((instruction & SpecialOpcodeMask) >> SpecialOpcodeShift)
+	} else if specialOpcode != SpecialReserved {
 		operandA := OperandA((instruction & SpecialValueMaskA) >> SpecialValueShiftA)
 		assignable := specialOpcode == InterruptAddressGet || specialOpcode == HardwareNumberConnected
 
@@ -264,6 +318,24 @@ func (d *DCPU) ExecuteInstruction(skip bool) {
 			if int(a) < len(d.Hardware) {
 				d.Hardware[a].HandleHardwareInterrupt()
 			}
+		}
+	} else {
+		debugOpcode := DebugOpcode((instruction & DebugOpcodeMask) >> DebugOpcodeShift)
+
+		switch debugOpcode {
+		case Alert:
+			length := d.Memory[0xf000]
+			switch {
+			case length > 0:
+				alert := string(utf16.Decode(d.Memory[0xf001 : 0xf001+length]))
+				log.Println(alert)
+
+			default:
+				log.Println("alert")
+			}
+
+		case DumpState:
+			log.Println(*d)
 		}
 	}
 }
