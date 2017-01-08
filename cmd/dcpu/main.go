@@ -4,7 +4,7 @@ import "github.com/robertsdionne/dcpu"
 
 func main() {
 	cpu := dcpu.DCPU{}
-	clock := dcpu.NewClock()
+	clock := dcpu.Clock{}
 
 	cpu.Hardware = append(cpu.Hardware, &clock)
 	clock.DCPU = &cpu

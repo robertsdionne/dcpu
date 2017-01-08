@@ -2,32 +2,22 @@ package dcpu
 
 import "time"
 
+// Clock implements Generic Clock (compatible).
 type Clock struct {
-	BaseHardware
-
-	lastTick time.Time
-
 	DCPU     *DCPU
 	Interval uint16
 	Message  uint16
 	Ticks    uint16
+
+	lastTick time.Time
 }
 
 const (
-	frequency = 60
 	duration  = time.Second / frequency
+	frequency = 60
+	id        = 0x12d0b402
+	version   = 0x0001
 )
-
-// NewClock builds a new clock.
-func NewClock() Clock {
-	return Clock{
-		BaseHardware: BaseHardware{
-			id:             0x12d0b402,
-			manufacturerID: 0x00000000,
-			version:        0x0001,
-		},
-	}
-}
 
 // Execute runs the clock.
 func (c *Clock) Execute() {
@@ -42,6 +32,21 @@ func (c *Clock) Execute() {
 			}
 		}
 	}
+}
+
+// GetID returns the Clock id.
+func (c *Clock) GetID() uint32 {
+	return id
+}
+
+// GetManufacturerID returns the Clock manufacturer id.
+func (c *Clock) GetManufacturerID() uint32 {
+	return 0
+}
+
+// GetVersion returns the Clock version.
+func (c *Clock) GetVersion() uint16 {
+	return version
 }
 
 // HandleHardwareInterrupt handles messages from the DCPU.
