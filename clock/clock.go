@@ -1,10 +1,14 @@
-package dcpu
+package clock
 
-import "time"
+import (
+	"time"
+
+	"github.com/robertsdionne/dcpu"
+)
 
 // Clock implements Generic Clock (compatible).
 type Clock struct {
-	DCPU     *DCPU
+	DCPU     *dcpu.DCPU
 	Interval uint16
 	Message  uint16
 	Ticks    uint16
@@ -13,16 +17,16 @@ type Clock struct {
 }
 
 const (
-	duration     = time.Second / frequency
-	frequency    = 60
-	clockID      = 0x12d0b402
-	clockVersion = 0x0001
+	duration  = time.Second / frequency
+	frequency = 60
+	id        = 0x12d0b402
+	version   = 0x0001
 )
 
 const (
-	clockSetInterval = iota
-	clockGetTicks
-	clockSetInterruptMessage
+	setInterval = iota
+	getTicks
+	setInterruptMessage
 )
 
 // Execute runs the clock.
@@ -42,7 +46,7 @@ func (c *Clock) Execute() {
 
 // GetID returns the Clock id.
 func (c *Clock) GetID() uint32 {
-	return clockID
+	return id
 }
 
 // GetManufacturerID returns the Clock manufacturer id.
@@ -52,7 +56,7 @@ func (c *Clock) GetManufacturerID() uint32 {
 
 // GetVersion returns the Clock version.
 func (c *Clock) GetVersion() uint16 {
-	return clockVersion
+	return version
 }
 
 // HandleHardwareInterrupt handles messages from the DCPU.
@@ -62,14 +66,14 @@ func (c *Clock) HandleHardwareInterrupt() {
 	}
 
 	switch c.DCPU.RegisterA {
-	case clockSetInterval:
+	case setInterval:
 		c.Interval = c.DCPU.RegisterB
 		c.Ticks = 0
 
-	case clockGetTicks:
+	case getTicks:
 		c.DCPU.RegisterC = c.Ticks
 
-	case clockSetInterruptMessage:
+	case setInterruptMessage:
 		c.Message = c.DCPU.RegisterB
 	}
 }

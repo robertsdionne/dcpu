@@ -1,10 +1,13 @@
 package main
 
-import "github.com/robertsdionne/dcpu"
+import (
+	"github.com/robertsdionne/dcpu"
+	"github.com/robertsdionne/dcpu/clock"
+)
 
 func main() {
 	cpu := dcpu.DCPU{}
-	clock := dcpu.Clock{}
+	clock := clock.Clock{}
 
 	cpu.Hardware = append(cpu.Hardware, &clock)
 	clock.DCPU = &cpu
