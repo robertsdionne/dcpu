@@ -154,15 +154,15 @@ func (d *DCPU) ExecuteInstruction(skip bool) {
 	specialOpcode := SpecialOpcode((instruction & SpecialOpcodeMask) >> SpecialOpcodeShift)
 
 	if basicOpcode != BasicReserved {
-		operandA := OperandA((instruction & BasicValueMaskA) >> BasicValueShiftA)
-		operandB := OperandB((instruction & BasicValueMaskB) >> BasicValueShiftB)
+		operandA := (instruction & BasicValueMaskA) >> BasicValueShiftA
+		operandB := (instruction & BasicValueMaskB) >> BasicValueShiftB
 
 		pa, a := d.getOperandAddressOrLiteral(operandA, false)
 		if pa != nil {
 			a = *pa
 		}
 
-		pb, b := d.getOperandAddressOrLiteral(OperandA(operandB), true)
+		pb, b := d.getOperandAddressOrLiteral(operandB, true)
 		if pb != nil {
 			b = *pb
 		}
@@ -273,7 +273,7 @@ func (d *DCPU) ExecuteInstruction(skip bool) {
 			d.setThenDecrement(pb, b)
 		}
 	} else if specialOpcode != SpecialReserved {
-		operandA := OperandA((instruction & SpecialValueMaskA) >> SpecialValueShiftA)
+		operandA := (instruction & SpecialValueMaskA) >> SpecialValueShiftA
 		assignable := specialOpcode == InterruptAddressGet || specialOpcode == HardwareNumberConnected
 
 		pa, a := d.getOperandAddressOrLiteral(operandA, assignable)

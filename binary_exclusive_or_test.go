@@ -10,8 +10,8 @@ func TestExecuteInstructions_binaryExclusiveOrRegisterWithSmallLiteral(t *testin
 	dcpu := DCPU{}
 
 	dcpu.Load(0, []uint16{
-		Basic(Set, RegisterA, OperandA(Literal)), 0xf0f0,
-		Basic(BinaryExclusiveOr, RegisterA, OperandA(Literal)), 0x00ff,
+		Basic(Set, RegisterA, Literal), 0xf0f0,
+		Basic(BinaryExclusiveOr, RegisterA, Literal), 0x00ff,
 	})
 
 	dcpu.ExecuteInstructions(2)

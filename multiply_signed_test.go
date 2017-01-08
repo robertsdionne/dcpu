@@ -10,8 +10,8 @@ func TestExecuteInstructions_multiplySignedRegisterWithSmallLiteral(t *testing.T
 	dcpu := DCPU{}
 
 	dcpu.Load(0, []uint16{
-		Basic(Set, RegisterA, OperandA(LiteralNegative1)),
-		Basic(MultiplySigned, RegisterA, OperandA(Literal16)),
+		Basic(Set, RegisterA, LiteralNegative1),
+		Basic(MultiplySigned, RegisterA, Literal16),
 	})
 
 	dcpu.ExecuteInstructions(2)
@@ -23,8 +23,8 @@ func TestExecuteInstructions_multiplySignedRegisterWithOverflow(t *testing.T) {
 	dcpu := DCPU{}
 
 	dcpu.Load(0, []uint16{
-		Basic(Set, RegisterA, OperandA(LiteralNegative1)),
-		Basic(MultiplySigned, RegisterA, OperandA(LiteralNegative1)),
+		Basic(Set, RegisterA, LiteralNegative1),
+		Basic(MultiplySigned, RegisterA, LiteralNegative1),
 	})
 
 	dcpu.ExecuteInstructions(2)

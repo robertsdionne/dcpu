@@ -10,10 +10,10 @@ func TestExecuteInstructions_ifNotEqualRegisterWithUnequalSmallLiteral(t *testin
 	dcpu := DCPU{}
 
 	dcpu.Load(0, []uint16{
-		Basic(Set, RegisterA, OperandA(Literal15)),
-		Basic(IfNotEqual, RegisterA, OperandA(Literal0)),
-		Basic(Set, Push, OperandA(Literal13)),
-		Basic(Set, Push, OperandA(Literal14)),
+		Basic(Set, RegisterA, Literal15),
+		Basic(IfNotEqual, RegisterA, Literal0),
+		Basic(Set, Push, Literal13),
+		Basic(Set, Push, Literal14),
 	})
 
 	dcpu.ExecuteInstructions(3)
@@ -25,10 +25,10 @@ func TestExecuteInstructions_ifNotEqualRegisterWithEqualSmallLiteral(t *testing.
 	dcpu := DCPU{}
 
 	dcpu.Load(0, []uint16{
-		Basic(Set, RegisterA, OperandA(Literal15)),
-		Basic(IfNotEqual, RegisterA, OperandA(Literal15)),
-		Basic(Set, Push, OperandA(Literal13)),
-		Basic(Set, Push, OperandA(Literal14)),
+		Basic(Set, RegisterA, Literal15),
+		Basic(IfNotEqual, RegisterA, Literal15),
+		Basic(Set, Push, Literal13),
+		Basic(Set, Push, Literal14),
 	})
 
 	dcpu.ExecuteInstructions(3)

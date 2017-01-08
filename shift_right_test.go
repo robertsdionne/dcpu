@@ -10,8 +10,8 @@ func TestExecuteInstructions_shiftRightRegisterWithSmallLiteral(t *testing.T) {
 	dcpu := DCPU{}
 
 	dcpu.Load(0, []uint16{
-		Basic(Set, RegisterA, OperandA(Literal)), 0xFFF0,
-		Basic(ShiftRight, RegisterA, OperandA(Literal2)),
+		Basic(Set, RegisterA, Literal), 0xFFF0,
+		Basic(ShiftRight, RegisterA, Literal2),
 	})
 
 	dcpu.ExecuteInstructions(2)
@@ -23,8 +23,8 @@ func TestExecuteInstructions_shiftRightRegisterWithUnderflow(t *testing.T) {
 	dcpu := DCPU{}
 
 	dcpu.Load(0, []uint16{
-		Basic(Set, RegisterA, OperandA(LiteralNegative1)),
-		Basic(ShiftRight, RegisterA, OperandA(Literal2)),
+		Basic(Set, RegisterA, LiteralNegative1),
+		Basic(ShiftRight, RegisterA, Literal2),
 	})
 
 	dcpu.ExecuteInstructions(2)

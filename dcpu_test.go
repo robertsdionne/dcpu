@@ -28,16 +28,16 @@ func TestInterrupts(t *testing.T) {
 	dcpu := DCPU{}
 
 	dcpu.Load(0, []uint16{
-		Special(InterruptAddressSet, OperandA(Literal)), 0x1000,
-		Basic(Set, RegisterA, OperandA(Literal13)),
-		Special(InterruptTrigger, OperandA(Literal14)),
-		Basic(Set, RegisterB, OperandA(RegisterA)),
+		Special(InterruptAddressSet, Literal), 0x1000,
+		Basic(Set, RegisterA, Literal13),
+		Special(InterruptTrigger, Literal14),
+		Basic(Set, RegisterB, RegisterA),
 	})
 
 	dcpu.Load(0x1000, []uint16{
-		Basic(Set, RegisterA, OperandA(LiteralNegative1)),
-		Basic(Set, RegisterB, OperandA(LiteralNegative1)),
-		Special(ReturnFromInterrupt, OperandA(Literal0)),
+		Basic(Set, RegisterA, LiteralNegative1),
+		Basic(Set, RegisterB, LiteralNegative1),
+		Special(ReturnFromInterrupt, Literal0),
 	})
 
 	dcpu.ExecuteInstructions(3)

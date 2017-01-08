@@ -10,10 +10,10 @@ func TestExecuteInstructions_ifLessThanRegisterWithLesserSmallLiteral(t *testing
 	dcpu := DCPU{}
 
 	dcpu.Load(0, []uint16{
-		Basic(Set, RegisterA, OperandA(Literal30)),
-		Basic(IfLessThan, RegisterA, OperandA(Literal15)),
-		Basic(Set, Push, OperandA(Literal13)),
-		Basic(Set, Push, OperandA(Literal14)),
+		Basic(Set, RegisterA, Literal30),
+		Basic(IfLessThan, RegisterA, Literal15),
+		Basic(Set, Push, Literal13),
+		Basic(Set, Push, Literal14),
 	})
 
 	dcpu.ExecuteInstructions(3)
@@ -25,10 +25,10 @@ func TestExecuteInstructions_ifLessThanRegisterWithGreaterSmallLiteral(t *testin
 	dcpu := DCPU{}
 
 	dcpu.Load(0, []uint16{
-		Basic(Set, RegisterA, OperandA(Literal15)),
-		Basic(IfLessThan, RegisterA, OperandA(Literal30)),
-		Basic(Set, Push, OperandA(Literal13)),
-		Basic(Set, Push, OperandA(Literal14)),
+		Basic(Set, RegisterA, Literal15),
+		Basic(IfLessThan, RegisterA, Literal30),
+		Basic(Set, Push, Literal13),
+		Basic(Set, Push, Literal14),
 	})
 
 	dcpu.ExecuteInstructions(3)

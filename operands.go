@@ -8,151 +8,150 @@ type (
 // Values for operands.
 const (
 	// RegisterA signifies register A.
-	RegisterA OperandB = iota
+	RegisterA = iota
 	// RegisterB signifies register B.
-	RegisterB OperandB = iota
+	RegisterB
 	// RegisterC signifies register C.
-	RegisterC OperandB = iota
+	RegisterC
 	// RegisterX signifies register X.
-	RegisterX OperandB = iota
+	RegisterX
 	// RegisterY signifies register Y.
-	RegisterY OperandB = iota
+	RegisterY
 	// RegisterZ signifies register Z.
-	RegisterZ OperandB = iota
+	RegisterZ
 	// RegisterI signifies register I.
-	RegisterI OperandB = iota
+	RegisterI
 	// RegisterJ signifies register J.
-	RegisterJ OperandB = iota
+	RegisterJ
 	// LocationInRegisterA signifies location [A].
-	LocationInRegisterA OperandB = iota
+	LocationInRegisterA
 	// LocationInRegisterB signifies location [B].
-	LocationInRegisterB OperandB = iota
+	LocationInRegisterB
 	// LocationInRegisterC signifies location [C].
-	LocationInRegisterC OperandB = iota
+	LocationInRegisterC
 	// LocationInRegisterX signifies location [X].
-	LocationInRegisterX OperandB = iota
+	LocationInRegisterX
 	// LocationInRegisterY signifies location [Y].
-	LocationInRegisterY OperandB = iota
+	LocationInRegisterY
 	// LocationInRegisterZ signifies location [Z].
-	LocationInRegisterZ OperandB = iota
+	LocationInRegisterZ
 	// LocationInRegisterI signifies location [I].
-	LocationInRegisterI OperandB = iota
+	LocationInRegisterI
 	// LocationInRegisterI signifies location [J].
-	LocationInRegisterJ OperandB = iota
+	LocationInRegisterJ
 	// LocationOffsetByRegisterA signifies location [A + next word].
-	LocationOffsetByRegisterA OperandB = iota
+	LocationOffsetByRegisterA
 	// LocationOffsetByRegisterB signifies location [B + next word].
-	LocationOffsetByRegisterB OperandB = iota
+	LocationOffsetByRegisterB
 	// LocationOffsetByRegisterC signifies location [C + next word].
-	LocationOffsetByRegisterC OperandB = iota
+	LocationOffsetByRegisterC
 	// LocationOffsetByRegisterX signifies location [X + next word].
-	LocationOffsetByRegisterX OperandB = iota
+	LocationOffsetByRegisterX
 	// LocationOffsetByRegisterY signifies location [Y + next word].
-	LocationOffsetByRegisterY OperandB = iota
+	LocationOffsetByRegisterY
 	// LocationOffsetByRegisterZ signifies location [Z + next word].
-	LocationOffsetByRegisterZ OperandB = iota
+	LocationOffsetByRegisterZ
 	// LocationOffsetByRegisterI signifies location [I + next word].
-	LocationOffsetByRegisterI OperandB = iota
+	LocationOffsetByRegisterI
 	// LocationOffsetByRegisterJ signifies location [J + next word].
-	LocationOffsetByRegisterJ OperandB = iota
+	LocationOffsetByRegisterJ
 	// Push signifies [--SP] for operand b.
 	// Pop signifies [SP++] for operand a.
 	// PushOrPop signifies either Push or Pop depending upon context.
-	Push, Pop, PushOrPop OperandB = iota, iota, iota
+	Push, Pop, PushOrPop = iota, iota, iota
 	// Peek signifies [SP].
-	Peek OperandB = iota
+	Peek = iota
 	// Pick signifies [SP + next word].
-	Pick OperandB = iota
+	Pick
 	// StackPointer signifies SP.
-	StackPointer OperandB = iota
+	StackPointer
 	// ProgramCounter signifies PC.
-	ProgramCounter OperandB = iota
+	ProgramCounter
 	// Extra signifies EX.
-	Extra OperandB = iota
+	Extra
 	// Location signifies [next word].
-	Location OperandB = iota
+	Location
 	// Literal signifies the next word, literally.
-	Literal OperandB = iota
+	Literal
 	// LiteralNegative1 signifies 0xffff.
-	LiteralNegative1 OperandA = iota
+	LiteralNegative1
 	// Literal0 signifies 0x0.
-	Literal0 OperandA = iota
+	Literal0
 	// Literal1 signifies 0x1.
-	Literal1 OperandA = iota
+	Literal1
 	// Literal2 signifies 0x2.
-	Literal2 OperandA = iota
+	Literal2
 	// Literal3 signifies 0x3.
-	Literal3 OperandA = iota
+	Literal3
 	// Literal4 signifies 0x4.
-	Literal4 OperandA = iota
+	Literal4
 	// Literal5 signifies 0x5.
-	Literal5 OperandA = iota
+	Literal5
 	// Literal6 signifies 0x6.
-	Literal6 OperandA = iota
+	Literal6
 	// Literal7 signifies 0x7.
-	Literal7 OperandA = iota
+	Literal7
 	// Literal8 signifies 0x8.
-	Literal8 OperandA = iota
+	Literal8
 	// Literal9 signifies 0x9.
-	Literal9 OperandA = iota
+	Literal9
 	// Literal10 signifies 0xa.
-	Literal10 OperandA = iota
+	Literal10
 	// Literal11 signifies 0xb.
-	Literal11 OperandA = iota
+	Literal11
 	// Literal12 signifies 0xc.
-	Literal12 OperandA = iota
+	Literal12
 	// Literal12 signifies 0xd.
-	Literal13 OperandA = iota
+	Literal13
 	// Literal14 signifies 0xe.
-	Literal14 OperandA = iota
+	Literal14
 	// Literal15 signifies 0xf.
-	Literal15 OperandA = iota
+	Literal15
 	// Literal16 signifies 0x10.
-	Literal16 OperandA = iota
+	Literal16
 	// Literal17 signifies 0x11.
-	Literal17 OperandA = iota
+	Literal17
 	// Literal18 signifies 0x12.
-	Literal18 OperandA = iota
+	Literal18
 	// Literal19 signifies 0x13.
-	Literal19 OperandA = iota
+	Literal19
 	// Literal20 signifies 0x14.
-	Literal20 OperandA = iota
+	Literal20
 	// Literal21 signifies 0x15.
-	Literal21 OperandA = iota
+	Literal21
 	// Literal22 signifies 0x16.
-	Literal22 OperandA = iota
+	Literal22
 	// Literal23 signifies 0x17.
-	Literal23 OperandA = iota
+	Literal23
 	// Literal24 signifies 0x18.
-	Literal24 OperandA = iota
+	Literal24
 	// Literal25 signifies 0x19.
-	Literal25 OperandA = iota
+	Literal25
 	// Literal26 signifies 0x1a.
-	Literal26 OperandA = iota
+	Literal26
 	// Literal27 signifies 0x1b.
-	Literal27 OperandA = iota
+	Literal27
 	// Literal28 signifies 0x1c.
-	Literal28 OperandA = iota
+	Literal28
 	// Literal29 signifies 0x1d.
-	Literal29 OperandA = iota
+	Literal29
 	// Literal30 signifies 0x1e.
-	Literal30 OperandA = iota
+	Literal30
 )
 
-func (d *DCPU) getOperandAddressOrLiteral(operandTypeA OperandA, assignable bool) (address *uint16, literal uint16) {
-	operandTypeB := OperandB(operandTypeA)
-	push := operandTypeB == PushOrPop && assignable
-	pop := operandTypeB == PushOrPop && !assignable
+func (d *DCPU) getOperandAddressOrLiteral(operand uint16, assignable bool) (address *uint16, literal uint16) {
+	push := operand == PushOrPop && assignable
+	pop := operand == PushOrPop && !assignable
 
 	switch {
-	case operandTypeB <= RegisterJ:
-		address = d.registerAddress(operandTypeB)
+	case operand <= RegisterJ:
+		address = d.registerAddress(operand)
 
-	case operandTypeB <= LocationInRegisterJ:
-		address = &d.Memory[d.registerValue(operandTypeB)]
+	case operand <= LocationInRegisterJ:
+		address = &d.Memory[d.registerValue(operand)]
 
-	case operandTypeB <= LocationOffsetByRegisterJ:
-		address = &d.Memory[d.Memory[d.ProgramCounter]+d.registerValue(operandTypeB)]
+	case operand <= LocationOffsetByRegisterJ:
+		address = &d.Memory[d.Memory[d.ProgramCounter]+d.registerValue(operand)]
 		d.ProgramCounter++
 
 	case push:
@@ -163,37 +162,37 @@ func (d *DCPU) getOperandAddressOrLiteral(operandTypeA OperandA, assignable bool
 		address = &d.Memory[d.StackPointer]
 		d.StackPointer++
 
-	case operandTypeB == Peek:
+	case operand == Peek:
 		address = &d.Memory[d.StackPointer]
 
-	case operandTypeB == Pick:
+	case operand == Pick:
 		address = &d.Memory[d.StackPointer+d.Memory[d.ProgramCounter]]
 		d.ProgramCounter++
 
-	case operandTypeB == StackPointer:
+	case operand == StackPointer:
 		address = &d.StackPointer
 
-	case operandTypeB == ProgramCounter:
+	case operand == ProgramCounter:
 		address = &d.ProgramCounter
 
-	case operandTypeB == Extra:
+	case operand == Extra:
 		address = &d.Extra
 
-	case operandTypeB == Location:
+	case operand == Location:
 		address = &d.Memory[d.Memory[d.ProgramCounter]]
 		d.ProgramCounter++
 
-	case operandTypeB == Literal:
+	case operand == Literal:
 		address = &d.Memory[d.ProgramCounter]
 		d.ProgramCounter++
 
 	default:
-		literal = uint16(operandTypeA - Literal0)
+		literal = operand - Literal0
 	}
 	return
 }
 
-func (d *DCPU) registerAddress(registerIndex OperandB) (address *uint16) {
+func (d *DCPU) registerAddress(registerIndex uint16) (address *uint16) {
 	switch registerIndex {
 	case RegisterA:
 		address = &d.RegisterA
@@ -215,7 +214,7 @@ func (d *DCPU) registerAddress(registerIndex OperandB) (address *uint16) {
 	return
 }
 
-func (d *DCPU) registerValue(registerIndex OperandB) (value uint16) {
+func (d *DCPU) registerValue(registerIndex uint16) (value uint16) {
 	switch registerIndex {
 	case RegisterA, LocationInRegisterA, LocationOffsetByRegisterA:
 		value = d.RegisterA

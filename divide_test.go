@@ -10,8 +10,8 @@ func TestExecuteInstructions_divideRegisterWithSmallLiteral(t *testing.T) {
 	dcpu := DCPU{}
 
 	dcpu.Load(0, []uint16{
-		Basic(Set, RegisterA, OperandA(Literal30)),
-		Basic(Divide, RegisterA, OperandA(Literal16)),
+		Basic(Set, RegisterA, Literal30),
+		Basic(Divide, RegisterA, Literal16),
 	})
 
 	dcpu.ExecuteInstructions(2)
@@ -23,8 +23,8 @@ func TestExecuteInstructions_divideByZero(t *testing.T) {
 	dcpu := DCPU{}
 
 	dcpu.Load(0, []uint16{
-		Basic(Set, RegisterA, OperandA(Literal30)),
-		Basic(Divide, RegisterA, OperandA(Literal0)),
+		Basic(Set, RegisterA, Literal30),
+		Basic(Divide, RegisterA, Literal0),
 	})
 
 	dcpu.ExecuteInstructions(2)
