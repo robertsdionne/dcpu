@@ -1,4 +1,3 @@
-// Package dcpu implements an emulator for Notch's DCPU 1.7 specification.
 package dcpu
 
 // Hardware represents peripheral devices that may interact with a DCPU.
