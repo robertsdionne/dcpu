@@ -90,7 +90,7 @@ func (d *DCPU) Execute() {
 	for {
 		d.ExecuteInstruction(false)
 		for i := range d.Hardware {
-			d.Hardware[i].Execute()
+			d.Hardware[i].Execute(d)
 		}
 		time.Sleep(10 * time.Microsecond)
 	}
@@ -315,9 +315,7 @@ func (d *DCPU) ExecuteInstruction(skip bool) {
 			d.hardwareQuery(a)
 
 		case HardwareInterrupt:
-			if int(a) < len(d.Hardware) {
-				d.Hardware[a].HandleHardwareInterrupt()
-			}
+			d.hardwareInterrupt(a)
 		}
 	} else {
 		debugOpcode := DebugOpcode((instruction & DebugOpcodeMask) >> DebugOpcodeShift)

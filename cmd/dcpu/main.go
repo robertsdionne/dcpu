@@ -10,7 +10,6 @@ func main() {
 	clock := clock.Clock{}
 
 	cpu.Hardware = append(cpu.Hardware, &clock)
-	clock.DCPU = &cpu
 
 	cpu.Load(0, []uint16{
 		dcpu.Special(dcpu.InterruptAddressSet, dcpu.OperandA(dcpu.Literal)), 0x1000,

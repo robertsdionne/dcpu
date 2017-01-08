@@ -8,7 +8,6 @@ import (
 
 // Clock implements Generic Clock (compatible).
 type Clock struct {
-	DCPU     *dcpu.DCPU
 	Interval uint16
 	Message  uint16
 	Ticks    uint16
@@ -30,15 +29,15 @@ const (
 )
 
 // Execute runs the clock.
-func (c *Clock) Execute() {
+func (c *Clock) Execute(dcpu *dcpu.DCPU) {
 	if c.Interval > 0 {
 		now := time.Now()
 
 		if now.Sub(c.lastTick) > time.Duration(c.Interval)*duration {
 			c.lastTick = now
 			c.Ticks++
-			if c.DCPU != nil && c.Message > 0 {
-				c.DCPU.Interrupt(c.Message)
+			if dcpu != nil && c.Message > 0 {
+				dcpu.Interrupt(c.Message)
 			}
 		}
 	}
@@ -60,20 +59,16 @@ func (c *Clock) GetVersion() uint16 {
 }
 
 // HandleHardwareInterrupt handles messages from the DCPU.
-func (c *Clock) HandleHardwareInterrupt() {
-	if c.DCPU == nil {
-		return
-	}
-
-	switch c.DCPU.RegisterA {
+func (c *Clock) HandleHardwareInterrupt(dcpu *dcpu.DCPU) {
+	switch dcpu.RegisterA {
 	case setInterval:
-		c.Interval = c.DCPU.RegisterB
+		c.Interval = dcpu.RegisterB
 		c.Ticks = 0
 
 	case getTicks:
-		c.DCPU.RegisterC = c.Ticks
+		dcpu.RegisterC = c.Ticks
 
 	case setInterruptMessage:
-		c.Message = c.DCPU.RegisterB
+		c.Message = dcpu.RegisterB
 	}
 }
