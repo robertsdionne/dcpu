@@ -13,10 +13,16 @@ type Clock struct {
 }
 
 const (
-	duration  = time.Second / frequency
-	frequency = 60
-	id        = 0x12d0b402
-	version   = 0x0001
+	duration     = time.Second / frequency
+	frequency    = 60
+	clockID      = 0x12d0b402
+	clockVersion = 0x0001
+)
+
+const (
+	clockSetInterval = iota
+	clockGetTicks
+	clockSetInterruptMessage
 )
 
 // Execute runs the clock.
@@ -36,7 +42,7 @@ func (c *Clock) Execute() {
 
 // GetID returns the Clock id.
 func (c *Clock) GetID() uint32 {
-	return id
+	return clockID
 }
 
 // GetManufacturerID returns the Clock manufacturer id.
@@ -46,23 +52,24 @@ func (c *Clock) GetManufacturerID() uint32 {
 
 // GetVersion returns the Clock version.
 func (c *Clock) GetVersion() uint16 {
-	return version
+	return clockVersion
 }
 
 // HandleHardwareInterrupt handles messages from the DCPU.
 func (c *Clock) HandleHardwareInterrupt() {
-	switch {
-	case c.DCPU == nil:
+	if c.DCPU == nil {
 		return
+	}
 
-	case c.DCPU.RegisterA == 0:
+	switch c.DCPU.RegisterA {
+	case clockSetInterval:
 		c.Interval = c.DCPU.RegisterB
 		c.Ticks = 0
 
-	case c.DCPU.RegisterA == 1:
+	case clockGetTicks:
 		c.DCPU.RegisterC = c.Ticks
 
-	case c.DCPU.RegisterA == 2:
+	case clockSetInterruptMessage:
 		c.Message = c.DCPU.RegisterB
 	}
 }
