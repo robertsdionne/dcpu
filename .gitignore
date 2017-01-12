@@ -4,3 +4,12 @@
 /keys
 /screen
 /stdinout
+
+parser/dcpu_base_listener.go
+parser/dcpu_base_visitor.go
+parser/dcpu_lexer.go
+parser/dcpu_listener.go
+parser/dcpu_parser.go
+parser/dcpu_visitor.go
+parser/Dcpu.tokens
+parser/DcpuLExer.tokens

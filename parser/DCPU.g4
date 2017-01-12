@@ -1,12 +1,14 @@
-grammar Dcpu;
+grammar DCPU;
 
 program
-    : (label | instruction | dataSection)+ EOF
+    : (labelDefinition | instruction | dataSection)+ EOF
     ;
 
-label
+labelDefinition
     : ':' IDENTIFIER
     ;
+
+label : IDENTIFIER ;
 
 instruction
     : binaryOperation
@@ -14,7 +16,7 @@ instruction
     ;
 
 dataSection
-    : '.dat' data
+    : ('.dat' | '.DAT' | 'dat' | 'DAT') data
     ;
 
 data
@@ -100,6 +102,7 @@ argumentA
     | PROGRAM_COUNTER
     | EXTRA
     | location
+    | label
     | value
     ;
 
@@ -123,6 +126,7 @@ argumentB
     | PROGRAM_COUNTER
     | EXTRA
     | location
+    | label
     ;
 
 PUSH
@@ -168,7 +172,7 @@ locationInRegister
     ;
 
 locationOffsetByRegister
-    : '[' ( REGISTER '+' value | value '+' REGISTER ) ']'
+    : '[' ( REGISTER '+' (label | value) | (label | value) '+' REGISTER ) ']'
     ;
 
 value
@@ -212,7 +216,7 @@ COMMENT
     ;
 
 IDENTIFIER
-    : [_a-zA-Z]+
+    : [._a-zA-Z]+
     ;
 
 STRING
