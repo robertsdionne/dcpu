@@ -1,2 +1,4 @@
-dcpu
-keys
+/dcpu
+/floppydisk
+/keys
+/stdinout
