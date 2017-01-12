@@ -20,9 +20,9 @@ const (
 )
 
 const (
-	writeWordsAsBytes = iota
-	writeBytes
-	writeUTF16String
+	WriteWordsAsBytes = iota
+	WriteBytes
+	WriteUTF16String
 )
 
 func (s *Stdout) Execute(dcpu *dcpu.DCPU) {}
@@ -45,17 +45,17 @@ func (s *Stdout) HandleHardwareInterrupt(dcpu *dcpu.DCPU) {
 	var err error
 
 	switch dcpu.RegisterA {
-	case writeWordsAsBytes:
+	case WriteWordsAsBytes:
 		for i := uint16(0); i < length; i++ {
 			err = buffer.WriteByte(byte(dcpu.Memory[start+i]))
 		}
 
-	case writeBytes:
+	case WriteBytes:
 		for i := uint16(0); i < length; i++ {
 			err = binary.Write(buffer, binary.LittleEndian, dcpu.Memory[start+i])
 		}
 
-	case writeUTF16String:
+	case WriteUTF16String:
 		utf16String := string(utf16.Decode(dcpu.Memory[start : start+length]))
 		_, err = buffer.WriteString(utf16String)
 	}

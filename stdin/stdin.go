@@ -2,7 +2,6 @@ package stdin
 
 import (
 	"encoding/binary"
-	"io"
 	"log"
 	"os"
 	"unicode/utf16"
@@ -19,9 +18,9 @@ const (
 )
 
 const (
-	readBytesAsWords = iota
-	readWords
-	readUTF8String
+	ReadBytesAsWords = iota
+	ReadWords
+	ReadUTF8String
 )
 
 func (s *Stdin) Execute(dcpu *dcpu.DCPU) {}
@@ -43,24 +42,24 @@ func (s *Stdin) HandleHardwareInterrupt(dcpu *dcpu.DCPU) {
 	buffer := make([]byte, length)
 
 	bytesRead, err := os.Stdin.Read(buffer)
-	if err != nil && err != io.EOF {
+	if err != nil {
 		log.Fatalln(err)
 	}
 
 	dcpu.RegisterZ = uint16(bytesRead)
 
 	switch dcpu.RegisterA {
-	case readBytesAsWords:
+	case ReadBytesAsWords:
 		for i, value := range buffer {
 			dcpu.Memory[start+uint16(i)] = uint16(value)
 		}
 
-	case readWords:
+	case ReadWords:
 		for i := 0; i < int(length); i += 2 {
-			dcpu.Memory[start+uint16(i)] = binary.LittleEndian.Uint16(buffer[i : i+2])
+			dcpu.Memory[start+uint16(i/2)] = binary.LittleEndian.Uint16(buffer[i : i+2])
 		}
 
-	case readUTF8String:
+	case ReadUTF8String:
 		copy(dcpu.Memory[start:], utf16.Encode([]rune(string(buffer))))
 	}
 }
