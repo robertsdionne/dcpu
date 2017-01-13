@@ -4,9 +4,8 @@ import (
 	"flag"
 
 	"github.com/robertsdionne/dcpu"
-	"github.com/robertsdionne/dcpu/clock"
+	"github.com/robertsdionne/dcpu/keyboard"
 	"github.com/robertsdionne/dcpu/monitor"
-	"github.com/robertsdionne/dcpu/stdin"
 )
 
 var (
@@ -17,49 +16,81 @@ var (
 
 func main() {
 	flag.Parse()
+	color := uint16(*foregroundColor<<12 | *backgroundColor<<8)
 
 	cpu := dcpu.DCPU{}
-	c := clock.Clock{}
-	in := stdin.Stdin{}
+	k := keyboard.Keyboard{}
 	m := monitor.Monitor{}
 
-	cpu.Hardware = append(cpu.Hardware, &in, &m, &c)
+	cpu.Hardware = append(cpu.Hardware, &k, &m)
 
 	cpu.Load(0, []uint16{
 		dcpu.Special(dcpu.InterruptAddressSet, dcpu.Literal), 0x2000,
+
 		dcpu.Basic(dcpu.Set, dcpu.RegisterA, dcpu.Literal), monitor.SetBorderColor,
 		dcpu.Basic(dcpu.Set, dcpu.RegisterB, dcpu.Literal), uint16(*borderColor),
 		dcpu.Special(dcpu.HardwareInterrupt, dcpu.Literal1),
+
 		dcpu.Basic(dcpu.Set, dcpu.RegisterA, dcpu.Literal), monitor.MemoryMapScreen,
 		dcpu.Basic(dcpu.Set, dcpu.RegisterB, dcpu.Literal), 0x1000,
 		dcpu.Special(dcpu.HardwareInterrupt, dcpu.Literal1),
-		dcpu.Basic(dcpu.Set, dcpu.RegisterA, dcpu.Literal0),
-		dcpu.Basic(dcpu.Set, dcpu.RegisterB, dcpu.Literal20),
-		dcpu.Special(dcpu.HardwareInterrupt, dcpu.Literal2),
-		dcpu.Basic(dcpu.Set, dcpu.RegisterA, dcpu.Literal2),
+
+		dcpu.Basic(dcpu.Set, dcpu.RegisterA, dcpu.Literal), keyboard.SetInterruptMessage,
 		dcpu.Basic(dcpu.Set, dcpu.RegisterB, dcpu.Literal1),
-		dcpu.Special(dcpu.HardwareInterrupt, dcpu.Literal2),
-		// dcpu.Basic(dcpu.Set, dcpu.RegisterA, dcpu.Literal), stdin.ReadWords,
-		// dcpu.Basic(dcpu.Set, dcpu.RegisterX, dcpu.Literal), 0x0300,
-		// dcpu.Basic(dcpu.Set, dcpu.RegisterY, dcpu.Literal), 0x1000,
-		// dcpu.Special(dcpu.HardwareInterrupt, dcpu.Literal0),
+		dcpu.Special(dcpu.HardwareInterrupt, dcpu.Literal0),
+
 		dcpu.Basic(dcpu.Subtract, dcpu.ProgramCounter, dcpu.Literal1),
 	})
 
-	color := uint16(*foregroundColor<<12 | *backgroundColor<<8)
-
-	cpu.Load(0x1000, []uint16{
-		color | 0x48, color | 0x65, color | 0x6c, color | 0x6c, color | 0x6f, color | 0x2e,
-	})
+	const (
+		printCharacter  = 0x2100
+		advanceCursor   = 0x2200
+		deleteCharacter = 0x2300
+	)
 
 	cpu.Load(0x2000, []uint16{
-		dcpu.Basic(dcpu.Add, dcpu.Location, dcpu.Literal1), 0x1000,
-		dcpu.Basic(dcpu.Add, dcpu.Location, dcpu.Literal1), 0x1001,
-		dcpu.Basic(dcpu.Add, dcpu.Location, dcpu.Literal1), 0x1002,
-		dcpu.Basic(dcpu.Add, dcpu.Location, dcpu.Literal1), 0x1003,
-		dcpu.Basic(dcpu.Add, dcpu.Location, dcpu.Literal1), 0x1004,
-		dcpu.Basic(dcpu.Add, dcpu.Location, dcpu.Literal1), 0x1005,
+		dcpu.Basic(dcpu.Set, dcpu.RegisterA, dcpu.Literal), keyboard.GetNextKey,
+		dcpu.Special(dcpu.HardwareInterrupt, dcpu.Literal0),
+
+		dcpu.Basic(dcpu.Set, dcpu.RegisterB, dcpu.RegisterC),
+
+		dcpu.Basic(dcpu.Set, dcpu.RegisterA, dcpu.Literal), keyboard.GetKeyState,
+		dcpu.Special(dcpu.HardwareInterrupt, dcpu.Literal0),
+
+		dcpu.Basic(dcpu.IfEqual, dcpu.RegisterC, dcpu.Literal0),
 		dcpu.Special(dcpu.ReturnFromInterrupt, dcpu.Literal0),
+
+		dcpu.Basic(dcpu.IfEqual, dcpu.RegisterB, dcpu.Literal), 0x0010,
+		dcpu.Special(dcpu.JumpSubRoutine, dcpu.Literal), deleteCharacter,
+
+		dcpu.Basic(dcpu.IfNotEqual, dcpu.RegisterB, dcpu.Literal), 0x0010,
+		dcpu.Special(dcpu.JumpSubRoutine, dcpu.Literal), printCharacter,
+
+		dcpu.Special(dcpu.ReturnFromInterrupt, dcpu.Literal0),
+	})
+
+	cpu.Load(printCharacter, []uint16{
+		dcpu.Basic(dcpu.BinaryOr, dcpu.RegisterB, dcpu.Literal), color,
+		dcpu.Basic(dcpu.Set, dcpu.LocationOffsetByRegisterI, dcpu.RegisterB), 0x1000,
+		dcpu.Basic(dcpu.Set, dcpu.RegisterJ, dcpu.Literal1),
+		dcpu.Special(dcpu.JumpSubRoutine, dcpu.Literal), advanceCursor,
+		dcpu.Basic(dcpu.Set, dcpu.ProgramCounter, dcpu.Pop),
+	})
+
+	cpu.Load(advanceCursor, []uint16{
+		dcpu.Basic(dcpu.Add, dcpu.RegisterI, dcpu.RegisterJ),
+		dcpu.Basic(dcpu.IfGreaterThan, dcpu.RegisterI, dcpu.Literal), 0x17f,
+		dcpu.Basic(dcpu.Set, dcpu.RegisterI, dcpu.Literal0),
+		dcpu.Basic(dcpu.IfUnder, dcpu.RegisterI, dcpu.Literal0),
+		dcpu.Basic(dcpu.Set, dcpu.RegisterI, dcpu.Literal0),
+		dcpu.Basic(dcpu.Set, dcpu.ProgramCounter, dcpu.Pop),
+	})
+
+	cpu.Load(deleteCharacter, []uint16{
+		dcpu.Basic(dcpu.Set, dcpu.RegisterJ, dcpu.LiteralNegative1),
+		dcpu.Special(dcpu.JumpSubRoutine, dcpu.Literal), advanceCursor,
+		dcpu.Basic(dcpu.Set, dcpu.LocationOffsetByRegisterI, dcpu.Literal0), 0x1000,
+		dcpu.Basic(dcpu.Set, dcpu.ProgramCounter, dcpu.Pop),
 	})
 
 	go cpu.Execute()

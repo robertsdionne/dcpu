@@ -1,18 +1,16 @@
 package keyboard
 
 import (
-	"log"
-
-	"github.com/go-gl/gl/v4.1-core/gl"
-	"github.com/go-gl/glfw/v3.2/glfw"
+	"github.com/hajimehoshi/ebiten"
 	"github.com/robertsdionne/dcpu"
 )
 
 // Keyboard implements Generic Keyboard (compatible).
 type Keyboard struct {
-	Message uint16
-	channel chan uint16
-	state   [0x100]uint16
+	Message       uint16
+	buffer        []uint16
+	state         [0x100]uint16
+	previousState [0x100]uint16
 }
 
 const (
@@ -21,19 +19,27 @@ const (
 )
 
 const (
-	clearBuffer = iota
-	getNextKey
-	getKeyState
-	setInterruptMessage
+	ClearBuffer = iota
+	GetNextKey
+	GetKeyState
+	SetInterruptMessage
 )
 
-func (k *Keyboard) Init() {
-	k.channel = make(chan uint16, 16)
-}
-
 func (k *Keyboard) Execute(dcpu *dcpu.DCPU) {
-	if k.Message > 0 && len(k.channel) > 0 {
-		dcpu.Interrupt(k.Message)
+	k.previousState = k.state
+	k.state = [0x100]uint16{}
+
+	for i := uint16(0); i < 0x100; i++ {
+		if ebiten.IsKeyPressed(getKeyCode(i)) {
+			k.state[i] = 0x1
+		}
+
+		if k.state[i] != k.previousState[i] {
+			k.buffer = append(k.buffer, i)
+			if k.Message > 0 {
+				dcpu.Interrupt(k.Message)
+			}
+		}
 	}
 }
 
@@ -51,83 +57,129 @@ func (k *Keyboard) GetVersion() uint16 {
 
 func (k *Keyboard) HandleHardwareInterrupt(dcpu *dcpu.DCPU) {
 	switch dcpu.RegisterA {
-	case clearBuffer:
-		close(k.channel)
-		k.channel = make(chan uint16, 16)
+	case ClearBuffer:
+		k.buffer = make([]uint16, 0, 16)
 
-	case getNextKey:
+	case GetNextKey:
 		dcpu.RegisterC = 0
-		select {
-		case key := <-k.channel:
-			dcpu.RegisterC = key
+		if len(k.buffer) > 0 {
+			dcpu.RegisterC = k.buffer[0]
+			k.buffer = k.buffer[1:]
 		}
 
-	case getKeyState:
+	case GetKeyState:
 		dcpu.RegisterC = k.state[dcpu.RegisterB]
 
-	case setInterruptMessage:
+	case SetInterruptMessage:
 		k.Message = dcpu.RegisterB
 	}
 }
 
-func (k *Keyboard) Poll() {
-	err := glfw.Init()
-	if err != nil {
-		log.Fatalln(err)
+func getKeyCode(key uint16) ebiten.Key {
+	switch key {
+	case '\t':
+		return ebiten.KeyTab
+	case 0x10:
+		return ebiten.KeyBackspace
+	case 0x11:
+		return ebiten.KeyEnter
+	case 0x12:
+		return ebiten.KeyInsert
+	case 0x13:
+		return ebiten.KeyDelete
+	case 0x1b:
+		return ebiten.KeyEscape
+	case 0x20:
+		return ebiten.KeySpace
+	case ',':
+		return ebiten.KeyComma
+	case '.':
+		return ebiten.KeyPeriod
+	case '0':
+		return ebiten.Key0
+	case '1':
+		return ebiten.Key1
+	case '2':
+		return ebiten.Key2
+	case '3':
+		return ebiten.Key3
+	case '4':
+		return ebiten.Key4
+	case '5':
+		return ebiten.Key5
+	case '6':
+		return ebiten.Key6
+	case '7':
+		return ebiten.Key7
+	case '8':
+		return ebiten.Key8
+	case '9':
+		return ebiten.Key9
+	case 'a':
+		return ebiten.KeyA
+	case 'b':
+		return ebiten.KeyB
+	case 'c':
+		return ebiten.KeyC
+	case 'd':
+		return ebiten.KeyD
+	case 'e':
+		return ebiten.KeyE
+	case 'f':
+		return ebiten.KeyF
+	case 'g':
+		return ebiten.KeyG
+	case 'h':
+		return ebiten.KeyH
+	case 'i':
+		return ebiten.KeyI
+	case 'j':
+		return ebiten.KeyJ
+	case 'k':
+		return ebiten.KeyK
+	case 'l':
+		return ebiten.KeyL
+	case 'm':
+		return ebiten.KeyM
+	case 'n':
+		return ebiten.KeyN
+	case 'o':
+		return ebiten.KeyO
+	case 'p':
+		return ebiten.KeyP
+	case 'q':
+		return ebiten.KeyQ
+	case 'r':
+		return ebiten.KeyR
+	case 's':
+		return ebiten.KeyS
+	case 't':
+		return ebiten.KeyT
+	case 'u':
+		return ebiten.KeyU
+	case 'v':
+		return ebiten.KeyV
+	case 'w':
+		return ebiten.KeyW
+	case 'x':
+		return ebiten.KeyX
+	case 'y':
+		return ebiten.KeyY
+	case 'z':
+		return ebiten.KeyZ
+	case 0x80:
+		return ebiten.KeyUp
+	case 0x81:
+		return ebiten.KeyDown
+	case 0x82:
+		return ebiten.KeyLeft
+	case 0x83:
+		return ebiten.KeyRight
+	case 0x90:
+		return ebiten.KeyShift
+	case 0x91:
+		return ebiten.KeyControl
 	}
-	defer glfw.Terminate()
 
-	err = gl.Init()
-	if err != nil {
-		log.Fatalln(err)
-	}
-
-	window, err := glfw.CreateWindow(128, 1, "keyboard", nil, nil)
-	if err != nil {
-		log.Fatalln(err)
-	}
-
-	window.SetKeyCallback(func(window *glfw.Window, key glfw.Key, scancode int, action glfw.Action, mods glfw.ModifierKey) {
-		var value uint16
-		switch {
-		case key == glfw.KeyBackspace:
-			value = 0x10
-		case key == glfw.KeyEnter:
-			value = 0x11
-		case key == glfw.KeyInsert:
-			value = 0x12
-		case key == glfw.KeyDelete:
-			value = 0x13
-		case key == glfw.KeyUp:
-			value = 0x80
-		case key == glfw.KeyDown:
-			value = 0x81
-		case key == glfw.KeyLeft:
-			value = 0x82
-		case key == glfw.KeyRight:
-			value = 0x83
-		default:
-			value = uint16(key)
-		}
-
-		if value > 0 {
-			switch action {
-			case glfw.Press, glfw.Repeat:
-				k.state[value] = 0x1
-				k.channel <- value
-
-			case glfw.Release:
-				k.state[value] = 0x0
-				k.channel <- value
-			}
-		}
-	})
-
-	window.MakeContextCurrent()
-
-	for !window.ShouldClose() {
-		glfw.PollEvents()
-		gl.Clear(gl.COLOR_BUFFER_BIT)
-		window.SwapBuffers()
-	}
+	return ebiten.Key(ebiten.KeyUp + 1)
 }
