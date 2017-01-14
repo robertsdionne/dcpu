@@ -3,7 +3,10 @@ package monitor
 import (
 	"image"
 	"image/color"
+	"image/png"
 	"log"
+	"os"
+	"time"
 
 	"github.com/hajimehoshi/ebiten"
 	"github.com/robertsdionne/dcpu"
@@ -14,6 +17,7 @@ type Monitor struct {
 	FontAddress    uint16
 	PaletteAddress uint16
 	VideoAddress   uint16
+	startTime      time.Time
 }
 
 const (
@@ -27,6 +31,7 @@ const (
 	height       = areaHeight + 2*borderHeight
 	scale        = 3
 	title        = "LEM1802"
+	bootPNG      = "documents/boot.png"
 )
 
 const (
@@ -118,6 +123,8 @@ var (
 		0xf070, 0xf071, 0xf072, 0xf073, 0xf074, 0xf075, 0xf076, 0xf077,
 		0xf078, 0xf079, 0xf07a, 0xf07b, 0xf07c, 0xf07d, 0xf07e, 0xf07f,
 	}
+
+	bootImg *ebiten.Image
 )
 
 func (m *Monitor) Execute(dcpu *dcpu.DCPU) {}
@@ -157,7 +164,25 @@ func (m *Monitor) HandleHardwareInterrupt(dcpu *dcpu.DCPU) {
 }
 
 func (m *Monitor) Poll(dcpu *dcpu.DCPU) {
+	m.startTime = time.Now()
 	log.Fatalln(ebiten.Run(m.update(dcpu), width, height, scale, title))
+}
+
+type imagePart struct {
+	src image.Rectangle
+	dst image.Rectangle
+}
+
+func (i *imagePart) Len() int {
+	return 1
+}
+
+func (i *imagePart) Src(int) (x0, y0, x1, y1 int) {
+	return i.src.Min.X, i.src.Min.Y, i.src.Max.X, i.src.Max.Y
+}
+
+func (i *imagePart) Dst(int) (x0, y0, x1, y1 int) {
+	return i.dst.Min.X, i.dst.Min.Y, i.dst.Max.X, i.dst.Max.Y
 }
 
 func (m *Monitor) update(dcpu *dcpu.DCPU) func(*ebiten.Image) error {
@@ -199,6 +224,38 @@ func (m *Monitor) update(dcpu *dcpu.DCPU) func(*ebiten.Image) error {
 
 				img.Set(x, y, colorFromUint16(palette[backgroundColor]))
 			}
+		}
+
+		if time.Since(m.startTime) < 5*time.Second {
+			if bootImg == nil {
+				file, err := os.Open(bootPNG)
+				if err != nil {
+					log.Fatalln(err)
+				}
+				defer file.Close()
+
+				boot, err := png.Decode(file)
+				if err != nil {
+					log.Fatalln(err)
+				}
+
+				bootImg, err = ebiten.NewImageFromImage(boot, ebiten.FilterNearest)
+				if err != nil {
+					log.Fatalln(err)
+				}
+			}
+
+			err := screen.ReplacePixels(img.Pix)
+			if err != nil {
+				log.Fatalln(err)
+			}
+
+			return screen.DrawImage(bootImg, &ebiten.DrawImageOptions{
+				ImageParts: &imagePart{
+					src: image.Rect(0, 0, areaWidth, areaHeight),
+					dst: image.Rect(borderWidth, borderHeight, borderWidth+areaWidth, borderHeight+areaHeight),
+				},
+			})
 		}
 
 		return screen.ReplacePixels(img.Pix)
