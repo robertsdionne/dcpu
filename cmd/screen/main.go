@@ -69,6 +69,8 @@ func main() {
 		dcpu.Special(dcpu.ReturnFromInterrupt, dcpu.Literal0),
 	})
 
+	cpu.Load(0x1000, monitor.TestPattern)
+
 	cpu.Load(printCharacter, []uint16{
 		dcpu.Basic(dcpu.BinaryOr, dcpu.RegisterB, dcpu.Literal), color,
 		dcpu.Basic(dcpu.Set, dcpu.LocationOffsetByRegisterI, dcpu.RegisterB), 0x1000,
