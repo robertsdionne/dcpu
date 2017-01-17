@@ -24,7 +24,7 @@ func main() {
 	f.Insert(*floppyDisk, false)
 	defer f.Eject()
 
-	d.Hardware = append(d.Hardware, &stdin.Device{}, &stdout.Device{}, &stderr.Stderr{}, &f)
+	d.Hardware = append(d.Hardware, &stdin.Device{}, &stdout.Device{}, &stderr.Device{}, &f)
 
 	d.Load(0, []uint16{
 		dcpu.Basic(dcpu.Set, dcpu.RegisterA, dcpu.Literal), stdin.ReadWords,
