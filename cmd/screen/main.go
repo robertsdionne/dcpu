@@ -19,7 +19,7 @@ func main() {
 	color := uint16(*foregroundColor<<12 | *backgroundColor<<8)
 
 	cpu := dcpu.DCPU{}
-	k := keyboard.Keyboard{}
+	k := keyboard.Device{}
 	m := monitor.Device{}
 
 	cpu.Hardware = append(cpu.Hardware, &k, &m)

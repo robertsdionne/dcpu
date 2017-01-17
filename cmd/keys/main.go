@@ -1,23 +1,15 @@
 package main
 
 import (
-	"runtime"
-
 	"github.com/robertsdionne/dcpu"
 	"github.com/robertsdionne/dcpu/keyboard"
 )
 
-func init() {
-	runtime.LockOSThread()
-}
-
 func main() {
 	cpu := dcpu.DCPU{}
-	keys := keyboard.Keyboard{}
+	keys := keyboard.Device{}
 
 	cpu.Hardware = append(cpu.Hardware, &keys)
-
-	keys.Init()
 
 	cpu.Load(0, []uint16{
 		dcpu.Special(dcpu.InterruptAddressSet, dcpu.Literal), 0x1000,
@@ -45,6 +37,5 @@ func main() {
 
 	cpu.LoadString(0xf000, " ")
 
-	go cpu.Execute()
-	keys.Poll()
+	cpu.Execute()
 }

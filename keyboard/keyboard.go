@@ -5,8 +5,8 @@ import (
 	"github.com/robertsdionne/dcpu"
 )
 
-// Keyboard implements Generic Keyboard (compatible).
-type Keyboard struct {
+// Device implements Generic Keyboard (compatible).
+type Device struct {
 	Message       uint16
 	buffer        []uint16
 	state         [0x100]uint16
@@ -25,53 +25,53 @@ const (
 	SetInterruptMessage
 )
 
-func (k *Keyboard) Execute(dcpu *dcpu.DCPU) {
-	k.previousState = k.state
-	k.state = [0x100]uint16{}
+func (d *Device) Execute(dcpu *dcpu.DCPU) {
+	d.previousState = d.state
+	d.state = [0x100]uint16{}
 
 	for i := uint16(0); i < 0x100; i++ {
 		if ebiten.IsKeyPressed(getKeyCode(i)) {
-			k.state[i] = 0x1
+			d.state[i] = 0x1
 		}
 
-		if k.state[i] != k.previousState[i] {
-			k.buffer = append(k.buffer, i)
-			if k.Message > 0 {
-				dcpu.Interrupt(k.Message)
+		if d.state[i] != d.previousState[i] {
+			d.buffer = append(d.buffer, i)
+			if d.Message > 0 {
+				dcpu.Interrupt(d.Message)
 			}
 		}
 	}
 }
 
-func (k *Keyboard) GetID() uint32 {
+func (d *Device) GetID() uint32 {
 	return ID
 }
 
-func (k *Keyboard) GetManufacturerID() uint32 {
+func (d *Device) GetManufacturerID() uint32 {
 	return 0
 }
 
-func (k *Keyboard) GetVersion() uint16 {
+func (d *Device) GetVersion() uint16 {
 	return Version
 }
 
-func (k *Keyboard) HandleHardwareInterrupt(dcpu *dcpu.DCPU) {
+func (d *Device) HandleHardwareInterrupt(dcpu *dcpu.DCPU) {
 	switch dcpu.RegisterA {
 	case ClearBuffer:
-		k.buffer = make([]uint16, 0, 16)
+		d.buffer = make([]uint16, 0, 16)
 
 	case GetNextKey:
 		dcpu.RegisterC = 0
-		if len(k.buffer) > 0 {
-			dcpu.RegisterC = k.buffer[0]
-			k.buffer = k.buffer[1:]
+		if len(d.buffer) > 0 {
+			dcpu.RegisterC = d.buffer[0]
+			d.buffer = d.buffer[1:]
 		}
 
 	case GetKeyState:
-		dcpu.RegisterC = k.state[dcpu.RegisterB]
+		dcpu.RegisterC = d.state[dcpu.RegisterB]
 
 	case SetInterruptMessage:
-		k.Message = dcpu.RegisterB
+		d.Message = dcpu.RegisterB
 	}
 }
 
