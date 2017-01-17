@@ -9,7 +9,7 @@ import (
 	"github.com/robertsdionne/dcpu"
 )
 
-type Stdin struct{}
+type Device struct{}
 
 const (
 	ID             = 0x00000000
@@ -23,21 +23,21 @@ const (
 	ReadUTF8String
 )
 
-func (s *Stdin) Execute(dcpu *dcpu.DCPU) {}
+func (d *Device) Execute(dcpu *dcpu.DCPU) {}
 
-func (s *Stdin) GetID() uint32 {
+func (d *Device) GetID() uint32 {
 	return ID
 }
 
-func (s *Stdin) GetManufacturerID() uint32 {
+func (d *Device) GetManufacturerID() uint32 {
 	return ManufacturerID
 }
 
-func (s *Stdin) GetVersion() uint16 {
+func (d *Device) GetVersion() uint16 {
 	return Version
 }
 
-func (s *Stdin) HandleHardwareInterrupt(dcpu *dcpu.DCPU) {
+func (d *Device) HandleHardwareInterrupt(dcpu *dcpu.DCPU) {
 	length, start := dcpu.RegisterX, dcpu.RegisterY
 	buffer := make([]byte, length)
 

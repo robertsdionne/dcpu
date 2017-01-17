@@ -8,7 +8,7 @@ import (
 
 func main() {
 	cpu := dcpu.DCPU{}
-	in := stdin.Stdin{}
+	in := stdin.Device{}
 	out := stdout.Device{}
 
 	cpu.Hardware = append(cpu.Hardware, &in, &out)
