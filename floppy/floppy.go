@@ -8,7 +8,7 @@ import (
 	"github.com/robertsdionne/dcpu"
 )
 
-type Floppy struct {
+type Device struct {
 	file      *os.File
 	LastError uint16
 	Message   uint16
@@ -48,65 +48,65 @@ const (
 	ErrorBroken
 )
 
-func (f *Floppy) Execute(dcpu *dcpu.DCPU) {}
+func (d *Device) Execute(dcpu *dcpu.DCPU) {}
 
-func (f *Floppy) Insert(disk string, writeProtected bool) {
+func (d *Device) Insert(disk string, writeProtected bool) {
 	var err error
 	mode := os.O_RDWR
 	if writeProtected {
 		mode = os.O_RDONLY
 	}
 
-	f.file, err = os.OpenFile(disk, mode, os.ModePerm)
+	d.file, err = os.OpenFile(disk, mode, os.ModePerm)
 	if err != nil {
 		log.Fatalln(err)
 	}
 
-	f.State = StateReady
+	d.State = StateReady
 	if writeProtected {
-		f.State = StateReadyWriteProtected
+		d.State = StateReadyWriteProtected
 	}
 }
 
-func (f *Floppy) Eject() {
-	if f.file != nil {
-		f.State = StateNoMedia
-		f.file.Close()
-		f.file = nil
+func (d *Device) Eject() {
+	if d.file != nil {
+		d.State = StateNoMedia
+		d.file.Close()
+		d.file = nil
 	}
 }
 
-func (f *Floppy) GetID() uint32 {
+func (d *Device) GetID() uint32 {
 	return ID
 }
 
-func (f *Floppy) GetManufacturerID() uint32 {
+func (d *Device) GetManufacturerID() uint32 {
 	return ManufacturerID
 }
 
-func (f *Floppy) GetVersion() uint16 {
+func (d *Device) GetVersion() uint16 {
 	return Version
 }
 
-func (f *Floppy) HandleHardwareInterrupt(dcpu *dcpu.DCPU) {
+func (d *Device) HandleHardwareInterrupt(dcpu *dcpu.DCPU) {
 	switch dcpu.RegisterA {
 	case Poll:
-		dcpu.RegisterB = f.State
-		dcpu.RegisterC = f.LastError
+		dcpu.RegisterB = d.State
+		dcpu.RegisterC = d.LastError
 
 	case SetInterruptMessage:
-		f.Message = dcpu.RegisterX
+		d.Message = dcpu.RegisterX
 
 	case ReadSector:
 		dcpu.RegisterB = 0
 
-		switch f.State {
+		switch d.State {
 		case StateNoMedia:
-			f.LastError = ErrorNoMedia
+			d.LastError = ErrorNoMedia
 			return
 
 		case StateBusy:
-			f.LastError = ErrorBusy
+			d.LastError = ErrorBusy
 			return
 
 		default:
@@ -114,34 +114,34 @@ func (f *Floppy) HandleHardwareInterrupt(dcpu *dcpu.DCPU) {
 		}
 
 		offset := int64(1024 * (dcpu.RegisterX % 1440))
-		_, err := f.file.Seek(offset, os.SEEK_SET)
+		_, err := d.file.Seek(offset, os.SEEK_SET)
 		if err != nil {
 			log.Fatalln(err)
 		}
 
-		err = binary.Read(f.file, binary.LittleEndian, dcpu.Memory[dcpu.RegisterY:dcpu.RegisterY+512])
+		err = binary.Read(d.file, binary.LittleEndian, dcpu.Memory[dcpu.RegisterY:dcpu.RegisterY+512])
 		if err != nil {
 			log.Fatalln(err)
 		}
 
-		if f.Message > 0 {
-			dcpu.Interrupt(f.Message)
+		if d.Message > 0 {
+			dcpu.Interrupt(d.Message)
 		}
 
 	case WriteSector:
 		dcpu.RegisterB = 0
 
-		switch f.State {
+		switch d.State {
 		case StateNoMedia:
-			f.LastError = ErrorNoMedia
+			d.LastError = ErrorNoMedia
 			return
 
 		case StateBusy:
-			f.LastError = ErrorBusy
+			d.LastError = ErrorBusy
 			return
 
 		case StateReadyWriteProtected:
-			f.LastError = ErrorProtected
+			d.LastError = ErrorProtected
 			return
 
 		default:
@@ -149,17 +149,17 @@ func (f *Floppy) HandleHardwareInterrupt(dcpu *dcpu.DCPU) {
 		}
 
 		offset := int64(1024 * (dcpu.RegisterX % 1440))
-		_, err := f.file.Seek(offset, os.SEEK_SET)
+		_, err := d.file.Seek(offset, os.SEEK_SET)
 		if err != nil {
 			log.Fatalln(err)
 		}
 
-		err = binary.Write(f.file, binary.LittleEndian, dcpu.Memory[dcpu.RegisterY:dcpu.RegisterY+512])
+		err = binary.Write(d.file, binary.LittleEndian, dcpu.Memory[dcpu.RegisterY:dcpu.RegisterY+512])
 		if err != nil {
 			log.Fatalln(err)
 		}
 
-		err = f.file.Sync()
+		err = d.file.Sync()
 		if err != nil {
 			log.Fatalln(err)
 		}

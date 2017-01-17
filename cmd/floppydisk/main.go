@@ -19,7 +19,7 @@ func main() {
 	flag.Parse()
 
 	d := dcpu.DCPU{}
-	f := floppy.Floppy{}
+	f := floppy.Device{}
 
 	f.Insert(*floppyDisk, false)
 	defer f.Eject()
