@@ -12,7 +12,7 @@ import (
 	"github.com/robertsdionne/dcpu"
 )
 
-type Monitor struct {
+type Device struct {
 	BorderColor    uint16
 	FontAddress    uint16
 	PaletteAddress uint16
@@ -127,33 +127,33 @@ var (
 	bootImg *ebiten.Image
 )
 
-func (m *Monitor) Execute(dcpu *dcpu.DCPU) {}
+func (d *Device) Execute(dcpu *dcpu.DCPU) {}
 
-func (m *Monitor) GetID() uint32 {
+func (d *Device) GetID() uint32 {
 	return ID
 }
 
-func (m *Monitor) GetManufacturerID() uint32 {
+func (d *Device) GetManufacturerID() uint32 {
 	return ManufacturerID
 }
 
-func (m *Monitor) GetVersion() uint16 {
+func (d *Device) GetVersion() uint16 {
 	return Version
 }
 
-func (m *Monitor) HandleHardwareInterrupt(dcpu *dcpu.DCPU) {
+func (d *Device) HandleHardwareInterrupt(dcpu *dcpu.DCPU) {
 	switch dcpu.RegisterA {
 	case MemoryMapScreen:
-		m.VideoAddress = dcpu.RegisterB
+		d.VideoAddress = dcpu.RegisterB
 
 	case MemoryMapFont:
-		m.FontAddress = dcpu.RegisterB
+		d.FontAddress = dcpu.RegisterB
 
 	case MemoryMapPalette:
-		m.PaletteAddress = dcpu.RegisterB
+		d.PaletteAddress = dcpu.RegisterB
 
 	case SetBorderColor:
-		m.BorderColor = dcpu.RegisterB & 0xf
+		d.BorderColor = dcpu.RegisterB & 0xf
 
 	case MemoryDumpFont:
 		copy(dcpu.Memory[dcpu.RegisterB:dcpu.RegisterB+0x100], defaultFont)
@@ -163,9 +163,9 @@ func (m *Monitor) HandleHardwareInterrupt(dcpu *dcpu.DCPU) {
 	}
 }
 
-func (m *Monitor) Poll(dcpu *dcpu.DCPU) {
-	m.startTime = time.Now()
-	log.Fatalln(ebiten.Run(m.update(dcpu), width, height, scale, title))
+func (d *Device) Poll(dcpu *dcpu.DCPU) {
+	d.startTime = time.Now()
+	log.Fatalln(ebiten.Run(d.update(dcpu), width, height, scale, title))
 }
 
 type imagePart struct {
@@ -185,18 +185,18 @@ func (i *imagePart) Dst(int) (x0, y0, x1, y1 int) {
 	return i.dst.Min.X, i.dst.Min.Y, i.dst.Max.X, i.dst.Max.Y
 }
 
-func (m *Monitor) update(dcpu *dcpu.DCPU) func(*ebiten.Image) error {
+func (d *Device) update(dcpu *dcpu.DCPU) func(*ebiten.Image) error {
 	return func(screen *ebiten.Image) error {
 		img := image.NewRGBA(image.Rect(0, 0, width, height))
 
 		var font, palette []uint16 = defaultFont, defaultPalette
 
-		if m.FontAddress > 0 {
-			font = dcpu.Memory[m.FontAddress : m.FontAddress+0x100]
+		if d.FontAddress > 0 {
+			font = dcpu.Memory[d.FontAddress : d.FontAddress+0x100]
 		}
 
-		if m.PaletteAddress > 0 {
-			palette = dcpu.Memory[m.PaletteAddress : m.PaletteAddress+0x10]
+		if d.PaletteAddress > 0 {
+			palette = dcpu.Memory[d.PaletteAddress : d.PaletteAddress+0x10]
 		}
 
 		for x := 0; x < width; x++ {
@@ -207,12 +207,12 @@ func (m *Monitor) update(dcpu *dcpu.DCPU) func(*ebiten.Image) error {
 
 				inBorder := i < 0 || i == bufferWidth || j < 0 || j == bufferHeight
 				if inBorder {
-					img.Set(x, y, colorFromUint16(palette[m.BorderColor&0xf]))
+					img.Set(x, y, colorFromUint16(palette[d.BorderColor&0xf]))
 					continue
 				}
 
 				offset := uint16(bufferWidth*j + i)
-				character := dcpu.Memory[m.VideoAddress+offset]
+				character := dcpu.Memory[d.VideoAddress+offset]
 				foregroundColor := character & 0xf000 >> 12
 				backgroundColor := character & 0x0f00 >> 8
 
@@ -226,7 +226,7 @@ func (m *Monitor) update(dcpu *dcpu.DCPU) func(*ebiten.Image) error {
 			}
 		}
 
-		if time.Since(m.startTime) < 5*time.Second {
+		if time.Since(d.startTime) < 5*time.Second {
 			if bootImg == nil {
 				file, err := os.Open(bootPNG)
 				if err != nil {

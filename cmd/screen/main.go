@@ -20,7 +20,7 @@ func main() {
 
 	cpu := dcpu.DCPU{}
 	k := keyboard.Keyboard{}
-	m := monitor.Monitor{}
+	m := monitor.Device{}
 
 	cpu.Hardware = append(cpu.Hardware, &k, &m)
 
