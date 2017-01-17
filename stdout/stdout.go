@@ -11,7 +11,7 @@ import (
 	"github.com/robertsdionne/dcpu"
 )
 
-type Stdout struct{}
+type Device struct{}
 
 const (
 	ID             = 0x00000001
@@ -25,21 +25,21 @@ const (
 	WriteUTF16String
 )
 
-func (s *Stdout) Execute(dcpu *dcpu.DCPU) {}
+func (d *Device) Execute(dcpu *dcpu.DCPU) {}
 
-func (s *Stdout) GetID() uint32 {
+func (d *Device) GetID() uint32 {
 	return ID
 }
 
-func (s *Stdout) GetManufacturerID() uint32 {
+func (d *Device) GetManufacturerID() uint32 {
 	return ManufacturerID
 }
 
-func (s *Stdout) GetVersion() uint16 {
+func (d *Device) GetVersion() uint16 {
 	return Version
 }
 
-func (s *Stdout) HandleHardwareInterrupt(dcpu *dcpu.DCPU) {
+func (d *Device) HandleHardwareInterrupt(dcpu *dcpu.DCPU) {
 	length, start := dcpu.RegisterX, dcpu.RegisterY
 	buffer := &bytes.Buffer{}
 	var err error

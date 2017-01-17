@@ -8,10 +8,10 @@ import (
 
 func main() {
 	cpu := dcpu.DCPU{}
-	stdin := stdin.Stdin{}
-	stdout := stdout.Stdout{}
+	in := stdin.Stdin{}
+	out := stdout.Device{}
 
-	cpu.Hardware = append(cpu.Hardware, &stdin, &stdout)
+	cpu.Hardware = append(cpu.Hardware, &in, &out)
 
 	cpu.Load(0, []uint16{
 		dcpu.Basic(dcpu.Set, dcpu.RegisterA, dcpu.Literal0),

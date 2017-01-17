@@ -9,7 +9,7 @@ import (
 
 func TestStdout(t *testing.T) {
 	d := dcpu.DCPU{}
-	stdout := Stdout{}
+	stdout := Device{}
 
 	d.Hardware = append(d.Hardware, &stdout)
 
