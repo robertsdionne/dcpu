@@ -46,6 +46,7 @@ func main() {
 		printCharacter  = 0x2100
 		advanceCursor   = 0x2200
 		deleteCharacter = 0x2300
+		newline         = 0x2400
 	)
 
 	cpu.Load(0x2000, []uint16{
@@ -58,6 +59,11 @@ func main() {
 		dcpu.Special(dcpu.HardwareInterrupt, dcpu.Literal0),
 
 		dcpu.Basic(dcpu.IfEqual, dcpu.RegisterC, dcpu.Literal0),
+		dcpu.Special(dcpu.ReturnFromInterrupt, dcpu.Literal0),
+
+		dcpu.Basic(dcpu.IfEqual, dcpu.RegisterB, dcpu.Literal), 0x0011,
+		dcpu.Special(dcpu.JumpSubRoutine, dcpu.Literal), newline,
+		dcpu.Basic(dcpu.IfEqual, dcpu.RegisterB, dcpu.Literal), 0x0011,
 		dcpu.Special(dcpu.ReturnFromInterrupt, dcpu.Literal0),
 
 		dcpu.Basic(dcpu.IfEqual, dcpu.RegisterB, dcpu.Literal), 0x0010,
@@ -92,6 +98,15 @@ func main() {
 		dcpu.Basic(dcpu.Set, dcpu.RegisterJ, dcpu.LiteralNegative1),
 		dcpu.Special(dcpu.JumpSubRoutine, dcpu.Literal), advanceCursor,
 		dcpu.Basic(dcpu.Set, dcpu.LocationOffsetByRegisterI, dcpu.Literal0), 0x1000,
+		dcpu.Basic(dcpu.Set, dcpu.ProgramCounter, dcpu.Pop),
+	})
+
+	cpu.Load(newline, []uint16{
+		dcpu.Basic(dcpu.Set, dcpu.Push, dcpu.RegisterI),
+		dcpu.Basic(dcpu.Modulo, dcpu.Peek, dcpu.Literal), 0x0020,
+		dcpu.Basic(dcpu.Set, dcpu.RegisterJ, dcpu.Literal), 0x0020,
+		dcpu.Basic(dcpu.Subtract, dcpu.RegisterJ, dcpu.Pop),
+		dcpu.Special(dcpu.JumpSubRoutine, dcpu.Literal), advanceCursor,
 		dcpu.Basic(dcpu.Set, dcpu.ProgramCounter, dcpu.Pop),
 	})
 
