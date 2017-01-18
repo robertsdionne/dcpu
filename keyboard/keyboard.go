@@ -29,11 +29,27 @@ func (d *Device) Execute(dcpu *dcpu.DCPU) {
 	d.previousState = d.state
 	d.state = [0x100]uint16{}
 
-	for i := uint16(0); i < 0x100; i++ {
-		if ebiten.IsKeyPressed(getKeyCode(i)) {
-			d.state[i] = 0x1
+	for key := ebiten.Key0; key <= ebiten.KeyMax; key++ {
+		i := getKeyCode(key)
+		if i == 0xffff {
+			continue
 		}
 
+		if ebiten.IsKeyPressed(key) {
+			switch key {
+			case ebiten.KeyShift:
+				// noop
+			case ebiten.KeyControl:
+				// noop
+			case ebiten.KeyRightShift, ebiten.KeyRightControl:
+				d.state[i] |= 0x1
+			default:
+				d.state[i] = 0x1
+			}
+		}
+	}
+
+	for i := uint16(0); i < 0x100; i++ {
 		if d.state[i] != d.previousState[i] {
 			d.buffer = append(d.buffer, i)
 			if d.Message > 0 {
@@ -75,111 +91,61 @@ func (d *Device) HandleHardwareInterrupt(dcpu *dcpu.DCPU) {
 	}
 }
 
-func getKeyCode(key uint16) ebiten.Key {
-	switch key {
-	case '\t':
-		return ebiten.KeyTab
-	case 0x10:
-		return ebiten.KeyBackspace
-	case 0x11:
-		return ebiten.KeyEnter
-	case 0x12:
-		return ebiten.KeyInsert
-	case 0x13:
-		return ebiten.KeyDelete
-	case 0x1b:
-		return ebiten.KeyEscape
-	case 0x20:
-		return ebiten.KeySpace
-	case ',':
-		return ebiten.KeyComma
-	case '.':
-		return ebiten.KeyPeriod
-	case '0':
-		return ebiten.Key0
-	case '1':
-		return ebiten.Key1
-	case '2':
-		return ebiten.Key2
-	case '3':
-		return ebiten.Key3
-	case '4':
-		return ebiten.Key4
-	case '5':
-		return ebiten.Key5
-	case '6':
-		return ebiten.Key6
-	case '7':
-		return ebiten.Key7
-	case '8':
-		return ebiten.Key8
-	case '9':
-		return ebiten.Key9
-	case 'a':
-		return ebiten.KeyA
-	case 'b':
-		return ebiten.KeyB
-	case 'c':
-		return ebiten.KeyC
-	case 'd':
-		return ebiten.KeyD
-	case 'e':
-		return ebiten.KeyE
-	case 'f':
-		return ebiten.KeyF
-	case 'g':
-		return ebiten.KeyG
-	case 'h':
-		return ebiten.KeyH
-	case 'i':
-		return ebiten.KeyI
-	case 'j':
-		return ebiten.KeyJ
-	case 'k':
-		return ebiten.KeyK
-	case 'l':
-		return ebiten.KeyL
-	case 'm':
-		return ebiten.KeyM
-	case 'n':
-		return ebiten.KeyN
-	case 'o':
-		return ebiten.KeyO
-	case 'p':
-		return ebiten.KeyP
-	case 'q':
-		return ebiten.KeyQ
-	case 'r':
-		return ebiten.KeyR
-	case 's':
-		return ebiten.KeyS
-	case 't':
-		return ebiten.KeyT
-	case 'u':
-		return ebiten.KeyU
-	case 'v':
-		return ebiten.KeyV
-	case 'w':
-		return ebiten.KeyW
-	case 'x':
-		return ebiten.KeyX
-	case 'y':
-		return ebiten.KeyY
-	case 'z':
-		return ebiten.KeyZ
-	case 0x80:
-		return ebiten.KeyUp
-	case 0x81:
-		return ebiten.KeyDown
-	case 0x82:
-		return ebiten.KeyLeft
-	case 0x83:
-		return ebiten.KeyRight
-	case 0x90:
-		return ebiten.KeyShift
-	case 0x91:
-		return ebiten.KeyControl
+func getKeyCode(key ebiten.Key) uint16 {
+	switch {
+	case ebiten.Key0 <= key && key <= ebiten.Key9:
+		return uint16(key-ebiten.Key0) + '0'
+	case ebiten.KeyA <= key && key <= ebiten.KeyZ:
+		return uint16(key-ebiten.KeyA) + 'A'
+	case key == ebiten.KeyBackspace:
+		return 0x10
+	case key == ebiten.KeyComma:
+		return ','
+	case key == ebiten.KeyControl || key == ebiten.KeyLeftControl || key == ebiten.KeyRightControl:
+		return 0x91
+	case key == ebiten.KeyDelete:
+		return 0x13
+	case key == ebiten.KeyDown:
+		return 0x81
+	case key == ebiten.KeyEnter:
+		return 0x11
+	case key == ebiten.KeyEscape:
+		return 0x1b
+	case key == ebiten.KeyInsert:
+		return 0x12
+	case key == ebiten.KeyLeft:
+		return 0x82
+	case key == ebiten.KeyPeriod:
+		return '.'
+	case key == ebiten.KeyRight:
+		return 0x83
+	case key == ebiten.KeyShift || key == ebiten.KeyLeftShift || key == ebiten.KeyRightShift:
+		return 0x90
+	case key == ebiten.KeySpace:
+		return ' '
+	case key == ebiten.KeyTab:
+		return '\t'
+	case key == ebiten.KeyUp:
+		return 0x80
+	case key == ebiten.KeyApostrophe:
+		return '\''
+	case key == ebiten.KeyMinus:
+		return '-'
+	case key == ebiten.KeySlash:
+		return '/'
+	case key == ebiten.KeySemicolon:
+		return ';'
+	case key == ebiten.KeyEqual:
+		return '='
+	case key == ebiten.KeyLeftBracket:
+		return '{'
+	case key == ebiten.KeyBackslash:
+		return '\\'
+	case key == ebiten.KeyRightBracket:
+		return '}'
+	case key == ebiten.KeyGraveAccent:
+		return '`'
+	default:
+		return 0xffff
 	}
-
-	return ebiten.Key(ebiten.KeyUp + 1)
 }
