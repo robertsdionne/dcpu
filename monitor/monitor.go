@@ -199,6 +199,8 @@ func (d *Device) update(dcpu *dcpu.DCPU) func(*ebiten.Image) error {
 			palette = dcpu.Memory[d.PaletteAddress : d.PaletteAddress+0x10]
 		}
 
+		timeToBlink := time.Since(d.startTime)%(2*time.Second) < 1*time.Second
+
 		for x := 0; x < width; x++ {
 			for y := 0; y < height; y++ {
 
@@ -213,8 +215,12 @@ func (d *Device) update(dcpu *dcpu.DCPU) func(*ebiten.Image) error {
 
 				offset := uint16(bufferWidth*j + i)
 				character := dcpu.Memory[d.VideoAddress+offset]
+				blink := character&0x0080 > 0
 				foregroundColor := character & 0xf000 >> 12
 				backgroundColor := character & 0x0f00 >> 8
+				if blink && timeToBlink {
+					foregroundColor, backgroundColor = backgroundColor, foregroundColor
+				}
 
 				foreground := lookupPixel(font, x%borderWidth, y%borderHeight, character&0x7f)
 				if foreground {
