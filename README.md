@@ -7,6 +7,9 @@ For now, requires a custom version fork https://github.com/robertsdionne/ebiten 
 of https://github.com/hajimehoshi/ebiten for proper `SHIFT` and `CTRL` key keyboard support.
 
 ## TODO
+* [ ] Implement assembler:
+  * [ ] Define parser specification in ANTLR4.
+  * [ ] Write assembler abstract syntax tree visitor or listener.
 * [ ] Implement devices:
   * [ ] Standard:
     * [ ] Mackapar SPED-3
