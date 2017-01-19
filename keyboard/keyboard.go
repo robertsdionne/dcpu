@@ -96,7 +96,7 @@ func getKeyCode(key ebiten.Key) uint16 {
 	case ebiten.Key0 <= key && key <= ebiten.Key9:
 		return uint16(key-ebiten.Key0) + '0'
 	case ebiten.KeyA <= key && key <= ebiten.KeyZ:
-		return uint16(key-ebiten.KeyA) + 'A'
+		return uint16(key-ebiten.KeyA) + 'a'
 	case key == ebiten.KeyBackspace:
 		return 0x10
 	case key == ebiten.KeyComma:
@@ -138,11 +138,11 @@ func getKeyCode(key ebiten.Key) uint16 {
 	case key == ebiten.KeyEqual:
 		return '='
 	case key == ebiten.KeyLeftBracket:
-		return '{'
+		return '['
 	case key == ebiten.KeyBackslash:
 		return '\\'
 	case key == ebiten.KeyRightBracket:
-		return '}'
+		return ']'
 	case key == ebiten.KeyGraveAccent:
 		return '`'
 	default:
