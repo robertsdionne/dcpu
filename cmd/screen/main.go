@@ -4,6 +4,7 @@ import (
 	"flag"
 
 	"github.com/robertsdionne/dcpu"
+	"github.com/robertsdionne/dcpu/hardware"
 	"github.com/robertsdionne/dcpu/keyboard"
 	"github.com/robertsdionne/dcpu/monitor"
 )
@@ -34,13 +35,15 @@ func main() {
 	k := keyboard.Device{}
 	m := monitor.Device{}
 
+	k.Init()
+
 	cpu.Hardware = append(cpu.Hardware, &k, &m)
 
 	cpu.Load(0, []uint16{
 		dcpu.Special(dcpu.InterruptAddressSet, dcpu.Literal), 0x2000,
 
-		dcpu.Basic(dcpu.Set, dcpu.RegisterI, dcpu.Literal), 0x0180,
-		dcpu.Special(dcpu.JumpSubRoutine, dcpu.Literal), clearScreen,
+		// dcpu.Basic(dcpu.Set, dcpu.RegisterI, dcpu.Literal), 0x0180,
+		// dcpu.Special(dcpu.JumpSubRoutine, dcpu.Literal), clearScreen,
 
 		dcpu.Basic(dcpu.Set, dcpu.RegisterA, dcpu.Literal), monitor.SetBorderColor,
 		dcpu.Basic(dcpu.Set, dcpu.RegisterB, dcpu.Literal), uint16(*borderColor),
@@ -56,6 +59,8 @@ func main() {
 
 		dcpu.Basic(dcpu.Subtract, dcpu.ProgramCounter, dcpu.Literal1),
 	})
+
+	cpu.Load(0x1000, monitor.TestPattern)
 
 	cpu.Load(0x2000, []uint16{
 		dcpu.Basic(dcpu.Set, dcpu.RegisterA, dcpu.Literal), keyboard.GetNextKey,
@@ -239,5 +244,10 @@ func main() {
 	})
 
 	go cpu.Execute()
-	m.Poll(&cpu)
+
+	loop := hardware.Loop{
+		Keyboard: &k,
+		Monitor:  &m,
+	}
+	loop.Run()
 }

@@ -3,12 +3,14 @@ package monitor
 import (
 	"image"
 	"image/color"
+	"image/draw"
 	"image/png"
 	"log"
 	"os"
 	"time"
 
-	"github.com/hajimehoshi/ebiten"
+	"golang.org/x/mobile/exp/gl/glutil"
+
 	"github.com/robertsdionne/dcpu"
 )
 
@@ -17,6 +19,8 @@ type Device struct {
 	FontAddress    uint16
 	PaletteAddress uint16
 	VideoAddress   uint16
+	dcpu           *dcpu.DCPU
+	image          *glutil.Image
 	startTime      time.Time
 }
 
@@ -124,10 +128,14 @@ var (
 		0xf078, 0xf079, 0xf07a, 0xf07b, 0xf07c, 0xf07d, 0xf07e, 0xf07f,
 	}
 
-	bootImg *ebiten.Image
+	boot image.Image
 )
 
-func (d *Device) Execute(dcpu *dcpu.DCPU) {}
+func (d *Device) Execute(dcpu *dcpu.DCPU) {
+	if d.dcpu == nil {
+		d.dcpu = dcpu
+	}
+}
 
 func (d *Device) GetID() uint32 {
 	return ID
@@ -163,11 +171,6 @@ func (d *Device) HandleHardwareInterrupt(dcpu *dcpu.DCPU) {
 	}
 }
 
-func (d *Device) Poll(dcpu *dcpu.DCPU) {
-	d.startTime = time.Now()
-	log.Fatalln(ebiten.Run(d.update(dcpu), width, height, scale, title))
-}
-
 type imagePart struct {
 	src image.Rectangle
 	dst image.Rectangle
@@ -185,86 +188,75 @@ func (i *imagePart) Dst(int) (x0, y0, x1, y1 int) {
 	return i.dst.Min.X, i.dst.Min.Y, i.dst.Max.X, i.dst.Max.Y
 }
 
-func (d *Device) update(dcpu *dcpu.DCPU) func(*ebiten.Image) error {
-	return func(screen *ebiten.Image) error {
-		img := image.NewRGBA(image.Rect(0, 0, width, height))
+func (d *Device) Dimensions() (int, int) {
+	d.startTime = time.Now()
+	return width, height
+}
 
-		var font, palette []uint16 = defaultFont, defaultPalette
+func (d *Device) Paint(img *image.RGBA) {
+	if d.dcpu == nil {
+		return
+	}
 
-		if d.FontAddress > 0 {
-			font = dcpu.Memory[d.FontAddress : d.FontAddress+0x100]
-		}
+	var font, palette []uint16 = defaultFont, defaultPalette
 
-		if d.PaletteAddress > 0 {
-			palette = dcpu.Memory[d.PaletteAddress : d.PaletteAddress+0x10]
-		}
+	if d.FontAddress > 0 {
+		font = d.dcpu.Memory[d.FontAddress : d.FontAddress+0x100]
+	}
 
-		timeToBlink := time.Since(d.startTime)%(2*time.Second) < 1*time.Second
+	if d.PaletteAddress > 0 {
+		palette = d.dcpu.Memory[d.PaletteAddress : d.PaletteAddress+0x10]
+	}
 
-		for x := 0; x < width; x++ {
-			for y := 0; y < height; y++ {
+	timeToBlink := time.Since(d.startTime)%(2*time.Second) < 1*time.Second
 
-				i := x/borderWidth - 1
-				j := y/borderHeight - 1
+	for x := 0; x < width; x++ {
+		for y := 0; y < height; y++ {
 
-				inBorder := i < 0 || i == bufferWidth || j < 0 || j == bufferHeight
-				if inBorder {
-					img.Set(x, y, colorFromUint16(palette[d.BorderColor&0xf]))
-					continue
-				}
+			i := x/borderWidth - 1
+			j := y/borderHeight - 1
 
-				offset := uint16(bufferWidth*j + i)
-				character := dcpu.Memory[d.VideoAddress+offset]
-				blink := character&0x0080 > 0
-				foregroundColor := character & 0xf000 >> 12
-				backgroundColor := character & 0x0f00 >> 8
-				if blink && timeToBlink {
-					foregroundColor, backgroundColor = backgroundColor, foregroundColor
-				}
-
-				foreground := lookupPixel(font, x%borderWidth, y%borderHeight, character&0x7f)
-				if foreground {
-					img.Set(x, y, colorFromUint16(palette[foregroundColor]))
-					continue
-				}
-
-				img.Set(x, y, colorFromUint16(palette[backgroundColor]))
-			}
-		}
-
-		if time.Since(d.startTime) < 5*time.Second {
-			if bootImg == nil {
-				file, err := os.Open(bootPNG)
-				if err != nil {
-					log.Fatalln(err)
-				}
-				defer file.Close()
-
-				boot, err := png.Decode(file)
-				if err != nil {
-					log.Fatalln(err)
-				}
-
-				bootImg, err = ebiten.NewImageFromImage(boot, ebiten.FilterNearest)
-				if err != nil {
-					log.Fatalln(err)
-				}
+			inBorder := i < 0 || i == bufferWidth || j < 0 || j == bufferHeight
+			if inBorder {
+				img.Set(x, y, colorFromUint16(palette[d.BorderColor&0xf]))
+				continue
 			}
 
-			err := screen.ReplacePixels(img.Pix)
+			offset := uint16(bufferWidth*j + i)
+			character := d.dcpu.Memory[d.VideoAddress+offset]
+			blink := character&0x0080 > 0
+			foregroundColor := character & 0xf000 >> 12
+			backgroundColor := character & 0x0f00 >> 8
+			if blink && timeToBlink {
+				foregroundColor, backgroundColor = backgroundColor, foregroundColor
+			}
+
+			foreground := lookupPixel(font, x%borderWidth, y%borderHeight, character&0x7f)
+			if foreground {
+				img.Set(x, y, colorFromUint16(palette[foregroundColor]))
+				continue
+			}
+
+			img.Set(x, y, colorFromUint16(palette[backgroundColor]))
+		}
+	}
+
+	if time.Since(d.startTime) < 5*time.Second {
+		if boot == nil {
+			file, err := os.Open(bootPNG)
 			if err != nil {
 				log.Fatalln(err)
 			}
+			defer file.Close()
 
-			return screen.DrawImage(bootImg, &ebiten.DrawImageOptions{
-				ImageParts: &imagePart{
-					src: image.Rect(0, 0, areaWidth, areaHeight),
-					dst: image.Rect(borderWidth, borderHeight, borderWidth+areaWidth, borderHeight+areaHeight),
-				},
-			})
+			boot, err = png.Decode(file)
+			if err != nil {
+				log.Fatalln(err)
+			}
 		}
 
-		return screen.ReplacePixels(img.Pix)
+		pt := image.Pt(borderWidth, borderHeight)
+		draw.Draw(img, image.Rectangle{pt, pt.Add(boot.Bounds().Size())}, boot, image.ZP, draw.Src)
 	}
 }
 
