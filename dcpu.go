@@ -75,8 +75,10 @@ func Debug(opcode DebugOpcode) (instruction uint16) {
 }
 
 // Load copies a sequence of instructions (a program) into memory.
-func (d *DCPU) Load(start uint16, instructions []uint16) {
+func (d *DCPU) Load(start uint16, instructions []uint16) (address uint16) {
 	copy(d.Memory[start:], instructions)
+	address = start + uint16(len(instructions))
+	return
 }
 
 // LoadString copies a string into memory as utf16.

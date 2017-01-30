@@ -3,6 +3,7 @@ package hardware
 import (
 	"github.com/robertsdionne/dcpu/keyboard"
 	"github.com/robertsdionne/dcpu/monitor"
+	"github.com/robertsdionne/dcpu/sped3"
 	"golang.org/x/mobile/app"
 	"golang.org/x/mobile/event/key"
 	"golang.org/x/mobile/event/lifecycle"
@@ -16,6 +17,7 @@ import (
 type Loop struct {
 	Keyboard *keyboard.Device
 	Monitor  *monitor.Device
+	SPED3    *sped3.Device
 	images   *glutil.Images
 	image    *glutil.Image
 }
@@ -33,7 +35,7 @@ func (l *Loop) Run() {
 					l.onStart(context)
 					a.Send(paint.Event{})
 				case lifecycle.CrossOff:
-					l.onStop()
+					l.onStop(context)
 					context = nil
 				}
 			case size.Event:
@@ -56,11 +58,19 @@ func (l *Loop) Run() {
 
 func (l *Loop) onStart(context gl.Context) {
 	l.images = glutil.NewImages(context)
-	l.image = l.images.NewImage(l.Monitor.Dimensions())
+
+	if l.Monitor != nil {
+		l.image = l.images.NewImage(l.Monitor.Dimensions())
+	}
+
+	if l.SPED3 != nil {
+		l.SPED3.Start(context)
+	}
 }
 
 func (l *Loop) onPaint(context gl.Context, sz size.Event) {
-	context.Clear(gl.COLOR_BUFFER_BIT)
+	context.Clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
+
 	if l.Monitor != nil {
 		l.Monitor.Paint(l.image.RGBA)
 		l.image.Upload()
@@ -68,9 +78,19 @@ func (l *Loop) onPaint(context gl.Context, sz size.Event) {
 		context.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST)
 		l.image.Draw(sz, geom.Point{}, geom.Point{X: sz.WidthPt}, geom.Point{Y: sz.HeightPt}, l.image.RGBA.Bounds())
 	}
+
+	if l.SPED3 != nil {
+		l.SPED3.Paint(context)
+	}
 }
 
-func (l *Loop) onStop() {
-	l.image.Release()
+func (l *Loop) onStop(context gl.Context) {
+	if l.Monitor != nil {
+		l.image.Release()
+	}
 	l.images.Release()
+
+	if l.SPED3 != nil {
+		l.SPED3.Stop(context)
+	}
 }
