@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"io/ioutil"
+	"log"
 	"os"
 
 	"github.com/antlr/antlr4/runtime/Go/antlr"
@@ -10,7 +11,6 @@ import (
 )
 
 func main() {
-
 	text, _ := ioutil.ReadAll(os.Stdin)
 	input := antlr.NewInputStream(string(text))
 	lexer := parser.NewDCPULexer(input)
@@ -22,6 +22,9 @@ func main() {
 	fmt.Println(stream.GetAllTokens())
 	fmt.Println()
 	tree := p.Program()
+	visitor := parser.Assembler{
+		BaseDCPUVisitor: &parser.BaseDCPUVisitor{},
+	}
+	log.Println(visitor.Visit(tree))
 	fmt.Println(tree.ToStringTree(p.RuleNames, p))
-
 }

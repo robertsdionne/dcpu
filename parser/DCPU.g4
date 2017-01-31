@@ -92,7 +92,7 @@ STI : 'STI' | 'sti' ;
 STD : 'STD' | 'std' ;
 
 argumentA
-    : REGISTER
+    : register
     | locationInRegister
     | locationOffsetByRegister
     | POP
@@ -107,7 +107,7 @@ argumentA
     ;
 
 location
-    : '[' value ']'
+    : '[' (label | value) ']'
     ;
 
 POP
@@ -116,7 +116,7 @@ POP
     ;
 
 argumentB
-    : REGISTER
+    : register
     | locationInRegister
     | locationOffsetByRegister
     | PUSH
@@ -126,7 +126,10 @@ argumentB
     | PROGRAM_COUNTER
     | EXTRA
     | location
-    | label
+    ;
+
+register
+    : REGISTER
     ;
 
 PUSH
@@ -176,8 +179,7 @@ locationOffsetByRegister
     ;
 
 value
-    : IDENTIFIER
-    | NUMBER
+    : NUMBER
     ;
 
 NUMBER
