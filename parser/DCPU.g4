@@ -13,6 +13,7 @@ label : IDENTIFIER ;
 instruction
     : binaryOperation
     | unaryOperation
+    | debugOperation
     ;
 
 dataSection
@@ -212,6 +213,18 @@ IAQ : 'IAQ' | 'iaq' ;
 HWN : 'HWN' | 'hwn' ;
 HWQ : 'HWQ' | 'hwq' ;
 HWI : 'HWI' | 'hwi' ;
+
+debugOperation
+    : debugOpcode
+    ;
+
+debugOpcode
+    : ALT
+    | DUM
+    ;
+
+ALT : 'ALT' | 'alt' ;
+DUM : 'DUM' | 'dum' ;
 
 COMMENT
     : ';' ~[\r\n]* -> skip

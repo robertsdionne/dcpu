@@ -81,6 +81,9 @@ func (a *Assembler) VisitInstruction(ctx *InstructionContext) interface{} {
 
 	case ctx.UnaryOperation() != nil:
 		return a.Visit(ctx.UnaryOperation())
+
+	case ctx.DebugOperation() != nil:
+		return a.Visit(ctx.DebugOperation())
 	}
 	return nil
 }
@@ -276,6 +279,28 @@ func unaryOpcodeValue(ctx *UnaryOpcodeContext) uint16 {
 
 	case ctx.HWI() != nil:
 		return dcpu.HardwareInterrupt
+
+	default:
+		return 0
+	}
+}
+
+func (a *Assembler) VisitDebugOperation(ctx *DebugOperationContext) interface{} {
+	opcode := a.Visit(ctx.DebugOpcode()).(uint16)
+	return []interface{}{opcode << dcpu.DebugOpcodeShift}
+}
+
+func (a *Assembler) VisitDebugOpcode(ctx *DebugOpcodeContext) interface{} {
+	return debugOpcodeValue(ctx)
+}
+
+func debugOpcodeValue(ctx *DebugOpcodeContext) uint16 {
+	switch {
+	case ctx.ALT() != nil:
+		return dcpu.Alert
+
+	case ctx.DUM() != nil:
+		return dcpu.DumpState
 
 	default:
 		return 0

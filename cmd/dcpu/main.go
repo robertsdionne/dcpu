@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/robertsdionne/dcpu"
 	"github.com/robertsdionne/dcpu/clock"
+	"github.com/robertsdionne/dcpu/parser"
 )
 
 func main() {
@@ -11,24 +12,24 @@ func main() {
 
 	cpu.Hardware = append(cpu.Hardware, &clock)
 
-	cpu.Load(0, []uint16{
-		dcpu.Special(dcpu.InterruptAddressSet, dcpu.OperandA(dcpu.Literal)), 0x1000,
-		dcpu.Basic(dcpu.Set, dcpu.RegisterA, dcpu.OperandA(dcpu.Literal0)),
-		dcpu.Basic(dcpu.Set, dcpu.RegisterB, dcpu.OperandA(dcpu.Literal)), 120,
-		dcpu.Special(dcpu.HardwareInterrupt, dcpu.OperandA(dcpu.Literal0)),
-		dcpu.Basic(dcpu.Set, dcpu.RegisterA, dcpu.OperandA(dcpu.Literal2)),
-		dcpu.Basic(dcpu.Set, dcpu.RegisterB, dcpu.OperandA(dcpu.Literal1)),
-		dcpu.Special(dcpu.HardwareInterrupt, dcpu.OperandA(dcpu.Literal0)),
-		dcpu.Debug(dcpu.DumpState),
-		dcpu.Basic(dcpu.Subtract, dcpu.ProgramCounter, dcpu.OperandA(dcpu.Literal1)),
-	})
+	cpu.Load(0, parser.Assemble(`
+		:main
+			ias handleInterrupt
+			set a, 0
+			set b, 120
+			hwi 0
+			set a, 2
+			set b, 1
+			hwi 0
+			dum
+			sub pc, 1
 
-	cpu.Load(0x1000, []uint16{
-		dcpu.Debug(dcpu.DumpState),
-		dcpu.Basic(dcpu.Set, dcpu.RegisterA, dcpu.OperandA(dcpu.Literal1)),
-		dcpu.Special(dcpu.HardwareInterrupt, dcpu.OperandA(dcpu.Literal0)),
-		dcpu.Special(dcpu.ReturnFromInterrupt, dcpu.OperandA(dcpu.Literal0)),
-	})
+		:handleInterrupt
+			dum
+			set a, 1
+			hwi 0
+			rfi 0
+	`))
 
 	cpu.Execute()
 }
