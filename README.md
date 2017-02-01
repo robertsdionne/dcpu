@@ -3,9 +3,9 @@
 Package dcpu implements an emulator for Notch's [DCPU 1.7 specification](documents/dcpu-16.txt).
 
 ## TODO
-* [ ] Implement assembler:
-  * [ ] Define parser specification in ANTLR4.
-  * [ ] Write assembler abstract syntax tree visitor or listener.
+* [x] Implement assembler:
+  * [x] Define parser specification in ANTLR4.
+  * [x] Write assembler abstract syntax tree visitor or listener.
 * [ ] Implement devices:
   * [ ] Standard:
     * [x] Mackapar SPED-3
