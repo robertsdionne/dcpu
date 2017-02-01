@@ -61,6 +61,8 @@ func (l *Loop) onStart(context gl.Context) {
 
 	if l.Monitor != nil {
 		l.image = l.images.NewImage(l.Monitor.Dimensions())
+		context.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST)
+		context.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST)
 	}
 
 	if l.SPED3 != nil {
@@ -74,8 +76,6 @@ func (l *Loop) onPaint(context gl.Context, sz size.Event) {
 	if l.Monitor != nil {
 		l.Monitor.Paint(l.image.RGBA)
 		l.image.Upload()
-		context.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST)
-		context.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST)
 		l.image.Draw(sz, geom.Point{}, geom.Point{X: sz.WidthPt}, geom.Point{Y: sz.HeightPt}, l.image.RGBA.Bounds())
 	}
 
