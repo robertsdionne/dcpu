@@ -1,6 +1,9 @@
 package main
 
 import (
+	"io/ioutil"
+	"log"
+
 	"github.com/robertsdionne/dcpu"
 	"github.com/robertsdionne/dcpu/hardware"
 	"github.com/robertsdionne/dcpu/parser"
@@ -8,186 +11,16 @@ import (
 )
 
 func main() {
+	source, err := ioutil.ReadFile("programs/hologram.dasm")
+	if err != nil {
+		log.Fatalln(err)
+	}
+
 	d := dcpu.DCPU{}
 	s := sped3.Device{TargetRotation: 90}
 
 	d.Hardware = append(d.Hardware, &s)
-
-	d.Load(0x000, parser.Assemble(`
-		:main
-			set a, 0x1
-			set x, 0x8000
-			set y, 84
-			hwi 0
-
-		:update
-			add [px], [vx]
-			add [py], [vy]
-			add [pz], [vz]
-
-			set a, px
-			set b, vx
-			jsr clipCoordinateAbove
-			jsr clipCoordinateBelow
-
-			set a, py
-			set b, vy
-			jsr clipCoordinateAbove
-			jsr clipCoordinateBelow
-
-			set a, pz
-			set b, vz
-			jsr clipCoordinateAbove
-			jsr clipCoordinateBelow
-
-			set i, 0x8000
-			set j, boxes
-			jsr displayBoxes
-			jsr displayBoundary
-
-			set pc, update
-
-		:clipCoordinateAbove
-			ife [a], 223
-			set pc, pop
-			ifu [a], 223
-			set pc, pop
-			set [a], 223
-			mli [b], -1
-			set pc, pop
-
-		:clipCoordinateBelow
-			ife [a], 0
-			set pc, pop
-			ifa [a], 0
-			set pc, pop
-			set [a], 0
-			mli [b], -1
-			set pc, pop
-
-		:displayBoxes
-			ife j, boxesEnd
-			set pc, pop
-			set a, [py]
-			shl a, 8
-			set b, [px]
-			bor a, b
-			add a, [j]
-			sti [i], a
-			set a, [pz]
-			add a, [j]
-			sti [i], a
-			set pc, displayBoxes
-
-		:displayBoundary
-			ife j, boundaryEnd
-			set pc, pop
-			sti [i], [j]
-			set pc, displayBoundary
-
-		:px dat 0
-		:py dat 0
-		:pz dat 0
-		:vx dat 1
-		:vy dat 2
-		:vz dat 3
-
-		:boxes dat
-			0x0000, 0x0700,
-			0x2000, 0x0700,
-			0x2020, 0x0700,
-			0x0020, 0x0700,
-			0x0000, 0x0700,
-
-			0x0000, 0x0720,
-			0x0000, 0x0700,
-			0x2000, 0x0700,
-			0x2000, 0x0720,
-			0x2020, 0x0720,
-			0x2020, 0x0700,
-			0x0020, 0x0700,
-			0x0020, 0x0720,
-
-			0x0000, 0x0720,
-			0x2000, 0x0720,
-			0x2020, 0x0720,
-			0x0020, 0x0720,
-			0x0000, 0x0720,
-			0x0000, 0x0020,
-
-			0x3000, 0x0000,
-			0x3000, 0x0700,
-			0x5000, 0x0700,
-			0x5020, 0x0700,
-			0x3020, 0x0700,
-			0x3000, 0x0700,
-
-			0x3000, 0x0720,
-			0x3000, 0x0700,
-			0x5000, 0x0700,
-			0x5000, 0x0720,
-			0x5020, 0x0720,
-			0x5020, 0x0700,
-			0x3020, 0x0700,
-			0x3020, 0x0720,
-
-			0x3000, 0x0720,
-			0x5000, 0x0720,
-			0x5020, 0x0720,
-			0x3020, 0x0720,
-			0x3000, 0x0720,
-			0x3000, 0x0020
-		:boxesEnd
-
-		:boundary dat
-			0x0000, 0x0000,
-			0x0000, 0x0700,
-			0x2000, 0x0700,
-			0x2000, 0x0000,
-			0xDF00, 0x0000,
-			0xDF00, 0x0700,
-			0xFF00, 0x0700,
-			0xFF20, 0x0700,
-			0xFF20, 0x0000,
-			0xFFDF, 0x0000,
-			0xFFDF, 0x0700,
-			0xFFFF, 0x0700,
-			0xDFFF, 0x0700,
-			0xDFFF, 0x0000,
-			0x20FF, 0x0000,
-			0x20FF, 0x0700,
-			0x00FF, 0x0700,
-			0x00DF, 0x0700,
-			0x00DF, 0x0000,
-			0x0020, 0x0000,
-			0x0020, 0x0700,
-			0x0000, 0x0700,
-			0x0000, 0x0000,
-
-			0x0000, 0x00FF,
-			0x0000, 0x07FF,
-			0x2000, 0x07FF,
-			0x2000, 0x00FF,
-			0xDF00, 0x00FF,
-			0xDF00, 0x07FF,
-			0xFF00, 0x07FF,
-			0xFF20, 0x07FF,
-			0xFF20, 0x00FF,
-			0xFFDF, 0x00FF,
-			0xFFDF, 0x07FF,
-			0xFFFF, 0x07FF,
-			0xDFFF, 0x07FF,
-			0xDFFF, 0x00FF,
-			0x20FF, 0x00FF,
-			0x20FF, 0x07FF,
-			0x00FF, 0x07FF,
-			0x00DF, 0x07FF,
-			0x00DF, 0x00FF,
-			0x0020, 0x00FF,
-			0x0020, 0x07FF,
-			0x0000, 0x07FF
-		:boundaryEnd
-	`))
+	d.Load(0, parser.Assemble(string(source)))
 
 	go d.Execute()
 
