@@ -4,6 +4,7 @@ import (
 	"log"
 	"strconv"
 	"strings"
+	"unicode/utf16"
 
 	"github.com/antlr/antlr4/runtime/Go/antlr"
 	"github.com/robertsdionne/dcpu"
@@ -86,6 +87,49 @@ func (a *Assembler) VisitInstruction(ctx *InstructionContext) interface{} {
 
 func (a *Assembler) VisitLabelDefinition(ctx *LabelDefinitionContext) interface{} {
 	return ctx.IDENTIFIER().GetText()
+}
+
+func (a *Assembler) VisitDataSection(ctx *DataSectionContext) interface{} {
+	return a.Visit(ctx.Data())
+}
+
+func (a *Assembler) VisitData(ctx *DataContext) interface{} {
+	var result []interface{}
+	for _, child := range ctx.GetChildren() {
+		switch child := child.(type) {
+		case *DatumContext:
+			datum := a.Visit(child)
+			switch datum := datum.(type) {
+			case []uint16:
+				for _, value := range datum {
+					result = append(result, value)
+				}
+
+			case string, uint16:
+				result = append(result, datum)
+			}
+		}
+	}
+	return result
+}
+
+func (a *Assembler) VisitDatum(ctx *DatumContext) interface{} {
+	switch {
+	case ctx.STRING() != nil:
+		text := ctx.STRING().GetText()
+		encoded := utf16.Encode([]rune(text[1 : len(text)-2]))
+		result := []uint16{uint16(len(encoded))}
+		result = append(result, encoded...)
+		return result
+
+	case ctx.IDENTIFIER() != nil:
+		return ctx.IDENTIFIER().GetText()
+
+	case ctx.NUMBER() != nil:
+		return parseValue(ctx.NUMBER().GetText())
+	}
+
+	return nil
 }
 
 func (a *Assembler) VisitBinaryOperation(ctx *BinaryOperationContext) interface{} {
@@ -387,7 +431,10 @@ func (a *Assembler) VisitLabel(ctx *LabelContext) interface{} {
 }
 
 func (a *Assembler) VisitValue(ctx *ValueContext) interface{} {
-	text := ctx.NUMBER().GetText()
+	return parseValue(ctx.NUMBER().GetText())
+}
+
+func parseValue(text string) uint16 {
 	switch {
 	case strings.HasPrefix(text, "0x"):
 		value, err := strconv.ParseUint(text[2:], 16, 16)

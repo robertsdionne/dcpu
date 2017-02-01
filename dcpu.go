@@ -83,8 +83,9 @@ func (d *DCPU) Load(start uint16, instructions []uint16) (address uint16) {
 
 // LoadString copies a string into memory as utf16.
 func (d *DCPU) LoadString(start uint16, message string) {
-	d.Load(start, []uint16{uint16(len(message))})
-	d.Load(start+1, utf16.Encode([]rune(message)))
+	encoded := utf16.Encode([]rune(message))
+	d.Load(start, []uint16{uint16(len(encoded))})
+	d.Load(start+1, encoded)
 }
 
 // Execute runs the DCPU machine and all connected hardware.
