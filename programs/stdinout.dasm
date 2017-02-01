@@ -1,0 +1,12 @@
+:main
+	set a, 0
+	set x, 0x0400
+	set y, 0x1000
+	hwi 0
+
+	set a, 0
+	set x, z
+	set y, 0x1000
+	hwi 1
+
+	set pc, main
