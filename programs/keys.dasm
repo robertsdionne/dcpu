@@ -1,0 +1,21 @@
+:main
+	ias handleInterrupt
+	set a, 3
+	set b, 1
+	hwi 0
+	dum
+	sub pc, 1
+
+:handleInterrupt
+	set a, 1
+	hwi 0
+	set b, c
+	set a, 2
+	hwi 0
+	ife c, 0
+		rfi 0
+	add [0xf000], 1
+	set a, [0xf000]
+	set [0xf000+a], b
+	alt
+	rfi 0
