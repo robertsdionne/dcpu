@@ -7,6 +7,7 @@ import (
 	"github.com/robertsdionne/dcpu/hardware"
 	"github.com/robertsdionne/dcpu/keyboard"
 	"github.com/robertsdionne/dcpu/monitor"
+	"github.com/robertsdionne/dcpu/parser"
 )
 
 var (
@@ -15,21 +16,8 @@ var (
 	backgroundColor = flag.Int("background-color", 0x0, "the background color")
 )
 
-const (
-	printCharacter  = 0x2100
-	advanceCursor   = 0x2200
-	deleteCharacter = 0x2300
-	newline         = 0x2400
-	shiftCharacter  = 0x2500
-	clearScreen     = 0x2600
-	cursor          = 0x009f
-	shiftFlag       = 0x0f00
-)
-
 func main() {
 	flag.Parse()
-	clearColor := uint16(*backgroundColor<<12 | *backgroundColor<<8)
-	color := uint16(*foregroundColor<<12 | *backgroundColor<<8)
 
 	cpu := dcpu.DCPU{}
 	k := keyboard.Device{}
@@ -39,209 +27,108 @@ func main() {
 
 	cpu.Hardware = append(cpu.Hardware, &k, &m)
 
-	cpu.Load(0, []uint16{
-		dcpu.Special(dcpu.InterruptAddressSet, dcpu.Literal), 0x2000,
+	cpu.Load(0, parser.Assemble(`
+			ias interruptHandler
 
-		// dcpu.Basic(dcpu.Set, dcpu.RegisterI, dcpu.Literal), 0x0180,
-		// dcpu.Special(dcpu.JumpSubRoutine, dcpu.Literal), clearScreen,
+		:main
+			set i, 0x0180
+			jsr clearScreen
 
-		dcpu.Basic(dcpu.Set, dcpu.RegisterA, dcpu.Literal), monitor.SetBorderColor,
-		dcpu.Basic(dcpu.Set, dcpu.RegisterB, dcpu.Literal), uint16(*borderColor),
-		dcpu.Special(dcpu.HardwareInterrupt, dcpu.Literal1),
+			set a, 3
+			set b, [0x1000]	; borderColor
+			hwi 1
 
-		dcpu.Basic(dcpu.Set, dcpu.RegisterA, dcpu.Literal), monitor.MemoryMapScreen,
-		dcpu.Basic(dcpu.Set, dcpu.RegisterB, dcpu.Literal), 0x1000,
-		dcpu.Special(dcpu.HardwareInterrupt, dcpu.Literal1),
+			set a, 0	; monitor.SetBorderColor
+			set b, screenBuffer
+			hwi 1
 
-		dcpu.Basic(dcpu.Set, dcpu.RegisterA, dcpu.Literal), keyboard.SetInterruptMessage,
-		dcpu.Basic(dcpu.Set, dcpu.RegisterB, dcpu.Literal1),
-		dcpu.Special(dcpu.HardwareInterrupt, dcpu.Literal0),
+			set a, 3	; keyboard.SetInterruptMessage
+			set b, 1
+			hwi 0
 
-		dcpu.Basic(dcpu.Subtract, dcpu.ProgramCounter, dcpu.Literal1),
-	})
+			sub pc, main
 
-	cpu.Load(0x1000, monitor.TestPattern)
+		:interruptHandler
+			set a, 1	; keyboard.GetNextKey
+			hwi 0
 
-	cpu.Load(0x2000, []uint16{
-		dcpu.Basic(dcpu.Set, dcpu.RegisterA, dcpu.Literal), keyboard.GetNextKey,
-		dcpu.Special(dcpu.HardwareInterrupt, dcpu.Literal0),
+			set b, c
 
-		dcpu.Basic(dcpu.Set, dcpu.RegisterB, dcpu.RegisterC),
+			set a, 2	; keyboard.GetKeyState
+			hwi 0
 
-		dcpu.Basic(dcpu.Set, dcpu.RegisterA, dcpu.Literal), keyboard.GetKeyState,
-		dcpu.Special(dcpu.HardwareInterrupt, dcpu.Literal0),
+			ife b, 0x90
+				set [shiftFlag], c
+			ife b, 0x90
+				rfi 0
 
-		dcpu.Basic(dcpu.IfEqual, dcpu.RegisterB, dcpu.Literal), 0x0090,
-		dcpu.Basic(dcpu.Set, dcpu.Location, dcpu.RegisterC), shiftFlag,
-		dcpu.Basic(dcpu.IfEqual, dcpu.RegisterB, dcpu.Literal), 0x0090,
-		dcpu.Special(dcpu.ReturnFromInterrupt, dcpu.Literal0),
+			ife c, 0
+				rfi 0
 
-		dcpu.Basic(dcpu.IfEqual, dcpu.RegisterC, dcpu.Literal0),
-		dcpu.Special(dcpu.ReturnFromInterrupt, dcpu.Literal0),
+			ife b, 0x11
+				jsr newline
+			ife b, 0x11
+				rfi 0
 
-		dcpu.Basic(dcpu.IfEqual, dcpu.RegisterB, dcpu.Literal), 0x0011,
-		dcpu.Special(dcpu.JumpSubRoutine, dcpu.Literal), newline,
-		dcpu.Basic(dcpu.IfEqual, dcpu.RegisterB, dcpu.Literal), 0x0011,
-		dcpu.Special(dcpu.ReturnFromInterrupt, dcpu.Literal0),
+			ife b, 0x10
+				jsr deleteCharacter
 
-		dcpu.Basic(dcpu.IfEqual, dcpu.RegisterB, dcpu.Literal), 0x0010,
-		dcpu.Special(dcpu.JumpSubRoutine, dcpu.Literal), deleteCharacter,
+			ifn b, 0x10
+				jsr printCharacter
 
-		dcpu.Basic(dcpu.IfNotEqual, dcpu.RegisterB, dcpu.Literal), 0x0010,
-		dcpu.Special(dcpu.JumpSubRoutine, dcpu.Literal), printCharacter,
+			rfi 0
 
-		dcpu.Special(dcpu.ReturnFromInterrupt, dcpu.Literal0),
-	})
+		:printCharacter
+			bor b, [color]
+			set [screenBuffer + i], b
+			add i, 1
+			set [screenBuffer + i], [cursor]
+			sub i, 1
+			set j, 1
+			jsr advanceCursor
+			set pc, pop
 
-	cpu.Load(0x1000, []uint16{color | cursor})
+		:advanceCursor
+			add i, j
+			ifg i, 0x17f
+				set i, 0
+			ifu i, 0
+				set i, 0
+			set pc, pop
 
-	cpu.Load(printCharacter, []uint16{
-		dcpu.Basic(dcpu.IfGreaterThan, dcpu.Location, dcpu.Literal0), shiftFlag,
-		dcpu.Special(dcpu.JumpSubRoutine, dcpu.Literal), shiftCharacter,
-		dcpu.Basic(dcpu.BinaryOr, dcpu.RegisterB, dcpu.Literal), color,
-		dcpu.Basic(dcpu.Set, dcpu.LocationOffsetByRegisterI, dcpu.RegisterB), 0x1000,
-		dcpu.Basic(dcpu.Set, dcpu.LocationOffsetByRegisterI, dcpu.Literal), 0x1001, color | cursor,
-		dcpu.Basic(dcpu.Set, dcpu.RegisterJ, dcpu.Literal1),
-		dcpu.Special(dcpu.JumpSubRoutine, dcpu.Literal), advanceCursor,
-		dcpu.Basic(dcpu.Set, dcpu.ProgramCounter, dcpu.Pop),
-	})
+		:deleteCharacter
+			set [screenBuffer + i], [clearColor]
+			set j, -1
+			jsr advanceCursor
+			ife [screenBuffer + i], [clearColor]
+				ifa i, 0
+					set pc, deleteCharacter
+			set [screenBuffer + i], [cursor]
+			set pc, pop
 
-	cpu.Load(advanceCursor, []uint16{
-		dcpu.Basic(dcpu.Add, dcpu.RegisterI, dcpu.RegisterJ),
-		dcpu.Basic(dcpu.IfGreaterThan, dcpu.RegisterI, dcpu.Literal), 0x17f,
-		dcpu.Basic(dcpu.Set, dcpu.RegisterI, dcpu.Literal0),
-		dcpu.Basic(dcpu.IfUnder, dcpu.RegisterI, dcpu.Literal0),
-		dcpu.Basic(dcpu.Set, dcpu.RegisterI, dcpu.Literal0),
-		dcpu.Basic(dcpu.Set, dcpu.ProgramCounter, dcpu.Pop),
-	})
+		:newline
+			set [screenBuffer + i], [clearColor]
+			set push, i
+			mod peek, 0x20
+			set j, 0x20
+			sub j, pop
+			jsr advanceCursor
+			set [screenBuffer + i], [cursor]
+			set pc, pop
 
-	cpu.Load(deleteCharacter, []uint16{
-		dcpu.Basic(dcpu.Set, dcpu.LocationOffsetByRegisterI, dcpu.Literal), 0x1000, clearColor,
-		dcpu.Basic(dcpu.Set, dcpu.RegisterJ, dcpu.LiteralNegative1),
-		dcpu.Special(dcpu.JumpSubRoutine, dcpu.Literal), advanceCursor,
-		dcpu.Basic(dcpu.IfEqual, dcpu.LocationOffsetByRegisterI, dcpu.Literal), 0x1000, clearColor,
-		dcpu.Basic(dcpu.IfAbove, dcpu.RegisterI, dcpu.Literal0),
-		dcpu.Basic(dcpu.Set, dcpu.ProgramCounter, dcpu.Literal), deleteCharacter,
-		dcpu.Basic(dcpu.Set, dcpu.LocationOffsetByRegisterI, dcpu.Literal), 0x1000, color | cursor,
-		dcpu.Basic(dcpu.Set, dcpu.ProgramCounter, dcpu.Pop),
-	})
+		:clearScreen
+			set [screenBuffer + i], [clearColor]
+			sub i, 1
+			ifn i, 0
+				set pc, clearScreen
+			set pc, pop
 
-	cpu.Load(newline, []uint16{
-		dcpu.Basic(dcpu.Set, dcpu.LocationOffsetByRegisterI, dcpu.Literal), 0x1000, clearColor,
-		dcpu.Basic(dcpu.Set, dcpu.Push, dcpu.RegisterI),
-		dcpu.Basic(dcpu.Modulo, dcpu.Peek, dcpu.Literal), 0x0020,
-		dcpu.Basic(dcpu.Set, dcpu.RegisterJ, dcpu.Literal), 0x0020,
-		dcpu.Basic(dcpu.Subtract, dcpu.RegisterJ, dcpu.Pop),
-		dcpu.Special(dcpu.JumpSubRoutine, dcpu.Literal), advanceCursor,
-		dcpu.Basic(dcpu.Set, dcpu.LocationOffsetByRegisterI, dcpu.Literal), 0x1000, color | cursor,
-		dcpu.Basic(dcpu.Set, dcpu.ProgramCounter, dcpu.Pop),
-	})
-
-	cpu.Load(shiftCharacter, []uint16{
-		dcpu.Basic(dcpu.IfEqual, dcpu.RegisterB, dcpu.Literal), '`',
-		dcpu.Basic(dcpu.Set, dcpu.RegisterB, dcpu.Literal), '~',
-		dcpu.Basic(dcpu.IfEqual, dcpu.RegisterB, dcpu.Literal), '1',
-		dcpu.Basic(dcpu.Set, dcpu.RegisterB, dcpu.Literal), '!',
-		dcpu.Basic(dcpu.IfEqual, dcpu.RegisterB, dcpu.Literal), '2',
-		dcpu.Basic(dcpu.Set, dcpu.RegisterB, dcpu.Literal), '@',
-		dcpu.Basic(dcpu.IfEqual, dcpu.RegisterB, dcpu.Literal), '3',
-		dcpu.Basic(dcpu.Set, dcpu.RegisterB, dcpu.Literal), '#',
-		dcpu.Basic(dcpu.IfEqual, dcpu.RegisterB, dcpu.Literal), '4',
-		dcpu.Basic(dcpu.Set, dcpu.RegisterB, dcpu.Literal), '$',
-		dcpu.Basic(dcpu.IfEqual, dcpu.RegisterB, dcpu.Literal), '5',
-		dcpu.Basic(dcpu.Set, dcpu.RegisterB, dcpu.Literal), '%',
-		dcpu.Basic(dcpu.IfEqual, dcpu.RegisterB, dcpu.Literal), '6',
-		dcpu.Basic(dcpu.Set, dcpu.RegisterB, dcpu.Literal), '^',
-		dcpu.Basic(dcpu.IfEqual, dcpu.RegisterB, dcpu.Literal), '7',
-		dcpu.Basic(dcpu.Set, dcpu.RegisterB, dcpu.Literal), '&',
-		dcpu.Basic(dcpu.IfEqual, dcpu.RegisterB, dcpu.Literal), '8',
-		dcpu.Basic(dcpu.Set, dcpu.RegisterB, dcpu.Literal), '*',
-		dcpu.Basic(dcpu.IfEqual, dcpu.RegisterB, dcpu.Literal), '9',
-		dcpu.Basic(dcpu.Set, dcpu.RegisterB, dcpu.Literal), '(',
-		dcpu.Basic(dcpu.IfEqual, dcpu.RegisterB, dcpu.Literal), '0',
-		dcpu.Basic(dcpu.Set, dcpu.RegisterB, dcpu.Literal), ')',
-		dcpu.Basic(dcpu.IfEqual, dcpu.RegisterB, dcpu.Literal), '-',
-		dcpu.Basic(dcpu.Set, dcpu.RegisterB, dcpu.Literal), '_',
-		dcpu.Basic(dcpu.IfEqual, dcpu.RegisterB, dcpu.Literal), '=',
-		dcpu.Basic(dcpu.Set, dcpu.RegisterB, dcpu.Literal), '+',
-		dcpu.Basic(dcpu.IfEqual, dcpu.RegisterB, dcpu.Literal), 'q',
-		dcpu.Basic(dcpu.Set, dcpu.RegisterB, dcpu.Literal), 'Q',
-		dcpu.Basic(dcpu.IfEqual, dcpu.RegisterB, dcpu.Literal), 'w',
-		dcpu.Basic(dcpu.Set, dcpu.RegisterB, dcpu.Literal), 'W',
-		dcpu.Basic(dcpu.IfEqual, dcpu.RegisterB, dcpu.Literal), 'e',
-		dcpu.Basic(dcpu.Set, dcpu.RegisterB, dcpu.Literal), 'E',
-		dcpu.Basic(dcpu.IfEqual, dcpu.RegisterB, dcpu.Literal), 'r',
-		dcpu.Basic(dcpu.Set, dcpu.RegisterB, dcpu.Literal), 'R',
-		dcpu.Basic(dcpu.IfEqual, dcpu.RegisterB, dcpu.Literal), 't',
-		dcpu.Basic(dcpu.Set, dcpu.RegisterB, dcpu.Literal), 'T',
-		dcpu.Basic(dcpu.IfEqual, dcpu.RegisterB, dcpu.Literal), 'y',
-		dcpu.Basic(dcpu.Set, dcpu.RegisterB, dcpu.Literal), 'Y',
-		dcpu.Basic(dcpu.IfEqual, dcpu.RegisterB, dcpu.Literal), 'u',
-		dcpu.Basic(dcpu.Set, dcpu.RegisterB, dcpu.Literal), 'U',
-		dcpu.Basic(dcpu.IfEqual, dcpu.RegisterB, dcpu.Literal), 'i',
-		dcpu.Basic(dcpu.Set, dcpu.RegisterB, dcpu.Literal), 'I',
-		dcpu.Basic(dcpu.IfEqual, dcpu.RegisterB, dcpu.Literal), 'o',
-		dcpu.Basic(dcpu.Set, dcpu.RegisterB, dcpu.Literal), 'O',
-		dcpu.Basic(dcpu.IfEqual, dcpu.RegisterB, dcpu.Literal), 'p',
-		dcpu.Basic(dcpu.Set, dcpu.RegisterB, dcpu.Literal), 'P',
-		dcpu.Basic(dcpu.IfEqual, dcpu.RegisterB, dcpu.Literal), '[',
-		dcpu.Basic(dcpu.Set, dcpu.RegisterB, dcpu.Literal), '{',
-		dcpu.Basic(dcpu.IfEqual, dcpu.RegisterB, dcpu.Literal), ']',
-		dcpu.Basic(dcpu.Set, dcpu.RegisterB, dcpu.Literal), '}',
-		dcpu.Basic(dcpu.IfEqual, dcpu.RegisterB, dcpu.Literal), '\\',
-		dcpu.Basic(dcpu.Set, dcpu.RegisterB, dcpu.Literal), '|',
-		dcpu.Basic(dcpu.IfEqual, dcpu.RegisterB, dcpu.Literal), 'a',
-		dcpu.Basic(dcpu.Set, dcpu.RegisterB, dcpu.Literal), 'A',
-		dcpu.Basic(dcpu.IfEqual, dcpu.RegisterB, dcpu.Literal), 's',
-		dcpu.Basic(dcpu.Set, dcpu.RegisterB, dcpu.Literal), 'S',
-		dcpu.Basic(dcpu.IfEqual, dcpu.RegisterB, dcpu.Literal), 'd',
-		dcpu.Basic(dcpu.Set, dcpu.RegisterB, dcpu.Literal), 'D',
-		dcpu.Basic(dcpu.IfEqual, dcpu.RegisterB, dcpu.Literal), 'f',
-		dcpu.Basic(dcpu.Set, dcpu.RegisterB, dcpu.Literal), 'F',
-		dcpu.Basic(dcpu.IfEqual, dcpu.RegisterB, dcpu.Literal), 'g',
-		dcpu.Basic(dcpu.Set, dcpu.RegisterB, dcpu.Literal), 'G',
-		dcpu.Basic(dcpu.IfEqual, dcpu.RegisterB, dcpu.Literal), 'h',
-		dcpu.Basic(dcpu.Set, dcpu.RegisterB, dcpu.Literal), 'H',
-		dcpu.Basic(dcpu.IfEqual, dcpu.RegisterB, dcpu.Literal), 'j',
-		dcpu.Basic(dcpu.Set, dcpu.RegisterB, dcpu.Literal), 'J',
-		dcpu.Basic(dcpu.IfEqual, dcpu.RegisterB, dcpu.Literal), 'k',
-		dcpu.Basic(dcpu.Set, dcpu.RegisterB, dcpu.Literal), 'K',
-		dcpu.Basic(dcpu.IfEqual, dcpu.RegisterB, dcpu.Literal), 'l',
-		dcpu.Basic(dcpu.Set, dcpu.RegisterB, dcpu.Literal), 'L',
-		dcpu.Basic(dcpu.IfEqual, dcpu.RegisterB, dcpu.Literal), ';',
-		dcpu.Basic(dcpu.Set, dcpu.RegisterB, dcpu.Literal), ':',
-		dcpu.Basic(dcpu.IfEqual, dcpu.RegisterB, dcpu.Literal), '\'',
-		dcpu.Basic(dcpu.Set, dcpu.RegisterB, dcpu.Literal), '"',
-		dcpu.Basic(dcpu.IfEqual, dcpu.RegisterB, dcpu.Literal), 'z',
-		dcpu.Basic(dcpu.Set, dcpu.RegisterB, dcpu.Literal), 'Z',
-		dcpu.Basic(dcpu.IfEqual, dcpu.RegisterB, dcpu.Literal), 'x',
-		dcpu.Basic(dcpu.Set, dcpu.RegisterB, dcpu.Literal), 'X',
-		dcpu.Basic(dcpu.IfEqual, dcpu.RegisterB, dcpu.Literal), 'c',
-		dcpu.Basic(dcpu.Set, dcpu.RegisterB, dcpu.Literal), 'C',
-		dcpu.Basic(dcpu.IfEqual, dcpu.RegisterB, dcpu.Literal), 'v',
-		dcpu.Basic(dcpu.Set, dcpu.RegisterB, dcpu.Literal), 'V',
-		dcpu.Basic(dcpu.IfEqual, dcpu.RegisterB, dcpu.Literal), 'b',
-		dcpu.Basic(dcpu.Set, dcpu.RegisterB, dcpu.Literal), 'B',
-		dcpu.Basic(dcpu.IfEqual, dcpu.RegisterB, dcpu.Literal), 'n',
-		dcpu.Basic(dcpu.Set, dcpu.RegisterB, dcpu.Literal), 'N',
-		dcpu.Basic(dcpu.IfEqual, dcpu.RegisterB, dcpu.Literal), 'm',
-		dcpu.Basic(dcpu.Set, dcpu.RegisterB, dcpu.Literal), 'M',
-		dcpu.Basic(dcpu.IfEqual, dcpu.RegisterB, dcpu.Literal), ',',
-		dcpu.Basic(dcpu.Set, dcpu.RegisterB, dcpu.Literal), '<',
-		dcpu.Basic(dcpu.IfEqual, dcpu.RegisterB, dcpu.Literal), '.',
-		dcpu.Basic(dcpu.Set, dcpu.RegisterB, dcpu.Literal), '>',
-		dcpu.Basic(dcpu.IfEqual, dcpu.RegisterB, dcpu.Literal), '/',
-		dcpu.Basic(dcpu.Set, dcpu.RegisterB, dcpu.Literal), '?',
-		dcpu.Basic(dcpu.Set, dcpu.ProgramCounter, dcpu.Pop),
-	})
-
-	cpu.Load(clearScreen, []uint16{
-		dcpu.Basic(dcpu.Set, dcpu.LocationOffsetByRegisterI, dcpu.Literal), 0x1000, clearColor,
-		dcpu.Basic(dcpu.Subtract, dcpu.RegisterI, dcpu.Literal1),
-		dcpu.Basic(dcpu.IfNotEqual, dcpu.RegisterI, dcpu.Literal0),
-		dcpu.Basic(dcpu.Set, dcpu.ProgramCounter, dcpu.Literal), clearScreen,
-		dcpu.Basic(dcpu.Set, dcpu.ProgramCounter, dcpu.Pop),
-	})
+		:cursor dat 0xf09f
+		:color dat 0xf000
+		:clearColor dat 0x0000
+		:shiftFlag dat 0
+		:screenBuffer dat 0xf09f
+	`))
 
 	go cpu.Execute()
 
