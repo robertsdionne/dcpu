@@ -2,40 +2,49 @@ package main
 
 import (
 	"github.com/robertsdionne/dcpu"
+	"github.com/robertsdionne/dcpu/hardware"
 	"github.com/robertsdionne/dcpu/keyboard"
+	"github.com/robertsdionne/dcpu/parser"
 )
 
 func main() {
 	cpu := dcpu.DCPU{}
 	keys := keyboard.Device{}
 
+	keys.Init()
+
 	cpu.Hardware = append(cpu.Hardware, &keys)
 
-	cpu.Load(0, []uint16{
-		dcpu.Special(dcpu.InterruptAddressSet, dcpu.Literal), 0x1000,
-		dcpu.Basic(dcpu.Set, dcpu.RegisterA, dcpu.Literal3),
-		dcpu.Basic(dcpu.Set, dcpu.RegisterB, dcpu.Literal1),
-		dcpu.Special(dcpu.HardwareInterrupt, dcpu.Literal0),
-		dcpu.Debug(dcpu.DumpState),
-		dcpu.Basic(dcpu.Subtract, dcpu.ProgramCounter, dcpu.Literal1),
-	})
+	cpu.Load(0, parser.Assemble(`
+		:main
+			ias handleInterrupt
+			set a, 3
+			set b, 1
+			hwi 0
+			dum
+			sub pc, 1
 
-	cpu.Load(0x1000, []uint16{
-		dcpu.Basic(dcpu.Set, dcpu.RegisterA, dcpu.Literal1),
-		dcpu.Special(dcpu.HardwareInterrupt, dcpu.Literal0),
-		dcpu.Basic(dcpu.Set, dcpu.RegisterB, dcpu.RegisterC),
-		dcpu.Basic(dcpu.Set, dcpu.RegisterA, dcpu.Literal2),
-		dcpu.Special(dcpu.HardwareInterrupt, dcpu.Literal0),
-		dcpu.Basic(dcpu.IfEqual, dcpu.RegisterC, dcpu.Literal0),
-		dcpu.Special(dcpu.ReturnFromInterrupt, dcpu.Literal0),
-		dcpu.Basic(dcpu.Add, dcpu.Location, dcpu.Literal1), 0xf000,
-		dcpu.Basic(dcpu.Set, dcpu.RegisterA, dcpu.Location), 0xf000,
-		dcpu.Basic(dcpu.Set, dcpu.LocationOffsetByRegisterA, dcpu.RegisterB), 0xf000,
-		dcpu.Debug(dcpu.Alert),
-		dcpu.Special(dcpu.ReturnFromInterrupt, dcpu.Literal0),
-	})
+		:handleInterrupt
+			set a, 1
+			hwi 0
+			set b, c
+			set a, 2
+			hwi 0
+			ife c, 0
+				rfi 0
+			add [0xf000], 1
+			set a, [0xf000]
+			set [0xf000+a], b
+			alt
+			rfi 0
+	`))
 
 	cpu.LoadString(0xf000, " ")
 
-	cpu.Execute()
+	go cpu.Execute()
+
+	loop := hardware.Loop{
+		Keyboard: &keys,
+	}
+	loop.Run()
 }
