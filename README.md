@@ -11,11 +11,12 @@ Package dcpu implements an emulator for Notch's [DCPU 1.7 specification](documen
     * [x] Mackapar SPED-3
     * [x] Generic Clock
     * [x] Mackapar M35FD
-    * [ ] Harold HMD2043
     * [x] Generic Keyboard
-    * [ ] Kulog K8581
     * [x] Nya Elektriska LEM1802
     * [ ] Nya Elektriska SPC2000
+  * [ ] Third-party:
+    * [ ] Harold HMD2043
+    * [ ] Kulog K8581
   * [ ] Debug:
     * [x] Standard input
     * [x] Standard output
