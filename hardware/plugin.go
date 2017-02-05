@@ -43,58 +43,61 @@ func OpenPlugin(path string) (hardware dcpu.Hardware, err error) {
 		return
 	}
 
-	execute, e := p.Lookup("Execute")
-	err = multierror.Append(err, e)
+	var errs *multierror.Error
 
-	getID, e := p.Lookup("GetID")
-	err = multierror.Append(err, e)
+	execute, err := p.Lookup("Execute")
+	errs = multierror.Append(errs, err)
 
-	getManufacturerID, e := p.Lookup("GetManufacturerID")
-	err = multierror.Append(err, e)
+	getID, err := p.Lookup("GetID")
+	errs = multierror.Append(errs, err)
 
-	getVersion, e := p.Lookup("GetVersion")
-	err = multierror.Append(err, e)
+	getManufacturerID, err := p.Lookup("GetManufacturerID")
+	errs = multierror.Append(errs, err)
 
-	handleHardwareInterrupt, e := p.Lookup("HandleHardwareInterrupt")
-	err = multierror.Append(err, e)
+	getVersion, err := p.Lookup("GetVersion")
+	errs = multierror.Append(errs, err)
+
+	handleHardwareInterrupt, err := p.Lookup("HandleHardwareInterrupt")
+	errs = multierror.Append(errs, err)
 
 	d := &device{}
 
 	if execute, ok := execute.(func(*dcpu.DCPU)); ok {
 		d.execute = execute
 	} else {
-		err = multierror.Append(err, fmt.Errorf(
+		errs = multierror.Append(errs, fmt.Errorf(
 			"Execute had invalid type: expected %s, got %s", reflect.TypeOf(d.execute), reflect.TypeOf(execute)))
 	}
 
 	if getID, ok := getID.(func() uint32); ok {
 		d.getID = getID
 	} else {
-		err = multierror.Append(
-			err, fmt.Errorf("GetID had invalid type: expected %s, got %s", reflect.TypeOf(d.getID), reflect.TypeOf(execute)))
+		errs = multierror.Append(
+			errs, fmt.Errorf("GetID had invalid type: expected %s, got %s", reflect.TypeOf(d.getID), reflect.TypeOf(execute)))
 	}
 
 	if getManufacturerID, ok := getManufacturerID.(func() uint32); ok {
 		d.getManufacturerID = getManufacturerID
 	} else {
-		err = multierror.Append(err, fmt.Errorf("GetManufacturerID had invalid type: expected %s, got %s",
+		errs = multierror.Append(errs, fmt.Errorf("GetManufacturerID had invalid type: expected %s, got %s",
 			reflect.TypeOf(d.getManufacturerID), reflect.TypeOf(getManufacturerID)))
 	}
 
 	if getVersion, ok := getVersion.(func() uint16); ok {
 		d.getVersion = getVersion
 	} else {
-		err = multierror.Append(err, fmt.Errorf(
+		errs = multierror.Append(errs, fmt.Errorf(
 			"GetVersion had invalid type: expected %s, got %s", reflect.TypeOf(d.getVersion), reflect.TypeOf(getVersion)))
 	}
 
 	if handleHardwareInterrupt, ok := handleHardwareInterrupt.(func(*dcpu.DCPU)); ok {
 		d.handleHardwareInterrupt = handleHardwareInterrupt
 	} else {
-		err = multierror.Append(err, fmt.Errorf("HandleHardwareInterrupt had invalid type: expected %s, got %s",
+		errs = multierror.Append(errs, fmt.Errorf("HandleHardwareInterrupt had invalid type: expected %s, got %s",
 			reflect.TypeOf(d.handleHardwareInterrupt), reflect.TypeOf(handleHardwareInterrupt)))
 	}
 
 	hardware = d
+	err = errs.ErrorOrNil()
 	return
 }
