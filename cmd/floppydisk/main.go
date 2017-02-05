@@ -2,7 +2,6 @@ package main
 
 import (
 	"flag"
-	"io/ioutil"
 	"log"
 
 	"github.com/robertsdionne/dcpu"
@@ -21,7 +20,7 @@ var (
 func main() {
 	flag.Parse()
 
-	source, err := ioutil.ReadFile("programs/floppydisk.dasm")
+	program, err := assembler.AssembleFile("programs/floppydisk.dasm")
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -33,7 +32,7 @@ func main() {
 	defer f.Eject()
 
 	d.Hardware = append(d.Hardware, &stdin.Device{}, &stdout.Device{}, &stderr.Device{}, &f)
-	d.Load(0, assembler.Assemble(string(source)))
+	d.Load(0, program)
 
 	d.Execute()
 }

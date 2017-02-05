@@ -1,7 +1,6 @@
 package main
 
 import (
-	"io/ioutil"
 	"log"
 
 	"github.com/robertsdionne/dcpu"
@@ -11,7 +10,7 @@ import (
 )
 
 func main() {
-	source, err := ioutil.ReadFile("programs/keys.dasm")
+	program, err := assembler.AssembleFile("programs/keys.dasm")
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -22,7 +21,7 @@ func main() {
 	keys.Init()
 
 	cpu.Hardware = append(cpu.Hardware, &keys)
-	cpu.Load(0, assembler.Assemble(string(source)))
+	cpu.Load(0, program)
 
 	cpu.LoadString(0xf000, " ")
 

@@ -1,7 +1,6 @@
 package main
 
 import (
-	"io/ioutil"
 	"log"
 
 	"github.com/robertsdionne/dcpu"
@@ -11,7 +10,7 @@ import (
 )
 
 func main() {
-	source, err := ioutil.ReadFile("programs/hologram.dasm")
+	program, err := assembler.AssembleFile("programs/hologram.dasm")
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -20,7 +19,7 @@ func main() {
 	s := sped3.Device{TargetRotation: 90}
 
 	d.Hardware = append(d.Hardware, &s)
-	d.Load(0, assembler.Assemble(string(source)))
+	d.Load(0, program)
 
 	go d.Execute()
 
