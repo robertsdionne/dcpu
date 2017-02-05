@@ -6,8 +6,8 @@ import (
 	"log"
 
 	"github.com/robertsdionne/dcpu"
+	"github.com/robertsdionne/dcpu/assembler"
 	"github.com/robertsdionne/dcpu/floppy"
-	"github.com/robertsdionne/dcpu/parser"
 	"github.com/robertsdionne/dcpu/stderr"
 	"github.com/robertsdionne/dcpu/stdin"
 	"github.com/robertsdionne/dcpu/stdout"
@@ -33,7 +33,7 @@ func main() {
 	defer f.Eject()
 
 	d.Hardware = append(d.Hardware, &stdin.Device{}, &stdout.Device{}, &stderr.Device{}, &f)
-	d.Load(0, parser.Assemble(string(source)))
+	d.Load(0, assembler.Assemble(string(source)))
 
 	d.Execute()
 }

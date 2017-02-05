@@ -5,9 +5,9 @@ import (
 	"log"
 
 	"github.com/robertsdionne/dcpu"
+	"github.com/robertsdionne/dcpu/assembler"
 	"github.com/robertsdionne/dcpu/hardware"
 	"github.com/robertsdionne/dcpu/keyboard"
-	"github.com/robertsdionne/dcpu/parser"
 )
 
 func main() {
@@ -22,7 +22,7 @@ func main() {
 	keys.Init()
 
 	cpu.Hardware = append(cpu.Hardware, &keys)
-	cpu.Load(0, parser.Assemble(string(source)))
+	cpu.Load(0, assembler.Assemble(string(source)))
 
 	cpu.LoadString(0xf000, " ")
 

@@ -5,7 +5,7 @@ import (
 	"log"
 
 	"github.com/robertsdionne/dcpu"
-	"github.com/robertsdionne/dcpu/parser"
+	"github.com/robertsdionne/dcpu/assembler"
 	"github.com/robertsdionne/dcpu/stdin"
 	"github.com/robertsdionne/dcpu/stdout"
 )
@@ -21,7 +21,7 @@ func main() {
 	out := stdout.Device{}
 
 	cpu.Hardware = append(cpu.Hardware, &in, &out)
-	cpu.Load(0, parser.Assemble(string(source)))
+	cpu.Load(0, assembler.Assemble(string(source)))
 
 	cpu.Execute()
 }

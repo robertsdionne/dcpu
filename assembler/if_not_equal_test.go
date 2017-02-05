@@ -1,4 +1,4 @@
-package parser
+package assembler
 
 import (
 	"testing"
@@ -7,29 +7,29 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestAssemble_ifUnderRegisterWithLesserSmallLiteral(t *testing.T) {
+func TestAssemble_ifNotEqualRegisterWithUnequalSmallLiteral(t *testing.T) {
 	assert.Equal(t, []uint16{
-		Basic(Set, RegisterA, Literal30),
-		Basic(IfUnder, RegisterA, LiteralNegative1),
+		Basic(Set, RegisterA, Literal15),
+		Basic(IfNotEqual, RegisterA, Literal0),
 		Basic(Set, Push, Literal13),
 		Basic(Set, Push, Literal14),
 	}, Assemble(`
-		set a, 30
-		ifu a, -1
+		set a, 15
+		ifn a, 0
 		set push, 13
 		set push, 14
 	`))
 }
 
-func TestAssemble_ifUnderRegisterWithGreaterSmallLiteral(t *testing.T) {
+func TestAssemble_ifNotEqualRegisterWithEqualSmallLiteral(t *testing.T) {
 	assert.Equal(t, []uint16{
-		Basic(Set, RegisterA, LiteralNegative1),
-		Basic(IfUnder, RegisterA, Literal30),
+		Basic(Set, RegisterA, Literal15),
+		Basic(IfNotEqual, RegisterA, Literal15),
 		Basic(Set, Push, Literal13),
 		Basic(Set, Push, Literal14),
 	}, Assemble(`
-		set a, -1
-		ifu a, 30
+		set a, 15
+		ifn a, 15
 		set push, 13
 		set push, 14
 	`))

@@ -5,8 +5,8 @@ import (
 	"log"
 
 	"github.com/robertsdionne/dcpu"
+	"github.com/robertsdionne/dcpu/assembler"
 	"github.com/robertsdionne/dcpu/hardware"
-	"github.com/robertsdionne/dcpu/parser"
 	"github.com/robertsdionne/dcpu/sped3"
 )
 
@@ -20,7 +20,7 @@ func main() {
 	s := sped3.Device{TargetRotation: 90}
 
 	d.Hardware = append(d.Hardware, &s)
-	d.Load(0, parser.Assemble(string(source)))
+	d.Load(0, assembler.Assemble(string(source)))
 
 	go d.Execute()
 

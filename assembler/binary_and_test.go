@@ -1,4 +1,4 @@
-package parser
+package assembler
 
 import (
 	"testing"
@@ -7,12 +7,12 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestAssemble_binaryExclusiveOrRegisterWithSmallLiteral(t *testing.T) {
+func TestAssemble_binaryAndRegisterWithSmallLiteral(t *testing.T) {
 	assert.Equal(t, []uint16{
 		Basic(Set, RegisterA, Literal), 0xf0f0,
-		Basic(BinaryExclusiveOr, RegisterA, Literal), 0x00ff,
+		Basic(BinaryAnd, RegisterA, Literal), 0x00ff,
 	}, Assemble(`
-		set a, 0xf0f0
-		xor a, 0x00ff
-	`))
+    set a, 0xf0f0
+    and a, 0x00ff
+  `))
 }

@@ -6,10 +6,10 @@ import (
 	"log"
 
 	"github.com/robertsdionne/dcpu"
+	"github.com/robertsdionne/dcpu/assembler"
 	"github.com/robertsdionne/dcpu/hardware"
 	"github.com/robertsdionne/dcpu/keyboard"
 	"github.com/robertsdionne/dcpu/monitor"
-	"github.com/robertsdionne/dcpu/parser"
 )
 
 var (
@@ -33,7 +33,7 @@ func main() {
 	k.Init()
 
 	cpu.Hardware = append(cpu.Hardware, &k, &m)
-	cpu.Load(0, parser.Assemble(string(source)))
+	cpu.Load(0, assembler.Assemble(string(source)))
 
 	go cpu.Execute()
 

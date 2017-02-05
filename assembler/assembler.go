@@ -1,4 +1,4 @@
-package parser
+package assembler
 
 import (
 	"log"
@@ -8,25 +8,26 @@ import (
 
 	"github.com/antlr/antlr4/runtime/Go/antlr"
 	"github.com/robertsdionne/dcpu"
+	"github.com/robertsdionne/dcpu/parser"
 )
 
 //go:generate java -jar $HOME/Downloads/antlr-4.6-complete.jar -Dlanguage=Go -package parser DCPU.g4 -visitor
 
 func Assemble(source string) (program []uint16) {
 	input := antlr.NewInputStream(source)
-	lexer := NewDCPULexer(input)
+	lexer := parser.NewDCPULexer(input)
 	stream := antlr.NewCommonTokenStream(lexer, 0)
-	parser := NewDCPUParser(stream)
-	parser.BuildParseTrees = true
+	p := parser.NewDCPUParser(stream)
+	p.BuildParseTrees = true
 	visitor := assembler{
-		BaseDCPUVisitor: &BaseDCPUVisitor{},
+		BaseDCPUVisitor: &parser.BaseDCPUVisitor{},
 	}
-	program = visitor.Visit(parser.Program()).([]uint16)
+	program = visitor.Visit(p.Program()).([]uint16)
 	return
 }
 
 type assembler struct {
-	*BaseDCPUVisitor
+	*parser.BaseDCPUVisitor
 }
 
 func (a *assembler) Visit(tree antlr.ParseTree) interface{} {
@@ -41,7 +42,7 @@ func (a *assembler) VisitChildren(node antlr.RuleNode) interface{} {
 	return results
 }
 
-func (a *assembler) VisitProgram(ctx *ProgramContext) interface{} {
+func (a *assembler) VisitProgram(ctx *parser.ProgramContext) interface{} {
 	program := []interface{}{}
 	labelAddresses := map[string]uint16{}
 
@@ -74,7 +75,7 @@ func (a *assembler) VisitProgram(ctx *ProgramContext) interface{} {
 	return assembledProgram
 }
 
-func (a *assembler) VisitInstruction(ctx *InstructionContext) interface{} {
+func (a *assembler) VisitInstruction(ctx *parser.InstructionContext) interface{} {
 	switch {
 	case ctx.BinaryOperation() != nil:
 		return a.Visit(ctx.BinaryOperation())
@@ -88,19 +89,19 @@ func (a *assembler) VisitInstruction(ctx *InstructionContext) interface{} {
 	return nil
 }
 
-func (a *assembler) VisitLabelDefinition(ctx *LabelDefinitionContext) interface{} {
+func (a *assembler) VisitLabelDefinition(ctx *parser.LabelDefinitionContext) interface{} {
 	return ctx.IDENTIFIER().GetText()
 }
 
-func (a *assembler) VisitDataSection(ctx *DataSectionContext) interface{} {
+func (a *assembler) VisitDataSection(ctx *parser.DataSectionContext) interface{} {
 	return a.Visit(ctx.Data())
 }
 
-func (a *assembler) VisitData(ctx *DataContext) interface{} {
+func (a *assembler) VisitData(ctx *parser.DataContext) interface{} {
 	var result []interface{}
 	for _, child := range ctx.GetChildren() {
 		switch child := child.(type) {
-		case *DatumContext:
+		case *parser.DatumContext:
 			datum := a.Visit(child)
 			switch datum := datum.(type) {
 			case []uint16:
@@ -116,7 +117,7 @@ func (a *assembler) VisitData(ctx *DataContext) interface{} {
 	return result
 }
 
-func (a *assembler) VisitDatum(ctx *DatumContext) interface{} {
+func (a *assembler) VisitDatum(ctx *parser.DatumContext) interface{} {
 	switch {
 	case ctx.STRING() != nil:
 		text := ctx.STRING().GetText()
@@ -135,7 +136,7 @@ func (a *assembler) VisitDatum(ctx *DatumContext) interface{} {
 	return nil
 }
 
-func (a *assembler) VisitBinaryOperation(ctx *BinaryOperationContext) interface{} {
+func (a *assembler) VisitBinaryOperation(ctx *parser.BinaryOperationContext) interface{} {
 	opcode := a.Visit(ctx.BinaryOpcode()).(uint16)
 	argumentB := a.Visit(ctx.ArgumentB()).([]interface{})
 	argumentA := a.Visit(ctx.ArgumentA()).([]interface{})
@@ -147,11 +148,11 @@ func (a *assembler) VisitBinaryOperation(ctx *BinaryOperationContext) interface{
 	return result
 }
 
-func (a *assembler) VisitBinaryOpcode(ctx *BinaryOpcodeContext) interface{} {
+func (a *assembler) VisitBinaryOpcode(ctx *parser.BinaryOpcodeContext) interface{} {
 	return binaryOpcodeValue(ctx)
 }
 
-func binaryOpcodeValue(ctx *BinaryOpcodeContext) uint16 {
+func binaryOpcodeValue(ctx *parser.BinaryOpcodeContext) uint16 {
 	switch {
 	case ctx.SET() != nil:
 		return dcpu.Set
@@ -239,7 +240,7 @@ func binaryOpcodeValue(ctx *BinaryOpcodeContext) uint16 {
 	}
 }
 
-func (a *assembler) VisitUnaryOperation(ctx *UnaryOperationContext) interface{} {
+func (a *assembler) VisitUnaryOperation(ctx *parser.UnaryOperationContext) interface{} {
 	opcode := a.Visit(ctx.UnaryOpcode()).(uint16)
 	argument := a.Visit(ctx.ArgumentA()).([]interface{})
 	result := []interface{}{opcode<<dcpu.SpecialOpcodeShift | argument[0].(uint16)<<dcpu.SpecialValueShiftA}
@@ -247,11 +248,11 @@ func (a *assembler) VisitUnaryOperation(ctx *UnaryOperationContext) interface{} 
 	return result
 }
 
-func (a *assembler) VisitUnaryOpcode(ctx *UnaryOpcodeContext) interface{} {
+func (a *assembler) VisitUnaryOpcode(ctx *parser.UnaryOpcodeContext) interface{} {
 	return unaryOpcodeValue(ctx)
 }
 
-func unaryOpcodeValue(ctx *UnaryOpcodeContext) uint16 {
+func unaryOpcodeValue(ctx *parser.UnaryOpcodeContext) uint16 {
 	switch {
 	case ctx.JSR() != nil:
 		return dcpu.JumpSubRoutine
@@ -285,16 +286,16 @@ func unaryOpcodeValue(ctx *UnaryOpcodeContext) uint16 {
 	}
 }
 
-func (a *assembler) VisitDebugOperation(ctx *DebugOperationContext) interface{} {
+func (a *assembler) VisitDebugOperation(ctx *parser.DebugOperationContext) interface{} {
 	opcode := a.Visit(ctx.DebugOpcode()).(uint16)
 	return []interface{}{opcode << dcpu.DebugOpcodeShift}
 }
 
-func (a *assembler) VisitDebugOpcode(ctx *DebugOpcodeContext) interface{} {
+func (a *assembler) VisitDebugOpcode(ctx *parser.DebugOpcodeContext) interface{} {
 	return debugOpcodeValue(ctx)
 }
 
-func debugOpcodeValue(ctx *DebugOpcodeContext) uint16 {
+func debugOpcodeValue(ctx *parser.DebugOpcodeContext) uint16 {
 	switch {
 	case ctx.ALT() != nil:
 		return dcpu.Alert
@@ -307,7 +308,7 @@ func debugOpcodeValue(ctx *DebugOpcodeContext) uint16 {
 	}
 }
 
-func (a *assembler) VisitArgumentB(ctx *ArgumentBContext) interface{} {
+func (a *assembler) VisitArgumentB(ctx *parser.ArgumentBContext) interface{} {
 	switch {
 	case ctx.Register() != nil:
 		return []interface{}{a.Visit(ctx.Register())}
@@ -342,15 +343,15 @@ func (a *assembler) VisitArgumentB(ctx *ArgumentBContext) interface{} {
 	return []interface{}{uint16(0)}
 }
 
-func (a *assembler) VisitRegister(ctx *RegisterContext) interface{} {
+func (a *assembler) VisitRegister(ctx *parser.RegisterContext) interface{} {
 	return registerValue(ctx.REGISTER())
 }
 
-func (a *assembler) VisitLocationInRegister(ctx *LocationInRegisterContext) interface{} {
+func (a *assembler) VisitLocationInRegister(ctx *parser.LocationInRegisterContext) interface{} {
 	return registerValue(ctx.REGISTER()) + dcpu.LocationInRegisterA
 }
 
-func (a *assembler) VisitLocationOffsetByRegister(ctx *LocationOffsetByRegisterContext) interface{} {
+func (a *assembler) VisitLocationOffsetByRegister(ctx *parser.LocationOffsetByRegisterContext) interface{} {
 	var location interface{}
 	switch {
 	case ctx.Label() != nil:
@@ -391,7 +392,7 @@ func registerValue(register antlr.TerminalNode) uint16 {
 	return 0
 }
 
-func (a *assembler) VisitArgumentA(ctx *ArgumentAContext) interface{} {
+func (a *assembler) VisitArgumentA(ctx *parser.ArgumentAContext) interface{} {
 	switch {
 	case ctx.Register() != nil:
 		return []interface{}{a.Visit(ctx.Register())}
@@ -440,7 +441,7 @@ func (a *assembler) VisitArgumentA(ctx *ArgumentAContext) interface{} {
 	return []interface{}{uint16(0)}
 }
 
-func (a *assembler) VisitLocation(ctx *LocationContext) interface{} {
+func (a *assembler) VisitLocation(ctx *parser.LocationContext) interface{} {
 	switch {
 	case ctx.Label() != nil:
 		return a.Visit(ctx.Label())
@@ -451,11 +452,11 @@ func (a *assembler) VisitLocation(ctx *LocationContext) interface{} {
 	return nil
 }
 
-func (a *assembler) VisitLabel(ctx *LabelContext) interface{} {
+func (a *assembler) VisitLabel(ctx *parser.LabelContext) interface{} {
 	return ctx.IDENTIFIER().GetText()
 }
 
-func (a *assembler) VisitValue(ctx *ValueContext) interface{} {
+func (a *assembler) VisitValue(ctx *parser.ValueContext) interface{} {
 	return parseValue(ctx.NUMBER().GetText())
 }
 
