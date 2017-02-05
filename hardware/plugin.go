@@ -37,6 +37,10 @@ func (d *device) HandleHardwareInterrupt(dcpu *dcpu.DCPU) {
 	d.handleHardwareInterrupt(dcpu)
 }
 
+const (
+	errFormat = "%s had invalid type: expected %s, got %s"
+)
+
 func OpenPlugin(path string) (hardware dcpu.Hardware, err error) {
 	p, err := plugin.Open(path)
 	if err != nil {
@@ -65,36 +69,34 @@ func OpenPlugin(path string) (hardware dcpu.Hardware, err error) {
 	if execute, ok := execute.(func(*dcpu.DCPU)); ok {
 		d.execute = execute
 	} else {
-		errs = multierror.Append(errs, fmt.Errorf(
-			"Execute had invalid type: expected %s, got %s", reflect.TypeOf(d.execute), reflect.TypeOf(execute)))
+		errs = multierror.Append(errs, fmt.Errorf(errFormat, "Execute", reflect.TypeOf(d.execute), reflect.TypeOf(execute)))
 	}
 
 	if getID, ok := getID.(func() uint32); ok {
 		d.getID = getID
 	} else {
-		errs = multierror.Append(
-			errs, fmt.Errorf("GetID had invalid type: expected %s, got %s", reflect.TypeOf(d.getID), reflect.TypeOf(execute)))
+		errs = multierror.Append(errs, fmt.Errorf(errFormat, "GetID", reflect.TypeOf(d.getID), reflect.TypeOf(execute)))
 	}
 
 	if getManufacturerID, ok := getManufacturerID.(func() uint32); ok {
 		d.getManufacturerID = getManufacturerID
 	} else {
-		errs = multierror.Append(errs, fmt.Errorf("GetManufacturerID had invalid type: expected %s, got %s",
-			reflect.TypeOf(d.getManufacturerID), reflect.TypeOf(getManufacturerID)))
+		errs = multierror.Append(errs, fmt.Errorf(errFormat,
+			"GetManufacturerID", reflect.TypeOf(d.getManufacturerID), reflect.TypeOf(getManufacturerID)))
 	}
 
 	if getVersion, ok := getVersion.(func() uint16); ok {
 		d.getVersion = getVersion
 	} else {
 		errs = multierror.Append(errs, fmt.Errorf(
-			"GetVersion had invalid type: expected %s, got %s", reflect.TypeOf(d.getVersion), reflect.TypeOf(getVersion)))
+			errFormat, "GetVersion", reflect.TypeOf(d.getVersion), reflect.TypeOf(getVersion)))
 	}
 
 	if handleHardwareInterrupt, ok := handleHardwareInterrupt.(func(*dcpu.DCPU)); ok {
 		d.handleHardwareInterrupt = handleHardwareInterrupt
 	} else {
-		errs = multierror.Append(errs, fmt.Errorf("HandleHardwareInterrupt had invalid type: expected %s, got %s",
-			reflect.TypeOf(d.handleHardwareInterrupt), reflect.TypeOf(handleHardwareInterrupt)))
+		errs = multierror.Append(errs, fmt.Errorf(errFormat,
+			"HandleHardwareInterrupt", reflect.TypeOf(d.handleHardwareInterrupt), reflect.TypeOf(handleHardwareInterrupt)))
 	}
 
 	hardware = d
