@@ -11,5 +11,5 @@ parser/dcpu_lexer.go
 parser/dcpu_listener.go
 parser/dcpu_parser.go
 parser/dcpu_visitor.go
-parser/Dcpu.tokens
-parser/DcpuLExer.tokens
+parser/DCPU.tokens
+parser/DCPULexer.tokens
