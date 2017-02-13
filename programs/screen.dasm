@@ -16,7 +16,7 @@
 	set b, 1
 	hwi 0
 
-	sub pc, main
+	sub pc, 1
 
 :interruptHandler
 	set a, 1	; keyboard.GetNextKey

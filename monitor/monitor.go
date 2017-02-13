@@ -9,8 +9,6 @@ import (
 	"os"
 	"time"
 
-	"golang.org/x/mobile/exp/gl/glutil"
-
 	"github.com/robertsdionne/dcpu"
 )
 
@@ -20,19 +18,19 @@ type Device struct {
 	PaletteAddress uint16
 	VideoAddress   uint16
 	dcpu           *dcpu.DCPU
-	image          *glutil.Image
 	startTime      time.Time
 }
 
 const (
+	Width  = areaWidth + 2*borderWidth
+	Height = areaHeight + 2*borderHeight
+
 	areaWidth    = 128
 	areaHeight   = 96
 	borderWidth  = 4
 	borderHeight = 8
 	bufferWidth  = 32
 	bufferHeight = 12
-	width        = areaWidth + 2*borderWidth
-	height       = areaHeight + 2*borderHeight
 	scale        = 3
 	title        = "LEM1802"
 	bootPNG      = "documents/boot.png"
@@ -190,7 +188,7 @@ func (i *imagePart) Dst(int) (x0, y0, x1, y1 int) {
 
 func (d *Device) Dimensions() (int, int) {
 	d.startTime = time.Now()
-	return width, height
+	return Width, Height
 }
 
 func (d *Device) Paint(img *image.RGBA) {
@@ -210,8 +208,8 @@ func (d *Device) Paint(img *image.RGBA) {
 
 	timeToBlink := time.Since(d.startTime)%(2*time.Second) < 1*time.Second
 
-	for x := 0; x < width; x++ {
-		for y := 0; y < height; y++ {
+	for x := 0; x < Width; x++ {
+		for y := 0; y < Height; y++ {
 
 			i := x/borderWidth - 1
 			j := y/borderHeight - 1

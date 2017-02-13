@@ -1,5 +1,6 @@
 package hardware
 
+/*
 import (
 	"fmt"
 	"plugin"
@@ -103,3 +104,4 @@ func OpenPlugin(path string) (hardware dcpu.Hardware, err error) {
 	err = errs.ErrorOrNil()
 	return
 }
+*/
