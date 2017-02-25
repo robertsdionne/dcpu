@@ -17,6 +17,7 @@ type Device struct {
 	FontAddress    uint16
 	PaletteAddress uint16
 	VideoAddress   uint16
+	BootPNGPath    string
 	dcpu           *dcpu.DCPU
 	startTime      time.Time
 }
@@ -241,7 +242,11 @@ func (d *Device) Paint(img *image.RGBA) {
 
 	if time.Since(d.startTime) < 5*time.Second {
 		if boot == nil {
-			file, err := os.Open(bootPNG)
+			if d.BootPNGPath == "" {
+				d.BootPNGPath = bootPNG
+			}
+
+			file, err := os.Open(d.BootPNGPath)
 			if err != nil {
 				log.Fatalln(err)
 			}
