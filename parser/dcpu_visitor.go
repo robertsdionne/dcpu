@@ -1,7 +1,7 @@
-// Generated from DCPU.g4 by ANTLR 4.6.
+// Code generated from parser/DCPU.g4 by ANTLR 4.13.1. DO NOT EDIT.
 
 package parser // DCPU
-import "github.com/antlr/antlr4/runtime/Go/antlr"
+import "github.com/antlr4-go/antlr/v4"
 
 // A complete Visitor for a parse tree produced by DCPUParser.
 type DCPUVisitor interface {
