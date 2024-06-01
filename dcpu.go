@@ -4,7 +4,6 @@ package dcpu
 import (
 	"fmt"
 	"log"
-	"time"
 	"unicode/utf16"
 )
 
@@ -95,7 +94,6 @@ func (d *DCPU) Execute() {
 		for i := range d.Hardware {
 			d.Hardware[i].Execute(d)
 		}
-		time.Sleep(10 * time.Microsecond)
 	}
 }
 
@@ -106,7 +104,6 @@ func (d *DCPU) ExecuteInstructions(count int) {
 		for i := range d.Hardware {
 			d.Hardware[i].Execute(d)
 		}
-		time.Sleep(10 * time.Microsecond)
 	}
 }
 
