@@ -39,15 +39,15 @@ func (d *Device) Event(event key.Event) {
 	switch event.Direction {
 	case key.DirPress:
 		d.state[code] = true
+
+		d.channel <- code
+		if d.Message > 0 && d.dcpu != nil {
+			d.dcpu.Interrupt(d.Message)
+		}
 	case key.DirNone:
 		return
 	case key.DirRelease:
 		d.state[code] = false
-	}
-
-	d.channel <- code
-	if d.Message > 0 && d.dcpu != nil {
-		d.dcpu.Interrupt(d.Message)
 	}
 }
 
