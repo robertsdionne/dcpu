@@ -132,10 +132,8 @@ func (a *assembler) VisitDatum(ctx *parser.DatumContext) interface{} {
 	switch {
 	case ctx.STRING() != nil:
 		text := ctx.STRING().GetText()
-		encoded := utf16.Encode([]rune(text[1 : len(text)-2]))
-		result := []uint16{uint16(len(encoded))}
-		result = append(result, encoded...)
-		return result
+		encoded := utf16.Encode([]rune(text[1 : len(text)-1]))
+		return encoded
 
 	case ctx.IDENTIFIER() != nil:
 		return ctx.IDENTIFIER().GetText()
