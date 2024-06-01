@@ -127,6 +127,8 @@ argumentB
     | PROGRAM_COUNTER
     | EXTRA
     | location
+    | label
+    | value
     ;
 
 register
@@ -231,7 +233,7 @@ COMMENT
     ;
 
 IDENTIFIER
-    : [._a-zA-Z]+
+    : [._a-zA-Z]+[._a-zA-Z0-9]*
     ;
 
 STRING

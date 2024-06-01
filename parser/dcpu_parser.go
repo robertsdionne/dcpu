@@ -53,7 +53,7 @@ func dcpuParserInit() {
 	}
 	staticData.PredictionContextCache = antlr.NewPredictionContextCache()
 	staticData.serializedATN = []int32{
-		4, 1, 60, 153, 2, 0, 7, 0, 2, 1, 7, 1, 2, 2, 7, 2, 2, 3, 7, 3, 2, 4, 7,
+		4, 1, 60, 155, 2, 0, 7, 0, 2, 1, 7, 1, 2, 2, 7, 2, 2, 3, 7, 3, 2, 4, 7,
 		4, 2, 5, 7, 5, 2, 6, 7, 6, 2, 7, 7, 7, 2, 8, 7, 8, 2, 9, 7, 9, 2, 10, 7,
 		10, 2, 11, 7, 11, 2, 12, 7, 12, 2, 13, 7, 13, 2, 14, 7, 14, 2, 15, 7, 15,
 		2, 16, 7, 16, 2, 17, 7, 17, 2, 18, 7, 18, 2, 19, 7, 19, 2, 20, 7, 20, 1,
@@ -63,61 +63,63 @@ func dcpuParserInit() {
 		1, 7, 1, 7, 1, 7, 1, 7, 1, 8, 1, 8, 1, 9, 1, 9, 1, 9, 1, 9, 1, 9, 1, 9,
 		1, 9, 1, 9, 1, 9, 1, 9, 1, 9, 1, 9, 3, 9, 94, 8, 9, 1, 10, 1, 10, 1, 10,
 		3, 10, 99, 8, 10, 1, 10, 1, 10, 1, 11, 1, 11, 1, 11, 1, 11, 1, 11, 1, 11,
-		1, 11, 1, 11, 1, 11, 1, 11, 3, 11, 113, 8, 11, 1, 12, 1, 12, 1, 13, 1,
-		13, 1, 13, 1, 14, 1, 14, 1, 14, 1, 15, 1, 15, 1, 15, 1, 15, 1, 16, 1, 16,
-		1, 16, 1, 16, 1, 16, 3, 16, 132, 8, 16, 1, 16, 1, 16, 3, 16, 136, 8, 16,
-		1, 16, 1, 16, 1, 16, 3, 16, 141, 8, 16, 1, 16, 1, 16, 1, 17, 1, 17, 1,
-		18, 1, 18, 1, 19, 1, 19, 1, 20, 1, 20, 1, 20, 0, 0, 21, 0, 2, 4, 6, 8,
-		10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34, 36, 38, 40, 0, 5, 1,
-		0, 2, 5, 2, 0, 44, 44, 58, 59, 1, 0, 10, 36, 1, 0, 46, 54, 1, 0, 55, 56,
-		161, 0, 45, 1, 0, 0, 0, 2, 51, 1, 0, 0, 0, 4, 54, 1, 0, 0, 0, 6, 59, 1,
-		0, 0, 0, 8, 61, 1, 0, 0, 0, 10, 64, 1, 0, 0, 0, 12, 72, 1, 0, 0, 0, 14,
-		74, 1, 0, 0, 0, 16, 79, 1, 0, 0, 0, 18, 93, 1, 0, 0, 0, 20, 95, 1, 0, 0,
-		0, 22, 112, 1, 0, 0, 0, 24, 114, 1, 0, 0, 0, 26, 116, 1, 0, 0, 0, 28, 119,
-		1, 0, 0, 0, 30, 122, 1, 0, 0, 0, 32, 126, 1, 0, 0, 0, 34, 144, 1, 0, 0,
-		0, 36, 146, 1, 0, 0, 0, 38, 148, 1, 0, 0, 0, 40, 150, 1, 0, 0, 0, 42, 46,
-		3, 2, 1, 0, 43, 46, 3, 6, 3, 0, 44, 46, 3, 8, 4, 0, 45, 42, 1, 0, 0, 0,
-		45, 43, 1, 0, 0, 0, 45, 44, 1, 0, 0, 0, 46, 47, 1, 0, 0, 0, 47, 45, 1,
-		0, 0, 0, 47, 48, 1, 0, 0, 0, 48, 49, 1, 0, 0, 0, 49, 50, 5, 0, 0, 1, 50,
-		1, 1, 0, 0, 0, 51, 52, 5, 1, 0, 0, 52, 53, 5, 58, 0, 0, 53, 3, 1, 0, 0,
-		0, 54, 55, 5, 58, 0, 0, 55, 5, 1, 0, 0, 0, 56, 60, 3, 14, 7, 0, 57, 60,
-		3, 28, 14, 0, 58, 60, 3, 38, 19, 0, 59, 56, 1, 0, 0, 0, 59, 57, 1, 0, 0,
-		0, 59, 58, 1, 0, 0, 0, 60, 7, 1, 0, 0, 0, 61, 62, 7, 0, 0, 0, 62, 63, 3,
-		10, 5, 0, 63, 9, 1, 0, 0, 0, 64, 69, 3, 12, 6, 0, 65, 66, 5, 6, 0, 0, 66,
-		68, 3, 12, 6, 0, 67, 65, 1, 0, 0, 0, 68, 71, 1, 0, 0, 0, 69, 67, 1, 0,
-		0, 0, 69, 70, 1, 0, 0, 0, 70, 11, 1, 0, 0, 0, 71, 69, 1, 0, 0, 0, 72, 73,
-		7, 1, 0, 0, 73, 13, 1, 0, 0, 0, 74, 75, 3, 16, 8, 0, 75, 76, 3, 22, 11,
-		0, 76, 77, 5, 6, 0, 0, 77, 78, 3, 18, 9, 0, 78, 15, 1, 0, 0, 0, 79, 80,
-		7, 2, 0, 0, 80, 17, 1, 0, 0, 0, 81, 94, 3, 24, 12, 0, 82, 94, 3, 30, 15,
-		0, 83, 94, 3, 32, 16, 0, 84, 94, 5, 37, 0, 0, 85, 94, 5, 39, 0, 0, 86,
-		94, 3, 26, 13, 0, 87, 94, 5, 41, 0, 0, 88, 94, 5, 42, 0, 0, 89, 94, 5,
-		43, 0, 0, 90, 94, 3, 20, 10, 0, 91, 94, 3, 4, 2, 0, 92, 94, 3, 34, 17,
-		0, 93, 81, 1, 0, 0, 0, 93, 82, 1, 0, 0, 0, 93, 83, 1, 0, 0, 0, 93, 84,
-		1, 0, 0, 0, 93, 85, 1, 0, 0, 0, 93, 86, 1, 0, 0, 0, 93, 87, 1, 0, 0, 0,
-		93, 88, 1, 0, 0, 0, 93, 89, 1, 0, 0, 0, 93, 90, 1, 0, 0, 0, 93, 91, 1,
-		0, 0, 0, 93, 92, 1, 0, 0, 0, 94, 19, 1, 0, 0, 0, 95, 98, 5, 7, 0, 0, 96,
-		99, 3, 4, 2, 0, 97, 99, 3, 34, 17, 0, 98, 96, 1, 0, 0, 0, 98, 97, 1, 0,
-		0, 0, 99, 100, 1, 0, 0, 0, 100, 101, 5, 8, 0, 0, 101, 21, 1, 0, 0, 0, 102,
-		113, 3, 24, 12, 0, 103, 113, 3, 30, 15, 0, 104, 113, 3, 32, 16, 0, 105,
-		113, 5, 38, 0, 0, 106, 113, 5, 39, 0, 0, 107, 113, 3, 26, 13, 0, 108, 113,
-		5, 41, 0, 0, 109, 113, 5, 42, 0, 0, 110, 113, 5, 43, 0, 0, 111, 113, 3,
-		20, 10, 0, 112, 102, 1, 0, 0, 0, 112, 103, 1, 0, 0, 0, 112, 104, 1, 0,
-		0, 0, 112, 105, 1, 0, 0, 0, 112, 106, 1, 0, 0, 0, 112, 107, 1, 0, 0, 0,
-		112, 108, 1, 0, 0, 0, 112, 109, 1, 0, 0, 0, 112, 110, 1, 0, 0, 0, 112,
-		111, 1, 0, 0, 0, 113, 23, 1, 0, 0, 0, 114, 115, 5, 45, 0, 0, 115, 25, 1,
-		0, 0, 0, 116, 117, 5, 40, 0, 0, 117, 118, 5, 44, 0, 0, 118, 27, 1, 0, 0,
-		0, 119, 120, 3, 36, 18, 0, 120, 121, 3, 18, 9, 0, 121, 29, 1, 0, 0, 0,
-		122, 123, 5, 7, 0, 0, 123, 124, 5, 45, 0, 0, 124, 125, 5, 8, 0, 0, 125,
-		31, 1, 0, 0, 0, 126, 140, 5, 7, 0, 0, 127, 128, 5, 45, 0, 0, 128, 131,
-		5, 9, 0, 0, 129, 132, 3, 4, 2, 0, 130, 132, 3, 34, 17, 0, 131, 129, 1,
-		0, 0, 0, 131, 130, 1, 0, 0, 0, 132, 141, 1, 0, 0, 0, 133, 136, 3, 4, 2,
-		0, 134, 136, 3, 34, 17, 0, 135, 133, 1, 0, 0, 0, 135, 134, 1, 0, 0, 0,
-		136, 137, 1, 0, 0, 0, 137, 138, 5, 9, 0, 0, 138, 139, 5, 45, 0, 0, 139,
-		141, 1, 0, 0, 0, 140, 127, 1, 0, 0, 0, 140, 135, 1, 0, 0, 0, 141, 142,
-		1, 0, 0, 0, 142, 143, 5, 8, 0, 0, 143, 33, 1, 0, 0, 0, 144, 145, 5, 44,
-		0, 0, 145, 35, 1, 0, 0, 0, 146, 147, 7, 3, 0, 0, 147, 37, 1, 0, 0, 0, 148,
-		149, 3, 40, 20, 0, 149, 39, 1, 0, 0, 0, 150, 151, 7, 4, 0, 0, 151, 41,
-		1, 0, 0, 0, 10, 45, 47, 59, 69, 93, 98, 112, 131, 135, 140,
+		1, 11, 1, 11, 1, 11, 1, 11, 1, 11, 1, 11, 3, 11, 115, 8, 11, 1, 12, 1,
+		12, 1, 13, 1, 13, 1, 13, 1, 14, 1, 14, 1, 14, 1, 15, 1, 15, 1, 15, 1, 15,
+		1, 16, 1, 16, 1, 16, 1, 16, 1, 16, 3, 16, 134, 8, 16, 1, 16, 1, 16, 3,
+		16, 138, 8, 16, 1, 16, 1, 16, 1, 16, 3, 16, 143, 8, 16, 1, 16, 1, 16, 1,
+		17, 1, 17, 1, 18, 1, 18, 1, 19, 1, 19, 1, 20, 1, 20, 1, 20, 0, 0, 21, 0,
+		2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34, 36, 38,
+		40, 0, 5, 1, 0, 2, 5, 2, 0, 44, 44, 58, 59, 1, 0, 10, 36, 1, 0, 46, 54,
+		1, 0, 55, 56, 165, 0, 45, 1, 0, 0, 0, 2, 51, 1, 0, 0, 0, 4, 54, 1, 0, 0,
+		0, 6, 59, 1, 0, 0, 0, 8, 61, 1, 0, 0, 0, 10, 64, 1, 0, 0, 0, 12, 72, 1,
+		0, 0, 0, 14, 74, 1, 0, 0, 0, 16, 79, 1, 0, 0, 0, 18, 93, 1, 0, 0, 0, 20,
+		95, 1, 0, 0, 0, 22, 114, 1, 0, 0, 0, 24, 116, 1, 0, 0, 0, 26, 118, 1, 0,
+		0, 0, 28, 121, 1, 0, 0, 0, 30, 124, 1, 0, 0, 0, 32, 128, 1, 0, 0, 0, 34,
+		146, 1, 0, 0, 0, 36, 148, 1, 0, 0, 0, 38, 150, 1, 0, 0, 0, 40, 152, 1,
+		0, 0, 0, 42, 46, 3, 2, 1, 0, 43, 46, 3, 6, 3, 0, 44, 46, 3, 8, 4, 0, 45,
+		42, 1, 0, 0, 0, 45, 43, 1, 0, 0, 0, 45, 44, 1, 0, 0, 0, 46, 47, 1, 0, 0,
+		0, 47, 45, 1, 0, 0, 0, 47, 48, 1, 0, 0, 0, 48, 49, 1, 0, 0, 0, 49, 50,
+		5, 0, 0, 1, 50, 1, 1, 0, 0, 0, 51, 52, 5, 1, 0, 0, 52, 53, 5, 58, 0, 0,
+		53, 3, 1, 0, 0, 0, 54, 55, 5, 58, 0, 0, 55, 5, 1, 0, 0, 0, 56, 60, 3, 14,
+		7, 0, 57, 60, 3, 28, 14, 0, 58, 60, 3, 38, 19, 0, 59, 56, 1, 0, 0, 0, 59,
+		57, 1, 0, 0, 0, 59, 58, 1, 0, 0, 0, 60, 7, 1, 0, 0, 0, 61, 62, 7, 0, 0,
+		0, 62, 63, 3, 10, 5, 0, 63, 9, 1, 0, 0, 0, 64, 69, 3, 12, 6, 0, 65, 66,
+		5, 6, 0, 0, 66, 68, 3, 12, 6, 0, 67, 65, 1, 0, 0, 0, 68, 71, 1, 0, 0, 0,
+		69, 67, 1, 0, 0, 0, 69, 70, 1, 0, 0, 0, 70, 11, 1, 0, 0, 0, 71, 69, 1,
+		0, 0, 0, 72, 73, 7, 1, 0, 0, 73, 13, 1, 0, 0, 0, 74, 75, 3, 16, 8, 0, 75,
+		76, 3, 22, 11, 0, 76, 77, 5, 6, 0, 0, 77, 78, 3, 18, 9, 0, 78, 15, 1, 0,
+		0, 0, 79, 80, 7, 2, 0, 0, 80, 17, 1, 0, 0, 0, 81, 94, 3, 24, 12, 0, 82,
+		94, 3, 30, 15, 0, 83, 94, 3, 32, 16, 0, 84, 94, 5, 37, 0, 0, 85, 94, 5,
+		39, 0, 0, 86, 94, 3, 26, 13, 0, 87, 94, 5, 41, 0, 0, 88, 94, 5, 42, 0,
+		0, 89, 94, 5, 43, 0, 0, 90, 94, 3, 20, 10, 0, 91, 94, 3, 4, 2, 0, 92, 94,
+		3, 34, 17, 0, 93, 81, 1, 0, 0, 0, 93, 82, 1, 0, 0, 0, 93, 83, 1, 0, 0,
+		0, 93, 84, 1, 0, 0, 0, 93, 85, 1, 0, 0, 0, 93, 86, 1, 0, 0, 0, 93, 87,
+		1, 0, 0, 0, 93, 88, 1, 0, 0, 0, 93, 89, 1, 0, 0, 0, 93, 90, 1, 0, 0, 0,
+		93, 91, 1, 0, 0, 0, 93, 92, 1, 0, 0, 0, 94, 19, 1, 0, 0, 0, 95, 98, 5,
+		7, 0, 0, 96, 99, 3, 4, 2, 0, 97, 99, 3, 34, 17, 0, 98, 96, 1, 0, 0, 0,
+		98, 97, 1, 0, 0, 0, 99, 100, 1, 0, 0, 0, 100, 101, 5, 8, 0, 0, 101, 21,
+		1, 0, 0, 0, 102, 115, 3, 24, 12, 0, 103, 115, 3, 30, 15, 0, 104, 115, 3,
+		32, 16, 0, 105, 115, 5, 38, 0, 0, 106, 115, 5, 39, 0, 0, 107, 115, 3, 26,
+		13, 0, 108, 115, 5, 41, 0, 0, 109, 115, 5, 42, 0, 0, 110, 115, 5, 43, 0,
+		0, 111, 115, 3, 20, 10, 0, 112, 115, 3, 4, 2, 0, 113, 115, 3, 34, 17, 0,
+		114, 102, 1, 0, 0, 0, 114, 103, 1, 0, 0, 0, 114, 104, 1, 0, 0, 0, 114,
+		105, 1, 0, 0, 0, 114, 106, 1, 0, 0, 0, 114, 107, 1, 0, 0, 0, 114, 108,
+		1, 0, 0, 0, 114, 109, 1, 0, 0, 0, 114, 110, 1, 0, 0, 0, 114, 111, 1, 0,
+		0, 0, 114, 112, 1, 0, 0, 0, 114, 113, 1, 0, 0, 0, 115, 23, 1, 0, 0, 0,
+		116, 117, 5, 45, 0, 0, 117, 25, 1, 0, 0, 0, 118, 119, 5, 40, 0, 0, 119,
+		120, 5, 44, 0, 0, 120, 27, 1, 0, 0, 0, 121, 122, 3, 36, 18, 0, 122, 123,
+		3, 18, 9, 0, 123, 29, 1, 0, 0, 0, 124, 125, 5, 7, 0, 0, 125, 126, 5, 45,
+		0, 0, 126, 127, 5, 8, 0, 0, 127, 31, 1, 0, 0, 0, 128, 142, 5, 7, 0, 0,
+		129, 130, 5, 45, 0, 0, 130, 133, 5, 9, 0, 0, 131, 134, 3, 4, 2, 0, 132,
+		134, 3, 34, 17, 0, 133, 131, 1, 0, 0, 0, 133, 132, 1, 0, 0, 0, 134, 143,
+		1, 0, 0, 0, 135, 138, 3, 4, 2, 0, 136, 138, 3, 34, 17, 0, 137, 135, 1,
+		0, 0, 0, 137, 136, 1, 0, 0, 0, 138, 139, 1, 0, 0, 0, 139, 140, 5, 9, 0,
+		0, 140, 141, 5, 45, 0, 0, 141, 143, 1, 0, 0, 0, 142, 129, 1, 0, 0, 0, 142,
+		137, 1, 0, 0, 0, 143, 144, 1, 0, 0, 0, 144, 145, 5, 8, 0, 0, 145, 33, 1,
+		0, 0, 0, 146, 147, 5, 44, 0, 0, 147, 35, 1, 0, 0, 0, 148, 149, 7, 3, 0,
+		0, 149, 37, 1, 0, 0, 0, 150, 151, 3, 40, 20, 0, 151, 39, 1, 0, 0, 0, 152,
+		153, 7, 4, 0, 0, 153, 41, 1, 0, 0, 0, 10, 45, 47, 59, 69, 93, 98, 114,
+		133, 137, 142,
 	}
 	deserializer := antlr.NewATNDeserializer(nil)
 	staticData.atn = deserializer.Deserialize(staticData.serializedATN)
@@ -2277,6 +2279,8 @@ type IArgumentBContext interface {
 	PROGRAM_COUNTER() antlr.TerminalNode
 	EXTRA() antlr.TerminalNode
 	Location() ILocationContext
+	Label() ILabelContext
+	Value() IValueContext
 
 	// IsArgumentBContext differentiates from other interfaces.
 	IsArgumentBContext()
@@ -2414,6 +2418,38 @@ func (s *ArgumentBContext) Location() ILocationContext {
 	return t.(ILocationContext)
 }
 
+func (s *ArgumentBContext) Label() ILabelContext {
+	var t antlr.RuleContext
+	for _, ctx := range s.GetChildren() {
+		if _, ok := ctx.(ILabelContext); ok {
+			t = ctx.(antlr.RuleContext)
+			break
+		}
+	}
+
+	if t == nil {
+		return nil
+	}
+
+	return t.(ILabelContext)
+}
+
+func (s *ArgumentBContext) Value() IValueContext {
+	var t antlr.RuleContext
+	for _, ctx := range s.GetChildren() {
+		if _, ok := ctx.(IValueContext); ok {
+			t = ctx.(antlr.RuleContext)
+			break
+		}
+	}
+
+	if t == nil {
+		return nil
+	}
+
+	return t.(IValueContext)
+}
+
 func (s *ArgumentBContext) GetRuleContext() antlr.RuleContext {
 	return s
 }
@@ -2447,7 +2483,7 @@ func (s *ArgumentBContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 func (p *DCPUParser) ArgumentB() (localctx IArgumentBContext) {
 	localctx = NewArgumentBContext(p, p.GetParserRuleContext(), p.GetState())
 	p.EnterRule(localctx, 22, DCPUParserRULE_argumentB)
-	p.SetState(112)
+	p.SetState(114)
 	p.GetErrorHandler().Sync(p)
 	if p.HasError() {
 		goto errorExit
@@ -2542,6 +2578,20 @@ func (p *DCPUParser) ArgumentB() (localctx IArgumentBContext) {
 		{
 			p.SetState(111)
 			p.Location()
+		}
+
+	case 11:
+		p.EnterOuterAlt(localctx, 11)
+		{
+			p.SetState(112)
+			p.Label()
+		}
+
+	case 12:
+		p.EnterOuterAlt(localctx, 12)
+		{
+			p.SetState(113)
+			p.Value()
 		}
 
 	case antlr.ATNInvalidAltNumber:
@@ -2646,7 +2696,7 @@ func (p *DCPUParser) Register() (localctx IRegisterContext) {
 	p.EnterRule(localctx, 24, DCPUParserRULE_register)
 	p.EnterOuterAlt(localctx, 1)
 	{
-		p.SetState(114)
+		p.SetState(116)
 		p.Match(DCPUParserREGISTER)
 		if p.HasError() {
 			// Recognition error - abort rule
@@ -2757,7 +2807,7 @@ func (p *DCPUParser) Pick() (localctx IPickContext) {
 	p.EnterRule(localctx, 26, DCPUParserRULE_pick)
 	p.EnterOuterAlt(localctx, 1)
 	{
-		p.SetState(116)
+		p.SetState(118)
 		p.Match(DCPUParserPICK)
 		if p.HasError() {
 			// Recognition error - abort rule
@@ -2765,7 +2815,7 @@ func (p *DCPUParser) Pick() (localctx IPickContext) {
 		}
 	}
 	{
-		p.SetState(117)
+		p.SetState(119)
 		p.Match(DCPUParserNUMBER)
 		if p.HasError() {
 			// Recognition error - abort rule
@@ -2900,11 +2950,11 @@ func (p *DCPUParser) UnaryOperation() (localctx IUnaryOperationContext) {
 	p.EnterRule(localctx, 28, DCPUParserRULE_unaryOperation)
 	p.EnterOuterAlt(localctx, 1)
 	{
-		p.SetState(119)
+		p.SetState(121)
 		p.UnaryOpcode()
 	}
 	{
-		p.SetState(120)
+		p.SetState(122)
 		p.ArgumentA()
 	}
 
@@ -3006,7 +3056,7 @@ func (p *DCPUParser) LocationInRegister() (localctx ILocationInRegisterContext) 
 	p.EnterRule(localctx, 30, DCPUParserRULE_locationInRegister)
 	p.EnterOuterAlt(localctx, 1)
 	{
-		p.SetState(122)
+		p.SetState(124)
 		p.Match(DCPUParserT__6)
 		if p.HasError() {
 			// Recognition error - abort rule
@@ -3014,7 +3064,7 @@ func (p *DCPUParser) LocationInRegister() (localctx ILocationInRegisterContext) 
 		}
 	}
 	{
-		p.SetState(123)
+		p.SetState(125)
 		p.Match(DCPUParserREGISTER)
 		if p.HasError() {
 			// Recognition error - abort rule
@@ -3022,7 +3072,7 @@ func (p *DCPUParser) LocationInRegister() (localctx ILocationInRegisterContext) 
 		}
 	}
 	{
-		p.SetState(124)
+		p.SetState(126)
 		p.Match(DCPUParserT__7)
 		if p.HasError() {
 			// Recognition error - abort rule
@@ -3162,14 +3212,14 @@ func (p *DCPUParser) LocationOffsetByRegister() (localctx ILocationOffsetByRegis
 	p.EnterRule(localctx, 32, DCPUParserRULE_locationOffsetByRegister)
 	p.EnterOuterAlt(localctx, 1)
 	{
-		p.SetState(126)
+		p.SetState(128)
 		p.Match(DCPUParserT__6)
 		if p.HasError() {
 			// Recognition error - abort rule
 			goto errorExit
 		}
 	}
-	p.SetState(140)
+	p.SetState(142)
 	p.GetErrorHandler().Sync(p)
 	if p.HasError() {
 		goto errorExit
@@ -3178,7 +3228,7 @@ func (p *DCPUParser) LocationOffsetByRegister() (localctx ILocationOffsetByRegis
 	switch p.GetTokenStream().LA(1) {
 	case DCPUParserREGISTER:
 		{
-			p.SetState(127)
+			p.SetState(129)
 			p.Match(DCPUParserREGISTER)
 			if p.HasError() {
 				// Recognition error - abort rule
@@ -3186,14 +3236,14 @@ func (p *DCPUParser) LocationOffsetByRegister() (localctx ILocationOffsetByRegis
 			}
 		}
 		{
-			p.SetState(128)
+			p.SetState(130)
 			p.Match(DCPUParserT__8)
 			if p.HasError() {
 				// Recognition error - abort rule
 				goto errorExit
 			}
 		}
-		p.SetState(131)
+		p.SetState(133)
 		p.GetErrorHandler().Sync(p)
 		if p.HasError() {
 			goto errorExit
@@ -3202,13 +3252,13 @@ func (p *DCPUParser) LocationOffsetByRegister() (localctx ILocationOffsetByRegis
 		switch p.GetTokenStream().LA(1) {
 		case DCPUParserIDENTIFIER:
 			{
-				p.SetState(129)
+				p.SetState(131)
 				p.Label()
 			}
 
 		case DCPUParserNUMBER:
 			{
-				p.SetState(130)
+				p.SetState(132)
 				p.Value()
 			}
 
@@ -3218,7 +3268,7 @@ func (p *DCPUParser) LocationOffsetByRegister() (localctx ILocationOffsetByRegis
 		}
 
 	case DCPUParserNUMBER, DCPUParserIDENTIFIER:
-		p.SetState(135)
+		p.SetState(137)
 		p.GetErrorHandler().Sync(p)
 		if p.HasError() {
 			goto errorExit
@@ -3227,13 +3277,13 @@ func (p *DCPUParser) LocationOffsetByRegister() (localctx ILocationOffsetByRegis
 		switch p.GetTokenStream().LA(1) {
 		case DCPUParserIDENTIFIER:
 			{
-				p.SetState(133)
+				p.SetState(135)
 				p.Label()
 			}
 
 		case DCPUParserNUMBER:
 			{
-				p.SetState(134)
+				p.SetState(136)
 				p.Value()
 			}
 
@@ -3242,7 +3292,7 @@ func (p *DCPUParser) LocationOffsetByRegister() (localctx ILocationOffsetByRegis
 			goto errorExit
 		}
 		{
-			p.SetState(137)
+			p.SetState(139)
 			p.Match(DCPUParserT__8)
 			if p.HasError() {
 				// Recognition error - abort rule
@@ -3250,7 +3300,7 @@ func (p *DCPUParser) LocationOffsetByRegister() (localctx ILocationOffsetByRegis
 			}
 		}
 		{
-			p.SetState(138)
+			p.SetState(140)
 			p.Match(DCPUParserREGISTER)
 			if p.HasError() {
 				// Recognition error - abort rule
@@ -3263,7 +3313,7 @@ func (p *DCPUParser) LocationOffsetByRegister() (localctx ILocationOffsetByRegis
 		goto errorExit
 	}
 	{
-		p.SetState(142)
+		p.SetState(144)
 		p.Match(DCPUParserT__7)
 		if p.HasError() {
 			// Recognition error - abort rule
@@ -3369,7 +3419,7 @@ func (p *DCPUParser) Value() (localctx IValueContext) {
 	p.EnterRule(localctx, 34, DCPUParserRULE_value)
 	p.EnterOuterAlt(localctx, 1)
 	{
-		p.SetState(144)
+		p.SetState(146)
 		p.Match(DCPUParserNUMBER)
 		if p.HasError() {
 			// Recognition error - abort rule
@@ -3517,7 +3567,7 @@ func (p *DCPUParser) UnaryOpcode() (localctx IUnaryOpcodeContext) {
 
 	p.EnterOuterAlt(localctx, 1)
 	{
-		p.SetState(146)
+		p.SetState(148)
 		_la = p.GetTokenStream().LA(1)
 
 		if !((int64(_la) & ^0x3f) == 0 && ((int64(1)<<_la)&35958428274786304) != 0) {
@@ -3638,7 +3688,7 @@ func (p *DCPUParser) DebugOperation() (localctx IDebugOperationContext) {
 	p.EnterRule(localctx, 38, DCPUParserRULE_debugOperation)
 	p.EnterOuterAlt(localctx, 1)
 	{
-		p.SetState(148)
+		p.SetState(150)
 		p.DebugOpcode()
 	}
 
@@ -3747,7 +3797,7 @@ func (p *DCPUParser) DebugOpcode() (localctx IDebugOpcodeContext) {
 
 	p.EnterOuterAlt(localctx, 1)
 	{
-		p.SetState(150)
+		p.SetState(152)
 		_la = p.GetTokenStream().LA(1)
 
 		if !(_la == DCPUParserALT || _la == DCPUParserDUM) {

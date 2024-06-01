@@ -350,6 +350,20 @@ func (a *assembler) VisitArgumentB(ctx *parser.ArgumentBContext) interface{} {
 
 	case ctx.Location() != nil:
 		return []interface{}{uint16(dcpu.Location), a.Visit(ctx.Location())}
+
+	case ctx.Label() != nil:
+		return []interface{}{uint16(dcpu.Literal), a.Visit(ctx.Label())}
+
+	case ctx.Value() != nil:
+		value := a.Visit(ctx.Value()).(uint16)
+		switch {
+		case value == 0xffff:
+			return []interface{}{uint16(dcpu.LiteralNegative1)}
+		case 0 <= value && value <= 30:
+			return []interface{}{uint16(dcpu.Literal0 + value)}
+		default:
+			return []interface{}{uint16(dcpu.Literal), value}
+		}
 	}
 	return []interface{}{uint16(0)}
 }
