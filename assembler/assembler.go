@@ -149,13 +149,13 @@ func (a *assembler) VisitDatum(ctx *parser.DatumContext) interface{} {
 
 func (a *assembler) VisitBinaryOperation(ctx *parser.BinaryOperationContext) interface{} {
 	opcode := a.Visit(ctx.BinaryOpcode()).(uint16)
-	argumentB := a.Visit(ctx.ArgumentB()).([]interface{})
 	argumentA := a.Visit(ctx.ArgumentA()).([]interface{})
+	argumentB := a.Visit(ctx.ArgumentB()).([]interface{})
 	result := []interface{}{
 		opcode | argumentB[0].(uint16)<<dcpu.BasicValueShiftB | argumentA[0].(uint16)<<dcpu.BasicValueShiftA,
 	}
-	result = append(result, argumentB[1:]...)
 	result = append(result, argumentA[1:]...)
+	result = append(result, argumentB[1:]...)
 	return result
 }
 

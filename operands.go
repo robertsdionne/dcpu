@@ -101,7 +101,7 @@ const (
 	Literal11
 	// Literal12 signifies 0xc.
 	Literal12
-	// Literal12 signifies 0xd.
+	// Literal13 signifies 0xd.
 	Literal13
 	// Literal14 signifies 0xe.
 	Literal14

@@ -162,14 +162,14 @@ func (d *DCPU) ExecuteInstruction(skip bool) {
 		operandA := (instruction & BasicValueMaskA) >> BasicValueShiftA
 		operandB := (instruction & BasicValueMaskB) >> BasicValueShiftB
 
-		pb, b := d.getOperandAddressOrLiteral(operandB, true)
-		if pb != nil {
-			b = *pb
-		}
-
 		pa, a := d.getOperandAddressOrLiteral(operandA, false)
 		if pa != nil {
 			a = *pa
+		}
+
+		pb, b := d.getOperandAddressOrLiteral(operandB, true)
+		if pb != nil {
+			b = *pb
 		}
 
 		// log.Println("instruction", instruction)

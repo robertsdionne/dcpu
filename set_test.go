@@ -281,7 +281,7 @@ func TestExecuteInstructions_setLocationOffsetByRegisterWithLocationOffsetByRegi
 	dcpu.Load(0, []uint16{
 		Basic(Set, RegisterA, Literal10),
 		Basic(Set, LocationOffsetByRegisterA, Literal13), 0x1000,
-		Basic(Set, LocationOffsetByRegisterA, LocationOffsetByRegisterA), 0x2000, 0x1000,
+		Basic(Set, LocationOffsetByRegisterA, LocationOffsetByRegisterA), 0x1000, 0x2000,
 	})
 
 	dcpu.ExecuteInstructions(3)
