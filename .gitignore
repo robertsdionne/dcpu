@@ -6,3 +6,8 @@
 /stdinout
 
 parser/*.tokens
+
+
+# Added by cargo
+
+/target
