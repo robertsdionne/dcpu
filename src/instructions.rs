@@ -11,7 +11,7 @@ const SPECIAL_OPCODE_SHIFT: u16 = BASIC_VALUE_SHIFT_B;
 const DEBUG_OPCODE_MASK: u16 = BASIC_VALUE_MASK_A;
 const DEBUG_OPCODE_SHIFT: u16 = BASIC_VALUE_SHIFT_A;
 
-#[derive(Debug)]
+#[derive(Copy, Clone, Debug, PartialEq)]
 pub enum Instruction {
     Basic(BasicOpcode, OperandB, OperandA),
     Special(SpecialOpcode, OperandA),
@@ -37,8 +37,24 @@ impl From<u16> for Instruction {
     }
 }
 
+impl Into<u16> for Instruction {
+    fn into(self) -> u16 {
+        match self {
+            Instruction::Basic(basic_opcode, operand_b, operand_a) => {
+                let operand_a: u16 = operand_a.into();
+                basic_opcode as u16 | (operand_b as u16) << BASIC_VALUE_SHIFT_B | operand_a << BASIC_VALUE_SHIFT_A
+            }
+            Instruction::Special(special_opcode, operand_a) => {
+                let operand_a: u16 = operand_a.into();
+                (special_opcode as u16) << SPECIAL_OPCODE_SHIFT | operand_a << BASIC_VALUE_SHIFT_A
+            }
+            Instruction::Debug(debug_opcode) => (debug_opcode as u16) << DEBUG_OPCODE_SHIFT,
+        }
+    }
+}
+
 #[allow(dead_code)]
-#[derive(Debug, PartialEq)]
+#[derive(Copy, Clone, Debug, PartialEq)]
 #[repr(u16)]
 pub enum BasicOpcode {
     Reserved = 0x0,
@@ -82,7 +98,7 @@ impl From<u16> for BasicOpcode {
 }
 
 #[allow(dead_code)]
-#[derive(Debug, PartialEq)]
+#[derive(Copy, Clone, Debug, PartialEq)]
 #[repr(u16)]
 pub enum SpecialOpcode {
     Reserved = 0x0,
@@ -125,7 +141,7 @@ impl From<u16> for SpecialOpcode {
 }
 
 #[allow(dead_code)]
-#[derive(Debug, PartialEq)]
+#[derive(Copy, Clone, Debug, PartialEq)]
 #[repr(u16)]
 pub enum DebugOpcode {
     Noop = 0x0,
@@ -200,7 +216,7 @@ impl From<u16> for DebugOpcode {
     }
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Copy, Clone, Debug, PartialEq)]
 pub enum OperandA {
     LeftValue(OperandB),
     SmallLiteral(i8), // 32 values: -1 to 30
@@ -213,6 +229,15 @@ impl From<u16> for OperandA {
             _ => OperandA::SmallLiteral(
                 ((instruction & BASIC_SMALL_VALUE_MASK_A) >> BASIC_VALUE_SHIFT_A) as i8 - 1
             ),
+        }
+    }
+}
+
+impl Into<u16> for OperandA {
+    fn into(self) -> u16 {
+        match self {
+            OperandA::LeftValue(operand_b) => operand_b as u16,
+            OperandA::SmallLiteral(literal) => literal as u16,
         }
     }
 }
@@ -258,5 +283,25 @@ pub enum OperandB {
 impl From<u16> for OperandB {
     fn from(instruction: u16) -> Self {
         unsafe { mem::transmute((instruction & BASIC_VALUE_MASK_B) >> BASIC_VALUE_SHIFT_B) }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn roundtrip() {
+        let instruction = Instruction::Basic(BasicOpcode::Add, OperandB::Extra, OperandA::LeftValue(OperandB::LocationOffsetByRegisterA));
+        let code: u16 = instruction.clone().into();
+        assert_eq!(instruction, Instruction::from(code));
+
+        let instruction = Instruction::Special(SpecialOpcode::HardwareNumberConnected, OperandA::LeftValue(OperandB::LocationOffsetByRegisterA));
+        let code: u16 = instruction.clone().into();
+        assert_eq!(instruction, Instruction::from(code));
+
+        let instruction = Instruction::Debug(DebugOpcode::DumpState);
+        let code: u16 = instruction.clone().into();
+        assert_eq!(instruction, Instruction::from(code));
     }
 }
