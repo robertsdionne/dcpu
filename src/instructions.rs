@@ -237,7 +237,7 @@ impl Into<u16> for OperandA {
     fn into(self) -> u16 {
         match self {
             OperandA::LeftValue(operand_b) => operand_b as u16,
-            OperandA::SmallLiteral(literal) => 0x20 | (literal + 1) as u16,
+            OperandA::SmallLiteral(literal) => 0x20 | ((literal + 1) as u16 & BASIC_OPCODE_MASK),
         }
     }
 }
