@@ -233,12 +233,12 @@ impl Dcpu {
                         let length = self.memory[0xf000];
                         if length > 0 {
                             let alert = String::from_utf16_lossy(&self.memory[0xf001..0xf001+length as usize]);
-                            println!("alert: {}", alert);
+                            // println!("alert: {}", alert);
                         } else {
-                            println!("alert");
+                            // println!("alert");
                         }
                     },
-                    DebugOpcode::DumpState => println!("{:04x?} {:04x?}", self, hardware),
+                    DebugOpcode::DumpState => {} //println!("{:04x?} {:04x?}", self, hardware),
                     _ => todo!(),
                 }
             }

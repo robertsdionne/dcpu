@@ -1,21 +1,40 @@
 :main
 	ias handleInterrupt
-	set a, 3
 	set b, 1
 	hwi 0
-	dum
+	set a, 2
+	set b, 1
+	hwi 0
+	set a, 3
+	set b, 2
+	hwi 1
 	sub pc, 1
 
 :handleInterrupt
+    ife a, 1
+    jsr handleClock
+    ife a, 2
+    jsr handleKey
+    rfi 0
+
+:handleClock
+    set a, 1
+    hwi 0
+    mod c, 4
+    set [0xf000], [graphics + c]
+    set [0xf01f], [graphics + c]
+    set [0xf160], [graphics + c]
+    set [0xf17f], [graphics + c]
+    set pc, pop
+
+:graphics
+    dat "|/-\"
+
+:handleKey
 	set a, 1
-	hwi 0
-	set b, c
-	set a, 2
-	hwi 0
-	ife c, 0
-		rfi 0
-	add [0xf000], 1
-	set a, [0xf000]
-	set [0xf000+a], b
-	alt
-	rfi 0
+	hwi 1
+	add [0xefff], 1
+	set a, [0xefff]
+	mod a, 0x180
+	set [0xf000+a], c
+	set pc, pop
