@@ -1,3 +1,6 @@
+; Displays spinners in the corners of a virtual screen.
+; Writes keyboard input into the screen and wraps around.
+
 :main
 	ias handleInterrupt
 	set b, 1

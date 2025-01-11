@@ -9,6 +9,7 @@ mod dcpu_test;
 mod clock;
 mod keyboard;
 mod cursive;
+mod stdout;
 
 fn main() -> Result<(), Box<dyn error::Error>> {
     match Cli::parse() {
@@ -21,7 +22,9 @@ fn run(program: &str) -> Result<(), Box<dyn error::Error>> {
     let data = fs::read(program)?;
 
     let mut clock = clock::Clock::default();
+    let mut stdout = stdout::Stdout;
     let mut hardware = vec![&mut clock as &mut dyn hardware::Hardware];
+    hardware.push(&mut stdout);
     let mut dcpu = dcpu::Dcpu::default();
     dcpu.load_bytes(0, &data);
 

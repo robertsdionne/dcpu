@@ -78,6 +78,10 @@ impl Dcpu {
         self.program_counter = self.program_counter.wrapping_add(1);
         let instruction = Instruction::from(instruction);
 
+        if !skip {
+            // println!("{:?}", instruction);
+        }
+
         match instruction {
             Instruction::Basic(basic_opcode, operand_b, operand_a) => {
                 use instructions::{BasicOpcode, OperandA};
