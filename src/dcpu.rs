@@ -236,7 +236,7 @@ impl Dcpu {
                     DebugOpcode::Alert => {
                         let length = self.memory[0xf000];
                         if length > 0 {
-                            let alert = String::from_utf16_lossy(&self.memory[0xf001..0xf001+length as usize]);
+                            let _alert = String::from_utf16_lossy(&self.memory[0xf001..0xf001+length as usize]);
                             // println!("alert: {}", alert);
                         } else {
                             // println!("alert");
