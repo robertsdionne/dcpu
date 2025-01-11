@@ -4,7 +4,7 @@ use crate::hardware;
 
 #[derive(Debug, Default)]
 pub struct Keyboard {
-    pub message: u16,
+    message: u16,
     buffer: Vec<u16>,
     state: collections::HashSet<u16>,
     previous_state: collections::HashSet<u16>,

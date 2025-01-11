@@ -4,9 +4,9 @@ use crate::hardware;
 
 #[derive(Debug, Default)]
 pub struct Clock {
-    pub interval: u16,
-    pub message: u16,
-    pub ticks: u16,
+    interval: u16,
+    message: u16,
+    ticks: u16,
     last_tick: Option<time::Instant>,
 }
 

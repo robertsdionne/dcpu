@@ -12,6 +12,7 @@ mod keyboard;
 mod stderr;
 mod stdin;
 mod stdout;
+mod floppy;
 
 fn main() -> Result<(), Box<dyn error::Error>> {
     match Cli::parse() {
