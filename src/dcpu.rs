@@ -443,7 +443,19 @@ impl Dcpu {
         operand
     }
 
-    fn maybe_trigger_interrupt(&mut self, interrupt: u16) {}
+    fn maybe_trigger_interrupt(&mut self, interrupt: u16) {
+        if self.interrupt_address == 0 {
+            return;
+        }
+
+        self.queue_interrupts = true;
+        self.stack_pointer = self.stack_pointer.wrapping_sub(1);
+        self.memory[self.stack_pointer as usize] = self.program_counter;
+        self.stack_pointer = self.stack_pointer.wrapping_sub(1);
+        self.memory[self.stack_pointer as usize] = self.register_a;
+        self.program_counter = self.interrupt_address;
+        self.register_a = interrupt;
+    }
 }
 
 enum Operand<'a> {

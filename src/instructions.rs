@@ -122,7 +122,7 @@ pub enum OperandA {
 
 impl From<u16> for OperandA {
     fn from(instruction: u16) -> Self {
-        match instruction & 0b1000_0000_0000_0000 {
+        match instruction & 0x8000 {
             0 => OperandA::LeftValue(OperandB::from(instruction >> 5)),
             _ => OperandA::SmallLiteral(
                 ((instruction & BASIC_SMALL_VALUE_MASK_A) >> BASIC_VALUE_SHIFT_A) as i8 - 1
