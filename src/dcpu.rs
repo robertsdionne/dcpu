@@ -28,6 +28,7 @@ impl Dcpu {
         self.memory[i..i + program.len()].copy_from_slice(&program);
     }
 
+    #[allow(dead_code)]
     pub fn execute(&mut self, hardware: &mut [&mut dyn hardware::Hardware]) {
         loop {
             self.execute_instruction(hardware, false);
@@ -69,19 +70,10 @@ impl Dcpu {
                 use instructions::{BasicOpcode, OperandA};
 
                 let a = self.get_operand(operand_a, false);
-                let a = match a {
-                    Operand::Address(address) => *address,
-                    Operand::Literal(literal) => literal,
-                };
+                let (_, a) = a.dereference();
 
                 let b = self.get_operand(OperandA::LeftValue(operand_b), true);
-                let (pb, b) = match b {
-                    Operand::Address(address) => {
-                        let value = *address;
-                        (Some(address), value)
-                    }
-                    Operand::Literal(literal) => (None, literal),
-                };
+                let (pb, b) = b.dereference();
 
                 if skip {
                     self.stack_pointer = stack_pointer;
@@ -176,13 +168,7 @@ impl Dcpu {
                 let interrupt_address = self.interrupt_address;
 
                 let a = self.get_operand(operand_a, assignable);
-                let (pa, a) = match a {
-                    Operand::Address(address) => {
-                        let value = *address;
-                        (Some(address), value)
-                    }
-                    Operand::Literal(literal) => (None, literal),
-                };
+                let (pa, a) = a.dereference();
 
                 if skip {
                     self.stack_pointer = stack_pointer;
@@ -461,6 +447,18 @@ impl Dcpu {
 enum Operand<'a> {
     Address(&'a mut u16),
     Literal(u16),
+}
+
+impl <'a> Operand<'a> {
+    fn dereference(self) -> (Option<&'a mut u16>, u16) {
+        match self {
+            Operand::Address(address) => {
+                let value = *address;
+                (Some(address), value)
+            }
+            Operand::Literal(literal) => (None, literal),
+        }
+    }
 }
 
 impl Default for Dcpu {

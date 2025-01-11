@@ -36,7 +36,7 @@ fn main() -> Result<(), Box<dyn error::Error>> {
 struct Monitor;
 
 impl Hardware for Monitor {
-    fn execute(&mut self, dcpu: &mut Dcpu) {
+    fn execute(&mut self, _dcpu: &mut Dcpu) {
         println!("hardware execute");
     }
 
@@ -52,7 +52,7 @@ impl Hardware for Monitor {
         0x17
     }
 
-    fn handle_hardware_interrupt(&mut self, dcpu: &mut Dcpu) {
+    fn handle_hardware_interrupt(&mut self, _dcpu: &mut Dcpu) {
         println!("hardware interrupt from hardware");
     }
 }
