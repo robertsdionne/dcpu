@@ -11,6 +11,7 @@ import (
 	"github.com/robertsdionne/dcpu/hardware"
 	"github.com/robertsdionne/dcpu/keyboard"
 	"github.com/robertsdionne/dcpu/monitor"
+	"github.com/robertsdionne/dcpu/printer"
 	"github.com/robertsdionne/dcpu/sped3"
 	"github.com/robertsdionne/dcpu/stderr"
 	"github.com/robertsdionne/dcpu/stdin"
@@ -42,13 +43,14 @@ func main() {
 	o := stdout.Device{}
 	e := stderr.Device{}
 	f := floppy.Device{}
+	p := printer.Device{}
 
 	if *useSPED3 {
 		cpu.Hardware = append(cpu.Hardware, &s)
 	} else {
 		cpu.Hardware = append(cpu.Hardware, &m)
 	}
-	cpu.Hardware = append(cpu.Hardware, &k, &c, &i, &o, &e, &f)
+	cpu.Hardware = append(cpu.Hardware, &k, &c, &i, &o, &e, &f, &p)
 
 	k.Init()
 	if *floppyDisk != "" {

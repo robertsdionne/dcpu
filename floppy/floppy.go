@@ -2,6 +2,7 @@ package floppy
 
 import (
 	"encoding/binary"
+	"io"
 	"log"
 	"os"
 
@@ -14,6 +15,8 @@ type Device struct {
 	Message   uint16
 	State     uint16
 }
+
+var _ dcpu.Hardware = &Device{}
 
 const (
 	ID             = 0x4fd524c5
@@ -114,7 +117,7 @@ func (d *Device) HandleHardwareInterrupt(dcpu *dcpu.DCPU) {
 		}
 
 		offset := int64(1024 * (dcpu.RegisterX % 1440))
-		_, err := d.file.Seek(offset, os.SEEK_SET)
+		_, err := d.file.Seek(offset, io.SeekStart)
 		if err != nil {
 			log.Fatalln(err)
 		}
@@ -149,7 +152,7 @@ func (d *Device) HandleHardwareInterrupt(dcpu *dcpu.DCPU) {
 		}
 
 		offset := int64(1024 * (dcpu.RegisterX % 1440))
-		_, err := d.file.Seek(offset, os.SEEK_SET)
+		_, err := d.file.Seek(offset, io.SeekStart)
 		if err != nil {
 			log.Fatalln(err)
 		}

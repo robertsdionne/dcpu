@@ -1,11 +1,46 @@
+use std::mem;
 
-enum Instruction {
+const BASIC_OPCODE_MASK: u16 = 0x001f;
+const BASIC_VALUE_MASK_A: u16 = 0xfc00;
+const BASIC_SMALL_VALUE_MASK_A: u16 = 0x7c00;
+const BASIC_VALUE_MASK_B: u16 = 0x03e0;
+const BASIC_VALUE_SHIFT_A: u16 = 0x000a;
+const BASIC_VALUE_SHIFT_B: u16 = 0x0005;
+const SPECIAL_OPCODE_MASK: u16 = BASIC_VALUE_MASK_B;
+const SPECIAL_OPCODE_SHIFT: u16 = BASIC_VALUE_SHIFT_B;
+const DEBUG_OPCODE_MASK: u16 = BASIC_VALUE_MASK_A;
+const DEBUG_OPCODE_SHIFT: u16 = BASIC_VALUE_SHIFT_A;
+
+#[derive(Debug)]
+pub enum Instruction {
     Basic(BasicOpcode, OperandB, OperandA),
     Special(SpecialOpcode, OperandA),
     Debug(DebugOpcode),
 }
 
-enum BasicOpcode {
+impl From<u16> for Instruction {
+    fn from(instruction: u16) -> Self {
+        let basic_opcode = BasicOpcode::from(instruction);
+        let special_opcode = SpecialOpcode::from(instruction);
+        let debug_opcode = DebugOpcode::from(instruction);
+
+        if basic_opcode != BasicOpcode::Reserved {
+            let operand_a = OperandA::from(instruction);
+            let operand_b = OperandB::from(instruction);
+            Instruction::Basic(basic_opcode, operand_b, operand_a)
+        } else if special_opcode != SpecialOpcode::Reserved {
+            let operand_a = OperandA::from(instruction);
+            Instruction::Special(special_opcode, operand_a)
+        } else {
+            Instruction::Debug(debug_opcode)
+        }
+    }
+}
+
+#[allow(dead_code)]
+#[derive(Debug, PartialEq)]
+#[repr(u16)]
+pub enum BasicOpcode {
     Reserved = 0x0,
     Set = 0x1,
     Add = 0x2,
@@ -36,7 +71,16 @@ enum BasicOpcode {
     SetThenDecrement = 0x1f,
 }
 
-enum SpecialOpcode {
+impl From<u16> for BasicOpcode {
+    fn from(instruction: u16) -> Self {
+        unsafe { mem::transmute(instruction & BASIC_OPCODE_MASK) }
+    }
+}
+
+#[allow(dead_code)]
+#[derive(Debug, PartialEq)]
+#[repr(u16)]
+pub enum SpecialOpcode {
     Reserved = 0x0,
     JumpSubroutine = 0x1,
     InterruptTrigger = 0x8,
@@ -49,18 +93,48 @@ enum SpecialOpcode {
     HardwareInterrupt = 0x12,
 }
 
-enum DebugOpcode {
+impl From<u16> for SpecialOpcode {
+    fn from(instruction: u16) -> Self {
+        unsafe { mem::transmute((instruction & SPECIAL_OPCODE_MASK) >> SPECIAL_OPCODE_SHIFT) }
+    }
+}
+
+#[allow(dead_code)]
+#[derive(Debug, PartialEq)]
+#[repr(u16)]
+pub enum DebugOpcode {
     Noop = 0x0,
     Alert = 0x1,
     DumpState = 0x2,
 }
 
-enum OperandA {
-    LeftValue(OperandB),
-    SmallLiteral(u8), // 32 values: -1 to 30
+impl From<u16> for DebugOpcode {
+    fn from(instruction: u16) -> Self {
+        unsafe { mem::transmute((instruction & DEBUG_OPCODE_MASK) >> DEBUG_OPCODE_SHIFT) }
+    }
 }
 
-enum OperandB {
+#[derive(Debug, PartialEq)]
+pub enum OperandA {
+    LeftValue(OperandB),
+    SmallLiteral(i8), // 32 values: -1 to 30
+}
+
+impl From<u16> for OperandA {
+    fn from(instruction: u16) -> Self {
+        match instruction & 0b1000_0000_0000_0000 {
+            0 => OperandA::LeftValue(OperandB::from(instruction >> 5)),
+            _ => OperandA::SmallLiteral(
+                ((instruction & BASIC_SMALL_VALUE_MASK_A) >> BASIC_VALUE_SHIFT_A) as i8 - 1
+            ),
+        }
+    }
+}
+
+#[allow(dead_code)]
+#[derive(Copy, Clone, Debug, PartialEq)]
+#[repr(u16)]
+pub enum OperandB {
     RegisterA,
     RegisterB,
     RegisterC,
@@ -93,4 +167,10 @@ enum OperandB {
     Extra,
     Location,
     Literal,
+}
+
+impl From<u16> for OperandB {
+    fn from(instruction: u16) -> Self {
+        unsafe { mem::transmute((instruction & BASIC_VALUE_MASK_B) >> BASIC_VALUE_SHIFT_B) }
+    }
 }

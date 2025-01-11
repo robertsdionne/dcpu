@@ -1,3 +1,4 @@
+/.idea/
 /dcpu
 /floppydisk
 /hologram
@@ -10,4 +11,4 @@ parser/*.tokens
 
 # Added by cargo
 
-/target
+/target/
