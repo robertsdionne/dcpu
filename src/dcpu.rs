@@ -145,14 +145,14 @@ impl Dcpu {
                     BasicOpcode::ShiftLeft => if let Some(pb) = pb {
                         self.extra = Self::shift_left(pb, b, a);
                     }
-                    BasicOpcode::IfBitSet => self.skip_instruction_if(hardware, (b & a) == 0),
-                    BasicOpcode::IfClear => self.skip_instruction_if(hardware, (b & a) != 0),
-                    BasicOpcode::IfEqual => self.skip_instruction_if(hardware, b != a),
-                    BasicOpcode::IfNotEqual => self.skip_instruction_if(hardware, b == a),
-                    BasicOpcode::IfGreaterThan => self.skip_instruction_if(hardware, b <= a),
-                    BasicOpcode::IfAbove => self.skip_instruction_if(hardware, (b as i16) <= (a as i16)),
-                    BasicOpcode::IfLessThan => self.skip_instruction_if(hardware, b >= a),
-                    BasicOpcode::IfUnder => self.skip_instruction_if(hardware, (b as i16) >= (a as i16)),
+                    BasicOpcode::IfBitSet => self.do_next_instruction_if(hardware, (b & a) != 0),
+                    BasicOpcode::IfClear => self.do_next_instruction_if(hardware, (b & a) == 0),
+                    BasicOpcode::IfEqual => self.do_next_instruction_if(hardware, b == a),
+                    BasicOpcode::IfNotEqual => self.do_next_instruction_if(hardware, b != a),
+                    BasicOpcode::IfGreaterThan => self.do_next_instruction_if(hardware, b > a),
+                    BasicOpcode::IfAbove => self.do_next_instruction_if(hardware, (b as i16) > (a as i16)),
+                    BasicOpcode::IfLessThan => self.do_next_instruction_if(hardware, b < a),
+                    BasicOpcode::IfUnder => self.do_next_instruction_if(hardware, (b as i16) < (a as i16)),
                     BasicOpcode::SetThenIncrement => if let Some(pb) = pb {
                         *pb = a;
                         self.register_i = self.register_i.wrapping_add(1);
@@ -211,6 +211,11 @@ impl Dcpu {
             }
             Instruction::Debug(debug_opcode) => {
                 use instructions::DebugOpcode;
+
+                if skip {
+                    self.stack_pointer = stack_pointer;
+                    return;
+                }
 
                 match debug_opcode {
                     DebugOpcode::Noop => {},
@@ -300,8 +305,8 @@ impl Dcpu {
         (result >> 16) as u16
     }
 
-    fn skip_instruction_if(&mut self, hardware: &mut [&mut dyn hardware::Hardware], condition: bool) {
-        if condition {
+    fn do_next_instruction_if(&mut self, hardware: &mut [&mut dyn hardware::Hardware], condition: bool) {
+        if !condition {
             self.execute_instruction(hardware, true);
         }
     }
