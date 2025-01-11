@@ -157,6 +157,7 @@ impl Dcpu {
                     },
                     BasicOpcode::AddWithCarry => todo!(),
                     BasicOpcode::SubtractWithCarry => todo!(),
+                    _ => todo!(),
                 }
             }
             Instruction::Special(special_opcode, operand_a) => {
@@ -197,6 +198,7 @@ impl Dcpu {
                             hardware.handle_hardware_interrupt(self);
                         }
                     }
+                    _ => todo!(),
                 }
             }
             Instruction::Debug(debug_opcode) => {
@@ -214,6 +216,7 @@ impl Dcpu {
                         }
                     },
                     DebugOpcode::DumpState => println!("{:04x?}", self),
+                    _ => todo!(),
                 }
             }
         }
