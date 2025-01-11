@@ -24,7 +24,15 @@ pub struct Dcpu {
 
 impl Dcpu {
     pub fn load(&mut self, i: usize, program: &Vec<u8>) {
-        let program = program.chunks(2).map(|c| u16::from_le_bytes([c[0], c[1]])).collect::<Vec<_>>();
+        let program = program.chunks(2)
+            .map(|c| {
+                match c {
+                    [a, b] => u16::from_le_bytes([*a, *b]),
+                    [b] => *b as u16,
+                    _ => unreachable!(),
+                }
+            })
+            .collect::<Vec<_>>();
         self.memory[i..i + program.len()].copy_from_slice(&program);
     }
 
@@ -93,7 +101,7 @@ impl Dcpu {
                 }
 
                 match basic_opcode {
-                    BasicOpcode::Reserved => panic!("BasicOpcode::Reserved is impossible here."),
+                    BasicOpcode::Reserved => unreachable!("BasicOpcode::Reserved"),
                     BasicOpcode::Set => if let Some(pb) = pb {
                         Self::set(pb, a);
                     }
@@ -177,7 +185,7 @@ impl Dcpu {
                 }
 
                 match special_opcode {
-                    SpecialOpcode::Reserved => panic!("SpecialOpcode::Reserved is impossible here."),
+                    SpecialOpcode::Reserved => unreachable!("SpecialOpcode::Reserved"),
                     SpecialOpcode::JumpSubroutine => self.jump_sub_routine(a),
                     SpecialOpcode::InterruptTrigger => self.interrupt(a),
                     SpecialOpcode::InterruptAddressGet => if let Some(pa) = pa {
