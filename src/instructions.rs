@@ -225,7 +225,7 @@ pub enum OperandA {
 impl From<u16> for OperandA {
     fn from(instruction: u16) -> Self {
         match instruction & 0x8000 {
-            0 => OperandA::LeftValue(OperandB::from(instruction >> 5)),
+            0 => OperandA::LeftValue(OperandB::from(instruction >> BASIC_VALUE_SHIFT_B)),
             _ => OperandA::SmallLiteral(
                 ((instruction & BASIC_SMALL_VALUE_MASK_A) >> BASIC_VALUE_SHIFT_A) as i8 - 1
             ),
@@ -237,7 +237,7 @@ impl Into<u16> for OperandA {
     fn into(self) -> u16 {
         match self {
             OperandA::LeftValue(operand_b) => operand_b as u16,
-            OperandA::SmallLiteral(literal) => literal as u16,
+            OperandA::SmallLiteral(literal) => 0x20 | (literal + 1) as u16,
         }
     }
 }

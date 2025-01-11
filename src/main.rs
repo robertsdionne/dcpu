@@ -14,7 +14,7 @@ fn main() -> Result<(), Box<dyn error::Error>> {
     let mut monitor = Monitor;
     let mut hardware = vec![&mut monitor as &mut dyn Hardware];
     let mut dcpu = dcpu::Dcpu::default();
-    dcpu.load(0, &data);
+    dcpu.load_bytes(0, &data);
     let data2 = vec![
         10, 0,
         'a' as u8, 0,
@@ -28,7 +28,7 @@ fn main() -> Result<(), Box<dyn error::Error>> {
         'i' as u8, 0,
         'j' as u8, 0,
     ];
-    dcpu.load(0xf000, &data2);
+    dcpu.load_bytes(0xf000, &data2);
     dcpu.execute_instructions(&mut hardware, 6);
     Ok(())
 }
