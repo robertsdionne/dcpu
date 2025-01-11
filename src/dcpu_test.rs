@@ -86,38 +86,6 @@ fn multiply_multiply_register_with_overflow() {
 }
 
 #[test]
-fn if_above_with_lesser_small_literal() {
-    let mut cpu = Dcpu::default();
-    let mut hardware = vec![];
-    cpu.load(0, &vec![
-        Instruction::Basic(BasicOpcode::Set, OperandB::RegisterA, OperandA::SmallLiteral(30)).into(),
-        Instruction::Basic(BasicOpcode::IfAbove, OperandB::RegisterA, OperandA::SmallLiteral(-1)).into(),
-        Instruction::Basic(BasicOpcode::Set, OperandB::PushOrPop, OperandA::SmallLiteral(13)).into(),
-        Instruction::Basic(BasicOpcode::Set, OperandB::PushOrPop, OperandA::SmallLiteral(14)).into(),
-    ]);
-
-    cpu.execute_instructions(&mut hardware, 3);
-    assert_eq!(13, cpu.memory[cpu.stack_pointer as usize]);
-    assert_eq!(0xffff, cpu.stack_pointer);
-}
-
-#[test]
-fn if_above_with_greater_small_literal() {
-    let mut cpu = Dcpu::default();
-    let mut hardware = vec![];
-    cpu.load(0, &vec![
-        Instruction::Basic(BasicOpcode::Set, OperandB::RegisterA, OperandA::SmallLiteral(-1)).into(),
-        Instruction::Basic(BasicOpcode::IfAbove, OperandB::RegisterA, OperandA::SmallLiteral(30)).into(),
-        Instruction::Basic(BasicOpcode::Set, OperandB::PushOrPop, OperandA::SmallLiteral(13)).into(),
-        Instruction::Basic(BasicOpcode::Set, OperandB::PushOrPop, OperandA::SmallLiteral(14)).into(),
-    ]);
-
-    cpu.execute_instructions(&mut hardware, 3);
-    assert_eq!(14, cpu.memory[cpu.stack_pointer as usize]);
-    assert_eq!(0xffff, cpu.stack_pointer);
-}
-
-#[test]
 fn if_clear_with_common_bits() {
     let mut cpu = Dcpu::default();
     let mut hardware = vec![];
@@ -212,5 +180,37 @@ fn if_equal_does_not_skip_conditionals_when_equal() {
 
     cpu.execute_instructions(&mut hardware, 4);
     assert_eq!(12, cpu.memory[cpu.stack_pointer as usize]);
+    assert_eq!(0xffff, cpu.stack_pointer);
+}
+
+#[test]
+fn if_above_with_lesser_small_literal() {
+    let mut cpu = Dcpu::default();
+    let mut hardware = vec![];
+    cpu.load(0, &vec![
+        Instruction::Basic(BasicOpcode::Set, OperandB::RegisterA, OperandA::SmallLiteral(30)).into(),
+        Instruction::Basic(BasicOpcode::IfAbove, OperandB::RegisterA, OperandA::SmallLiteral(-1)).into(),
+        Instruction::Basic(BasicOpcode::Set, OperandB::PushOrPop, OperandA::SmallLiteral(13)).into(),
+        Instruction::Basic(BasicOpcode::Set, OperandB::PushOrPop, OperandA::SmallLiteral(14)).into(),
+    ]);
+
+    cpu.execute_instructions(&mut hardware, 3);
+    assert_eq!(13, cpu.memory[cpu.stack_pointer as usize]);
+    assert_eq!(0xffff, cpu.stack_pointer);
+}
+
+#[test]
+fn if_above_with_greater_small_literal() {
+    let mut cpu = Dcpu::default();
+    let mut hardware = vec![];
+    cpu.load(0, &vec![
+        Instruction::Basic(BasicOpcode::Set, OperandB::RegisterA, OperandA::SmallLiteral(-1)).into(),
+        Instruction::Basic(BasicOpcode::IfAbove, OperandB::RegisterA, OperandA::SmallLiteral(30)).into(),
+        Instruction::Basic(BasicOpcode::Set, OperandB::PushOrPop, OperandA::SmallLiteral(13)).into(),
+        Instruction::Basic(BasicOpcode::Set, OperandB::PushOrPop, OperandA::SmallLiteral(14)).into(),
+    ]);
+
+    cpu.execute_instructions(&mut hardware, 3);
+    assert_eq!(14, cpu.memory[cpu.stack_pointer as usize]);
     assert_eq!(0xffff, cpu.stack_pointer);
 }
