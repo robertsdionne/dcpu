@@ -6,6 +6,8 @@ use crate::hardware::Hardware;
 mod dcpu;
 mod hardware;
 mod instructions;
+#[cfg(test)]
+mod dcpu_test;
 
 fn main() -> Result<(), Box<dyn error::Error>> {
     let mut input = io::stdin().lock();
