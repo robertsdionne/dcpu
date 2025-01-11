@@ -1,14 +1,11 @@
 use cursive;
 use cursive::{event, view, views, CursiveExt};
 use cursive::event::Key;
-use std::{error, io};
-use std::io::Read;
+use std::{error, fs};
 use crate::{clock, dcpu, hardware, keyboard};
 
-pub fn run() -> Result<(), Box<dyn error::Error>> {
-    let mut input = io::stdin().lock();
-    let mut data = vec![];
-    input.read_to_end(&mut data)?;
+pub fn run(program: &str) -> Result<(), Box<dyn error::Error>> {
+    let data = fs::read(program)?;
 
     let clock = clock::Clock::default();
     let keyboard = keyboard::Keyboard::default();

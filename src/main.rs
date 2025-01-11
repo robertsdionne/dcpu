@@ -1,5 +1,4 @@
-use std::{error, io};
-use std::io::Read;
+use std::{error, fs};
 use clap::Parser;
 
 mod dcpu;
@@ -12,18 +11,14 @@ mod keyboard;
 mod cursive;
 
 fn main() -> Result<(), Box<dyn error::Error>> {
-    let arguments = Cli::parse();
-
-    match arguments {
-        Cli::Terminal => run(),
-        Cli::Cursive => cursive::run(),
+    match Cli::parse() {
+        Cli::Terminal { program } => run(&program),
+        Cli::Cursive { program } => cursive::run(&program),
     }
 }
 
-fn run() -> Result<(), Box<dyn error::Error>> {
-    let mut input = io::stdin().lock();
-    let mut data = vec![];
-    input.read_to_end(&mut data)?;
+fn run(program: &str) -> Result<(), Box<dyn error::Error>> {
+    let data = fs::read(program)?;
 
     let mut clock = clock::Clock::default();
     let mut hardware = vec![&mut clock as &mut dyn hardware::Hardware];
@@ -36,6 +31,12 @@ fn run() -> Result<(), Box<dyn error::Error>> {
 
 #[derive(clap::Parser)]
 enum Cli {
-    Cursive,
-    Terminal,
+    Cursive {
+        #[clap(index = 1)]
+        program: String,
+    },
+    Terminal {
+        #[clap(index = 1)]
+        program: String,
+    },
 }
