@@ -149,7 +149,9 @@ impl Dcpu {
                     BasicOpcode::ShiftRight => if let Some(pb) = pb {
                         self.extra = Self::shift_right(pb, b, a);
                     }
-                    BasicOpcode::ArithmeticShiftRight => todo!(),
+                    BasicOpcode::ArithmeticShiftRight => if let Some(pb) = pb {
+                        self.extra = Self::arithmetic_shift_right(pb, b, a);
+                    },
                     BasicOpcode::ShiftLeft => if let Some(pb) = pb {
                         self.extra = Self::shift_left(pb, b, a);
                     }
@@ -310,6 +312,11 @@ impl Dcpu {
     fn shift_right(pb: &mut u16, a: u16, b: u16) -> u16 {
         *pb = b >> a;
         b << (0x10 - a)
+    }
+
+    fn arithmetic_shift_right(pb: &mut u16, a: u16, b: u16) -> u16 {
+        *pb = (b as i16 >> a) as u16;
+        ((b as i16) << (0x10 - a)) as u16
     }
 
     fn shift_left(pb: &mut u16, a: u16, b: u16) -> u16 {
