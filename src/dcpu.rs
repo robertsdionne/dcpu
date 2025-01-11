@@ -71,6 +71,7 @@ impl Dcpu {
             self.instruction_count = self.instruction_count.wrapping_add(1)
         }
 
+        let carry = self.extra;
         let stack_pointer = self.stack_pointer;
         let instruction = self.memory[self.program_counter as usize];
         self.program_counter = self.program_counter.wrapping_add(1);
@@ -169,9 +170,13 @@ impl Dcpu {
                         *pb = a;
                         self.register_i = self.register_i.wrapping_sub(1);
                         self.register_j = self.register_j.wrapping_sub(1);
+                    }
+                    BasicOpcode::AddWithCarry => if let Some(pb) = pb {
+                        self.extra = Self::add_with_carry(pb, b, a, carry);
+                    }
+                    BasicOpcode::SubtractWithCarry => if let Some(pb) = pb {
+                        self.extra = Self::subtract_with_carry(pb, b, a, carry);
                     },
-                    BasicOpcode::AddWithCarry => todo!(),
-                    BasicOpcode::SubtractWithCarry => todo!(),
                     _ => todo!(),
                 }
             }
@@ -254,8 +259,9 @@ impl Dcpu {
     }
 
     fn subtract(pb: &mut u16, b: u16, a: u16) -> u16 {
-        let extra = (b < a) as u16;
-        *pb = b.wrapping_sub(a);
+        let result = b as i32 - a as i32;
+        let extra = (result >> 16) as u16;
+        *pb = result as u16;
         extra
     }
 
@@ -316,6 +322,20 @@ impl Dcpu {
         if !condition {
             self.execute_instruction(hardware, true);
         }
+    }
+
+    fn add_with_carry(pb: &mut u16, a: u16, b: u16, carry: u16) -> u16 {
+        let result = b as u32 + a as u32 + carry as u32;
+        let extra = (result >> 16) as u16;
+        *pb = result as u16;
+        extra
+    }
+
+    fn subtract_with_carry(pb: &mut u16, a: u16, b: u16, carry: u16) -> u16 {
+        let result = b as i32 - a as i32 + carry as i32;
+        let extra = (result >> 16) as u16;
+        *pb = result as u16;
+        extra
     }
 
     fn jump_sub_routine(&mut self, a: u16) {
