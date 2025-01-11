@@ -10,6 +10,7 @@ mod clock;
 mod keyboard;
 mod cursive;
 mod stdout;
+mod stdin;
 
 fn main() -> Result<(), Box<dyn error::Error>> {
     match Cli::parse() {
@@ -21,10 +22,12 @@ fn main() -> Result<(), Box<dyn error::Error>> {
 fn run(program: &str) -> Result<(), Box<dyn error::Error>> {
     let data = fs::read(program)?;
 
-    let mut clock = clock::Clock::default();
+    let mut stdin = stdin::Stdin;
     let mut stdout = stdout::Stdout;
-    let mut hardware = vec![&mut clock as &mut dyn hardware::Hardware];
+    let mut clock = clock::Clock::default();
+    let mut hardware = vec![&mut stdin as &mut dyn hardware::Hardware];
     hardware.push(&mut stdout);
+    hardware.push(&mut clock);
     let mut dcpu = dcpu::Dcpu::default();
     dcpu.load_bytes(0, &data);
 
