@@ -50,6 +50,7 @@ impl Dcpu {
         }
     }
 
+    #[allow(dead_code)]
     pub fn execute_instructions(&mut self, hardware: &mut [&mut dyn hardware::Hardware], count: usize) {
         for _ in 0..count {
             self.execute_instruction(hardware, false);
@@ -76,10 +77,6 @@ impl Dcpu {
         let instruction = self.memory[self.program_counter as usize];
         self.program_counter = self.program_counter.wrapping_add(1);
         let instruction = Instruction::from(instruction);
-
-        if !skip {
-            println!("{:?}", instruction);
-        }
 
         match instruction {
             Instruction::Basic(basic_opcode, operand_b, operand_a) => {
@@ -215,7 +212,6 @@ impl Dcpu {
                     }
                     SpecialOpcode::HardwareQuery => self.hardware_query(hardware, a),
                     SpecialOpcode::HardwareInterrupt => {
-                        println!("Hardware interrupt {:?}", a);
                         if let Some(hardware) = hardware.get_mut(a as usize) {
                             hardware.handle_hardware_interrupt(self);
                         }
@@ -242,7 +238,7 @@ impl Dcpu {
                             println!("alert");
                         }
                     },
-                    DebugOpcode::DumpState => println!("{:04x?}", self),
+                    DebugOpcode::DumpState => println!("{:04x?} {:04x?}", self, hardware),
                     _ => todo!(),
                 }
             }
@@ -351,7 +347,7 @@ impl Dcpu {
         self.program_counter = a;
     }
 
-    fn interrupt(&mut self, a: u16) {
+    pub fn interrupt(&mut self, a: u16) {
         if self.queue_interrupts {
             self.interrupt_queue.push(a);
         } else {

@@ -1,22 +1,23 @@
 use std::{error, io};
 use std::io::Read;
-use crate::dcpu::Dcpu;
-use crate::hardware::Hardware;
 
 mod dcpu;
 mod hardware;
 mod instructions;
 #[cfg(test)]
 mod dcpu_test;
+mod clock;
 
 fn main() -> Result<(), Box<dyn error::Error>> {
     let mut input = io::stdin().lock();
     let mut data = vec![];
     input.read_to_end(&mut data)?;
-    let mut monitor = Monitor;
-    let mut hardware = vec![&mut monitor as &mut dyn Hardware];
+
+    let mut clock = clock::Clock::default();
+    let mut hardware = vec![&mut clock as &mut dyn hardware::Hardware];
     let mut dcpu = dcpu::Dcpu::default();
     dcpu.load_bytes(0, &data);
+
     let data2 = vec![
         10, 0,
         'a' as u8, 0,
@@ -31,30 +32,7 @@ fn main() -> Result<(), Box<dyn error::Error>> {
         'j' as u8, 0,
     ];
     dcpu.load_bytes(0xf000, &data2);
-    dcpu.execute_instructions(&mut hardware, 6);
+
+    dcpu.execute(&mut hardware);
     Ok(())
-}
-
-struct Monitor;
-
-impl Hardware for Monitor {
-    fn execute(&mut self, _dcpu: &mut Dcpu) {
-        println!("hardware execute");
-    }
-
-    fn get_id(&self) -> u32 {
-        0x1234
-    }
-
-    fn get_manufacturer_id(&self) -> u32 {
-        0x2345
-    }
-
-    fn get_version(&self) -> u16 {
-        0x17
-    }
-
-    fn handle_hardware_interrupt(&mut self, _dcpu: &mut Dcpu) {
-        println!("hardware interrupt from hardware");
-    }
 }

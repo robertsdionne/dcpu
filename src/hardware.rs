@@ -1,6 +1,7 @@
+use std::fmt;
 use crate::dcpu;
 
-pub trait Hardware {
+pub trait Hardware: fmt::Debug {
     fn execute(&mut self, dcpu: &mut dcpu::Dcpu);
     fn get_id(&self) -> u32;
     fn get_manufacturer_id(&self) -> u32;
