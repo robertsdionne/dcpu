@@ -296,7 +296,15 @@ mod tests {
         let code: u16 = instruction.clone().into();
         assert_eq!(instruction, Instruction::from(code));
 
+        let instruction = Instruction::Basic(BasicOpcode::IfEqual, OperandB::Literal, OperandA::SmallLiteral(-1));
+        let code: u16 = instruction.clone().into();
+        assert_eq!(instruction, Instruction::from(code));
+
         let instruction = Instruction::Special(SpecialOpcode::HardwareNumberConnected, OperandA::LeftValue(OperandB::LocationOffsetByRegisterA));
+        let code: u16 = instruction.clone().into();
+        assert_eq!(instruction, Instruction::from(code));
+
+        let instruction = Instruction::Special(SpecialOpcode::JumpSubroutine, OperandA::SmallLiteral(30));
         let code: u16 = instruction.clone().into();
         assert_eq!(instruction, Instruction::from(code));
 
