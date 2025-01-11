@@ -42,11 +42,14 @@ impl Into<u16> for Instruction {
         match self {
             Instruction::Basic(basic_opcode, operand_b, operand_a) => {
                 let operand_a: u16 = operand_a.into();
-                basic_opcode as u16 | (operand_b as u16) << BASIC_VALUE_SHIFT_B | operand_a << BASIC_VALUE_SHIFT_A
+                basic_opcode as u16
+                    | (operand_b as u16) << BASIC_VALUE_SHIFT_B
+                    | operand_a << BASIC_VALUE_SHIFT_A
             }
             Instruction::Special(special_opcode, operand_a) => {
                 let operand_a: u16 = operand_a.into();
-                (special_opcode as u16) << SPECIAL_OPCODE_SHIFT | operand_a << BASIC_VALUE_SHIFT_A
+                (special_opcode as u16) << SPECIAL_OPCODE_SHIFT
+                    | operand_a << BASIC_VALUE_SHIFT_A
             }
             Instruction::Debug(debug_opcode) => (debug_opcode as u16) << DEBUG_OPCODE_SHIFT,
         }
@@ -237,7 +240,8 @@ impl Into<u16> for OperandA {
     fn into(self) -> u16 {
         match self {
             OperandA::LeftValue(operand_b) => operand_b as u16,
-            OperandA::SmallLiteral(literal) => 0x20 | ((literal + 1) as u16 & BASIC_OPCODE_MASK),
+            OperandA::SmallLiteral(literal) => 0b10_0000
+                | ((literal + 1) as u16 & BASIC_OPCODE_MASK),
         }
     }
 }
