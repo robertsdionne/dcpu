@@ -11,11 +11,10 @@ pub struct Drive {
 }
 
 impl Drive {
-    #[allow(dead_code)]
-    fn insert(&mut self, dcpu: &mut dcpu::Dcpu, disk: &str, write_protected: bool) -> Result<(), Box<dyn error::Error>> {
+    pub fn insert(&mut self, disk: &str, write_protected: bool) -> Result<(), Box<dyn error::Error>> {
         self.file = Some(fs::OpenOptions::new()
             .read(true)
-            .write(write_protected)
+            .write(!write_protected)
             .open(disk)?);
 
         self.state = if write_protected {
@@ -24,23 +23,15 @@ impl Drive {
             State::Ready
         } as u16;
 
-        if self.message > 0 {
-            dcpu.interrupt(self.message);
-        }
-
         Ok(())
     }
 
     #[allow(dead_code)]
-    fn eject(&mut self, dcpu: &mut dcpu::Dcpu) -> Result<(), Box<dyn error::Error>> {
+    pub fn eject(&mut self) -> Result<(), Box<dyn error::Error>> {
         if let Some(file) = &mut self.file {
             file.flush()?;
             self.file = None;
             self.state = State::NoMedia as u16;
-
-            if self.message > 0 {
-                dcpu.interrupt(self.message);
-            }
         }
         Ok(())
     }
@@ -116,7 +107,7 @@ impl hardware::Hardware for Drive {
                         self.last_error = Error::NoMedia as u16;
                         return;
                     }
-                    State::Ready => {
+                    State::Busy => {
                         self.last_error = Error::Busy as u16;
                         return;
                     }
@@ -124,7 +115,7 @@ impl hardware::Hardware for Drive {
                         self.last_error = Error::Protected as u16;
                         return;
                     }
-                    State::Busy => dcpu.register_b = 1,
+                    State::Ready => dcpu.register_b = 1,
                 }
 
                 self.state = State::Busy as u16;
@@ -155,6 +146,7 @@ const MANUFACTURER_ID: u32 = 0x1eb37e91;
 const VERSION: u16 = 0x000b;
 
 #[allow(dead_code)]
+#[derive(Debug)]
 #[repr(u16)]
 enum Message {
     Poll,
@@ -170,6 +162,7 @@ impl From<u16> for Message {
 }
 
 #[allow(dead_code)]
+#[derive(Debug)]
 #[repr(u16)]
 enum State {
     NoMedia,

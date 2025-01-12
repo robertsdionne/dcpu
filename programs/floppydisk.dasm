@@ -3,11 +3,13 @@
 	set x, 1024
 	set y, 0x1000
 	hwi 0
+	dum
 
 	set a, 3
 	set x, i
 	set y, 0x1000
-	hwi 3
+	hwi 4
+	dum
 
 	add i, 1
 	dum
