@@ -417,49 +417,33 @@ impl From<u16> for OperandA {
 
 #[derive(Copy, Clone, Debug, PartialEq)]
 pub enum OperandB {
-    Register(Register),
-    LocationInRegister(Register),
-    LocationOffsetByRegister(Register, u16),
+    WithRegister(WithRegister, Register),
+    WithPayload(WithPayload, u16),
     PushOrPop,
     Peek,
-    Pick(u16),
     StackPointer,
     ProgramCounter,
     Extra,
-    Location(u16),
-    Literal(u16),
 }
 
 impl OperandB {
     fn size(self) -> usize {
         match self {
-            OperandB::LocationOffsetByRegister(_, _) => 1,
-            OperandB::Pick(_) => 1,
-            OperandB::Location(_) => 1,
-            OperandB::Literal(_) => 1,
+            OperandB::WithPayload(_, _) => 1,
             _ => 0,
         }
     }
 
     fn payload(self) -> Option<u16> {
         match self {
-            OperandB::LocationOffsetByRegister(_, location) | OperandB::Location(location) => {
-                Some(location)
-            }
-            OperandB::Pick(offset) => Some(offset),
-            OperandB::Literal(literal) => Some(literal),
+            OperandB::WithPayload(_, payload) => Some(payload),
             _ => None,
         }
     }
 
     fn with_payload(self, payload: u16) -> OperandB {
         match self {
-            OperandB::LocationOffsetByRegister(register, _) => {
-                OperandB::LocationOffsetByRegister(register, payload)
-            }
-            OperandB::Pick(_) => OperandB::Pick(payload),
-            OperandB::Location(_) => OperandB::Location(payload),
-            OperandB::Literal(_) => OperandB::Literal(payload),
+            OperandB::WithPayload(operand, _) => OperandB::WithPayload(operand, payload),
             _ => self,
         }
     }
@@ -502,54 +486,70 @@ impl Into<u16> for OperandB {
 impl From<OperandValue> for OperandB {
     fn from(value: OperandValue) -> Self {
         match value {
-            OperandValue::RegisterA => OperandB::Register(Register::A),
-            OperandValue::RegisterB => OperandB::Register(Register::B),
-            OperandValue::RegisterC => OperandB::Register(Register::C),
-            OperandValue::RegisterX => OperandB::Register(Register::X),
-            OperandValue::RegisterY => OperandB::Register(Register::Y),
-            OperandValue::RegisterZ => OperandB::Register(Register::Z),
-            OperandValue::RegisterI => OperandB::Register(Register::I),
-            OperandValue::RegisterJ => OperandB::Register(Register::J),
-            OperandValue::LocationInRegisterA => OperandB::LocationInRegister(Register::A),
-            OperandValue::LocationInRegisterB => OperandB::LocationInRegister(Register::B),
-            OperandValue::LocationInRegisterC => OperandB::LocationInRegister(Register::C),
-            OperandValue::LocationInRegisterX => OperandB::LocationInRegister(Register::X),
-            OperandValue::LocationInRegisterY => OperandB::LocationInRegister(Register::Y),
-            OperandValue::LocationInRegisterZ => OperandB::LocationInRegister(Register::Z),
-            OperandValue::LocationInRegisterI => OperandB::LocationInRegister(Register::I),
-            OperandValue::LocationInRegisterJ => OperandB::LocationInRegister(Register::J),
+            OperandValue::RegisterA => OperandB::WithRegister(WithRegister::Register, Register::A),
+            OperandValue::RegisterB => OperandB::WithRegister(WithRegister::Register, Register::B),
+            OperandValue::RegisterC => OperandB::WithRegister(WithRegister::Register, Register::C),
+            OperandValue::RegisterX => OperandB::WithRegister(WithRegister::Register, Register::X),
+            OperandValue::RegisterY => OperandB::WithRegister(WithRegister::Register, Register::Y),
+            OperandValue::RegisterZ => OperandB::WithRegister(WithRegister::Register, Register::Z),
+            OperandValue::RegisterI => OperandB::WithRegister(WithRegister::Register, Register::I),
+            OperandValue::RegisterJ => OperandB::WithRegister(WithRegister::Register, Register::J),
+            OperandValue::LocationInRegisterA => {
+                OperandB::WithRegister(WithRegister::LocationInRegister, Register::A)
+            }
+            OperandValue::LocationInRegisterB => {
+                OperandB::WithRegister(WithRegister::LocationInRegister, Register::B)
+            }
+            OperandValue::LocationInRegisterC => {
+                OperandB::WithRegister(WithRegister::LocationInRegister, Register::C)
+            }
+            OperandValue::LocationInRegisterX => {
+                OperandB::WithRegister(WithRegister::LocationInRegister, Register::X)
+            }
+            OperandValue::LocationInRegisterY => {
+                OperandB::WithRegister(WithRegister::LocationInRegister, Register::Y)
+            }
+            OperandValue::LocationInRegisterZ => {
+                OperandB::WithRegister(WithRegister::LocationInRegister, Register::Z)
+            }
+            OperandValue::LocationInRegisterI => {
+                OperandB::WithRegister(WithRegister::LocationInRegister, Register::I)
+            }
+            OperandValue::LocationInRegisterJ => {
+                OperandB::WithRegister(WithRegister::LocationInRegister, Register::J)
+            }
             OperandValue::LocationOffsetByRegisterA => {
-                OperandB::LocationOffsetByRegister(Register::A, 0)
+                OperandB::WithPayload(WithPayload::LocationOffsetByRegister(Register::A), 0)
             }
             OperandValue::LocationOffsetByRegisterB => {
-                OperandB::LocationOffsetByRegister(Register::B, 0)
+                OperandB::WithPayload(WithPayload::LocationOffsetByRegister(Register::B), 0)
             }
             OperandValue::LocationOffsetByRegisterC => {
-                OperandB::LocationOffsetByRegister(Register::C, 0)
+                OperandB::WithPayload(WithPayload::LocationOffsetByRegister(Register::C), 0)
             }
             OperandValue::LocationOffsetByRegisterX => {
-                OperandB::LocationOffsetByRegister(Register::X, 0)
+                OperandB::WithPayload(WithPayload::LocationOffsetByRegister(Register::X), 0)
             }
             OperandValue::LocationOffsetByRegisterY => {
-                OperandB::LocationOffsetByRegister(Register::Y, 0)
+                OperandB::WithPayload(WithPayload::LocationOffsetByRegister(Register::Y), 0)
             }
             OperandValue::LocationOffsetByRegisterZ => {
-                OperandB::LocationOffsetByRegister(Register::Z, 0)
+                OperandB::WithPayload(WithPayload::LocationOffsetByRegister(Register::Z), 0)
             }
             OperandValue::LocationOffsetByRegisterI => {
-                OperandB::LocationOffsetByRegister(Register::I, 0)
+                OperandB::WithPayload(WithPayload::LocationOffsetByRegister(Register::I), 0)
             }
             OperandValue::LocationOffsetByRegisterJ => {
-                OperandB::LocationOffsetByRegister(Register::J, 0)
+                OperandB::WithPayload(WithPayload::LocationOffsetByRegister(Register::J), 0)
             }
             OperandValue::PushOrPop => OperandB::PushOrPop,
             OperandValue::Peek => OperandB::Peek,
-            OperandValue::Pick => OperandB::Pick(0),
+            OperandValue::Pick => OperandB::WithPayload(WithPayload::Pick, 0),
             OperandValue::StackPointer => OperandB::StackPointer,
             OperandValue::ProgramCounter => OperandB::ProgramCounter,
             OperandValue::Extra => OperandB::Extra,
-            OperandValue::Location => OperandB::Location(0),
-            OperandValue::Literal => OperandB::Literal(0),
+            OperandValue::Location => OperandB::WithPayload(WithPayload::Location, 0),
+            OperandValue::Literal => OperandB::WithPayload(WithPayload::Literal, 0),
         }
     }
 }
@@ -557,56 +557,86 @@ impl From<OperandValue> for OperandB {
 impl Into<OperandValue> for OperandB {
     fn into(self) -> OperandValue {
         match self {
-            OperandB::Register(Register::A) => OperandValue::RegisterA,
-            OperandB::Register(Register::B) => OperandValue::RegisterB,
-            OperandB::Register(Register::C) => OperandValue::RegisterC,
-            OperandB::Register(Register::X) => OperandValue::RegisterX,
-            OperandB::Register(Register::Y) => OperandValue::RegisterY,
-            OperandB::Register(Register::Z) => OperandValue::RegisterZ,
-            OperandB::Register(Register::I) => OperandValue::RegisterI,
-            OperandB::Register(Register::J) => OperandValue::RegisterJ,
-            OperandB::LocationInRegister(Register::A) => OperandValue::LocationInRegisterA,
-            OperandB::LocationInRegister(Register::B) => OperandValue::LocationInRegisterB,
-            OperandB::LocationInRegister(Register::C) => OperandValue::LocationInRegisterC,
-            OperandB::LocationInRegister(Register::X) => OperandValue::LocationInRegisterX,
-            OperandB::LocationInRegister(Register::Y) => OperandValue::LocationInRegisterY,
-            OperandB::LocationInRegister(Register::Z) => OperandValue::LocationInRegisterZ,
-            OperandB::LocationInRegister(Register::I) => OperandValue::LocationInRegisterI,
-            OperandB::LocationInRegister(Register::J) => OperandValue::LocationInRegisterJ,
-            OperandB::LocationOffsetByRegister(Register::A, _) => {
+            OperandB::WithRegister(WithRegister::Register, Register::A) => OperandValue::RegisterA,
+            OperandB::WithRegister(WithRegister::Register, Register::B) => OperandValue::RegisterB,
+            OperandB::WithRegister(WithRegister::Register, Register::C) => OperandValue::RegisterC,
+            OperandB::WithRegister(WithRegister::Register, Register::X) => OperandValue::RegisterX,
+            OperandB::WithRegister(WithRegister::Register, Register::Y) => OperandValue::RegisterY,
+            OperandB::WithRegister(WithRegister::Register, Register::Z) => OperandValue::RegisterZ,
+            OperandB::WithRegister(WithRegister::Register, Register::I) => OperandValue::RegisterI,
+            OperandB::WithRegister(WithRegister::Register, Register::J) => OperandValue::RegisterJ,
+            OperandB::WithRegister(WithRegister::LocationInRegister, Register::A) => {
+                OperandValue::LocationInRegisterA
+            }
+            OperandB::WithRegister(WithRegister::LocationInRegister, Register::B) => {
+                OperandValue::LocationInRegisterB
+            }
+            OperandB::WithRegister(WithRegister::LocationInRegister, Register::C) => {
+                OperandValue::LocationInRegisterC
+            }
+            OperandB::WithRegister(WithRegister::LocationInRegister, Register::X) => {
+                OperandValue::LocationInRegisterX
+            }
+            OperandB::WithRegister(WithRegister::LocationInRegister, Register::Y) => {
+                OperandValue::LocationInRegisterY
+            }
+            OperandB::WithRegister(WithRegister::LocationInRegister, Register::Z) => {
+                OperandValue::LocationInRegisterZ
+            }
+            OperandB::WithRegister(WithRegister::LocationInRegister, Register::I) => {
+                OperandValue::LocationInRegisterI
+            }
+            OperandB::WithRegister(WithRegister::LocationInRegister, Register::J) => {
+                OperandValue::LocationInRegisterJ
+            }
+            OperandB::WithPayload(WithPayload::LocationOffsetByRegister(Register::A), _) => {
                 OperandValue::LocationOffsetByRegisterA
             }
-            OperandB::LocationOffsetByRegister(Register::B, _) => {
+            OperandB::WithPayload(WithPayload::LocationOffsetByRegister(Register::B), _) => {
                 OperandValue::LocationOffsetByRegisterB
             }
-            OperandB::LocationOffsetByRegister(Register::C, _) => {
+            OperandB::WithPayload(WithPayload::LocationOffsetByRegister(Register::C), _) => {
                 OperandValue::LocationOffsetByRegisterC
             }
-            OperandB::LocationOffsetByRegister(Register::X, _) => {
+            OperandB::WithPayload(WithPayload::LocationOffsetByRegister(Register::X), _) => {
                 OperandValue::LocationOffsetByRegisterX
             }
-            OperandB::LocationOffsetByRegister(Register::Y, _) => {
+            OperandB::WithPayload(WithPayload::LocationOffsetByRegister(Register::Y), _) => {
                 OperandValue::LocationOffsetByRegisterY
             }
-            OperandB::LocationOffsetByRegister(Register::Z, _) => {
+            OperandB::WithPayload(WithPayload::LocationOffsetByRegister(Register::Z), _) => {
                 OperandValue::LocationOffsetByRegisterZ
             }
-            OperandB::LocationOffsetByRegister(Register::I, _) => {
+            OperandB::WithPayload(WithPayload::LocationOffsetByRegister(Register::I), _) => {
                 OperandValue::LocationOffsetByRegisterI
             }
-            OperandB::LocationOffsetByRegister(Register::J, _) => {
+            OperandB::WithPayload(WithPayload::LocationOffsetByRegister(Register::J), _) => {
                 OperandValue::LocationOffsetByRegisterJ
             }
             OperandB::PushOrPop => OperandValue::PushOrPop,
             OperandB::Peek => OperandValue::Peek,
-            OperandB::Pick(_) => OperandValue::Pick,
+            OperandB::WithPayload(WithPayload::Pick, _) => OperandValue::Pick,
             OperandB::StackPointer => OperandValue::StackPointer,
             OperandB::ProgramCounter => OperandValue::ProgramCounter,
             OperandB::Extra => OperandValue::Extra,
-            OperandB::Location(_) => OperandValue::Location,
-            OperandB::Literal(_) => OperandValue::Literal,
+            OperandB::WithPayload(WithPayload::Location, _) => OperandValue::Location,
+            OperandB::WithPayload(WithPayload::Literal, _) => OperandValue::Literal,
         }
     }
+}
+
+#[derive(Copy, Clone, Debug, PartialEq)]
+pub enum WithRegister {
+    Register,
+    LocationInRegister,
+}
+
+#[derive(Copy, Clone, Debug, PartialEq)]
+pub enum WithPayload {
+    LocationOffsetByRegister(Register),
+    Pick,
+    Location,
+    Literal,
 }
 
 #[allow(dead_code)]
@@ -681,14 +711,17 @@ mod tests {
         let instruction = Instruction::Basic(
             BasicOpcode::Add,
             OperandB::Extra,
-            OperandA::LeftValue(OperandB::LocationOffsetByRegister(Register::A, 0)),
+            OperandA::LeftValue(OperandB::WithPayload(
+                WithPayload::LocationOffsetByRegister(Register::A),
+                0,
+            )),
         );
         let code: u16 = instruction.clone().into();
         assert_eq!(instruction, Instruction::from(code));
 
         let instruction = Instruction::Basic(
             BasicOpcode::IfEqual,
-            OperandB::Literal(0),
+            OperandB::WithPayload(WithPayload::Literal, 0),
             OperandA::SmallLiteral(-1),
         );
         let code: u16 = instruction.clone().into();
@@ -696,7 +729,10 @@ mod tests {
 
         let instruction = Instruction::Special(
             SpecialOpcode::HardwareNumberConnected,
-            OperandA::LeftValue(OperandB::LocationOffsetByRegister(Register::A, 0)),
+            OperandA::LeftValue(OperandB::WithPayload(
+                WithPayload::LocationOffsetByRegister(Register::A),
+                0,
+            )),
         );
         let code: u16 = instruction.clone().into();
         assert_eq!(instruction, Instruction::from(code));

@@ -1,5 +1,5 @@
 use crate::dcpu::*;
-use crate::instructions::{BasicOpcode, Instruction, OperandA, OperandB, Register};
+use crate::instructions::{BasicOpcode, Instruction, OperandA, OperandB, Register, WithRegister};
 
 #[test]
 fn add_small_literal_to_register() {
@@ -10,13 +10,13 @@ fn add_small_literal_to_register() {
         &vec![
             Instruction::Basic(
                 BasicOpcode::Set,
-                OperandB::Register(Register::A),
+                OperandB::WithRegister(WithRegister::Register, Register::A),
                 OperandA::SmallLiteral(13),
             )
             .into(),
             Instruction::Basic(
                 BasicOpcode::Add,
-                OperandB::Register(Register::A),
+                OperandB::WithRegister(WithRegister::Register, Register::A),
                 OperandA::SmallLiteral(14),
             )
             .into(),
@@ -37,13 +37,13 @@ fn add_register_with_overflow() {
         &vec![
             Instruction::Basic(
                 BasicOpcode::Set,
-                OperandB::Register(Register::A),
+                OperandB::WithRegister(WithRegister::Register, Register::A),
                 OperandA::SmallLiteral(-1),
             )
             .into(),
             Instruction::Basic(
                 BasicOpcode::Add,
-                OperandB::Register(Register::A),
+                OperandB::WithRegister(WithRegister::Register, Register::A),
                 OperandA::SmallLiteral(-1),
             )
             .into(),
@@ -64,13 +64,13 @@ fn subtract_small_literal_from_register() {
         &vec![
             Instruction::Basic(
                 BasicOpcode::Set,
-                OperandB::Register(Register::A),
+                OperandB::WithRegister(WithRegister::Register, Register::A),
                 OperandA::SmallLiteral(30),
             )
             .into(),
             Instruction::Basic(
                 BasicOpcode::Subtract,
-                OperandB::Register(Register::A),
+                OperandB::WithRegister(WithRegister::Register, Register::A),
                 OperandA::SmallLiteral(16),
             )
             .into(),
@@ -91,13 +91,13 @@ fn subtract_register_with_underflow() {
         &vec![
             Instruction::Basic(
                 BasicOpcode::Set,
-                OperandB::Register(Register::A),
+                OperandB::WithRegister(WithRegister::Register, Register::A),
                 OperandA::SmallLiteral(16),
             )
             .into(),
             Instruction::Basic(
                 BasicOpcode::Subtract,
-                OperandB::Register(Register::A),
+                OperandB::WithRegister(WithRegister::Register, Register::A),
                 OperandA::SmallLiteral(30),
             )
             .into(),
@@ -118,13 +118,13 @@ fn multiply_small_literal_with_register() {
         &vec![
             Instruction::Basic(
                 BasicOpcode::Set,
-                OperandB::Register(Register::A),
+                OperandB::WithRegister(WithRegister::Register, Register::A),
                 OperandA::SmallLiteral(16),
             )
             .into(),
             Instruction::Basic(
                 BasicOpcode::Multiply,
-                OperandB::Register(Register::A),
+                OperandB::WithRegister(WithRegister::Register, Register::A),
                 OperandA::SmallLiteral(30),
             )
             .into(),
@@ -145,13 +145,13 @@ fn multiply_multiply_register_with_overflow() {
         &vec![
             Instruction::Basic(
                 BasicOpcode::Set,
-                OperandB::Register(Register::A),
+                OperandB::WithRegister(WithRegister::Register, Register::A),
                 OperandA::SmallLiteral(-1),
             )
             .into(),
             Instruction::Basic(
                 BasicOpcode::Multiply,
-                OperandB::Register(Register::A),
+                OperandB::WithRegister(WithRegister::Register, Register::A),
                 OperandA::SmallLiteral(-1),
             )
             .into(),
@@ -172,13 +172,13 @@ fn if_clear_with_common_bits() {
         &vec![
             Instruction::Basic(
                 BasicOpcode::Set,
-                OperandB::Register(Register::A),
+                OperandB::WithRegister(WithRegister::Register, Register::A),
                 OperandA::SmallLiteral(30),
             )
             .into(),
             Instruction::Basic(
                 BasicOpcode::IfClear,
-                OperandB::Register(Register::A),
+                OperandB::WithRegister(WithRegister::Register, Register::A),
                 OperandA::SmallLiteral(16),
             )
             .into(),
@@ -211,13 +211,13 @@ fn if_clear_without_common_bits() {
         &vec![
             Instruction::Basic(
                 BasicOpcode::Set,
-                OperandB::Register(Register::A),
+                OperandB::WithRegister(WithRegister::Register, Register::A),
                 OperandA::SmallLiteral(15),
             )
             .into(),
             Instruction::Basic(
                 BasicOpcode::IfClear,
-                OperandB::Register(Register::A),
+                OperandB::WithRegister(WithRegister::Register, Register::A),
                 OperandA::SmallLiteral(16),
             )
             .into(),
@@ -250,13 +250,13 @@ fn if_equal_register_with_equal_small_literal() {
         &vec![
             Instruction::Basic(
                 BasicOpcode::Set,
-                OperandB::Register(Register::A),
+                OperandB::WithRegister(WithRegister::Register, Register::A),
                 OperandA::SmallLiteral(15),
             )
             .into(),
             Instruction::Basic(
                 BasicOpcode::IfEqual,
-                OperandB::Register(Register::A),
+                OperandB::WithRegister(WithRegister::Register, Register::A),
                 OperandA::SmallLiteral(15),
             )
             .into(),
@@ -289,13 +289,13 @@ fn if_equal_register_with_unequal_small_literal() {
         &vec![
             Instruction::Basic(
                 BasicOpcode::Set,
-                OperandB::Register(Register::A),
+                OperandB::WithRegister(WithRegister::Register, Register::A),
                 OperandA::SmallLiteral(15),
             )
             .into(),
             Instruction::Basic(
                 BasicOpcode::IfEqual,
-                OperandB::Register(Register::A),
+                OperandB::WithRegister(WithRegister::Register, Register::A),
                 OperandA::SmallLiteral(10),
             )
             .into(),
@@ -328,19 +328,19 @@ fn if_equal_skips_conditionals_when_not_equal() {
         &vec![
             Instruction::Basic(
                 BasicOpcode::Set,
-                OperandB::Register(Register::A),
+                OperandB::WithRegister(WithRegister::Register, Register::A),
                 OperandA::SmallLiteral(15),
             )
             .into(),
             Instruction::Basic(
                 BasicOpcode::IfEqual,
-                OperandB::Register(Register::A),
+                OperandB::WithRegister(WithRegister::Register, Register::A),
                 OperandA::SmallLiteral(0),
             )
             .into(),
             Instruction::Basic(
                 BasicOpcode::IfEqual,
-                OperandB::Register(Register::B),
+                OperandB::WithRegister(WithRegister::Register, Register::B),
                 OperandA::SmallLiteral(0),
             )
             .into(),
@@ -373,19 +373,19 @@ fn if_equal_does_not_skip_conditionals_when_equal() {
         &vec![
             Instruction::Basic(
                 BasicOpcode::Set,
-                OperandB::Register(Register::A),
+                OperandB::WithRegister(WithRegister::Register, Register::A),
                 OperandA::SmallLiteral(15),
             )
             .into(),
             Instruction::Basic(
                 BasicOpcode::IfEqual,
-                OperandB::Register(Register::A),
+                OperandB::WithRegister(WithRegister::Register, Register::A),
                 OperandA::SmallLiteral(15),
             )
             .into(),
             Instruction::Basic(
                 BasicOpcode::IfEqual,
-                OperandB::Register(Register::B),
+                OperandB::WithRegister(WithRegister::Register, Register::B),
                 OperandA::SmallLiteral(0),
             )
             .into(),
@@ -418,13 +418,13 @@ fn if_above_with_lesser_small_literal() {
         &vec![
             Instruction::Basic(
                 BasicOpcode::Set,
-                OperandB::Register(Register::A),
+                OperandB::WithRegister(WithRegister::Register, Register::A),
                 OperandA::SmallLiteral(30),
             )
             .into(),
             Instruction::Basic(
                 BasicOpcode::IfAbove,
-                OperandB::Register(Register::A),
+                OperandB::WithRegister(WithRegister::Register, Register::A),
                 OperandA::SmallLiteral(-1),
             )
             .into(),
@@ -457,13 +457,13 @@ fn if_above_with_greater_small_literal() {
         &vec![
             Instruction::Basic(
                 BasicOpcode::Set,
-                OperandB::Register(Register::A),
+                OperandB::WithRegister(WithRegister::Register, Register::A),
                 OperandA::SmallLiteral(-1),
             )
             .into(),
             Instruction::Basic(
                 BasicOpcode::IfAbove,
-                OperandB::Register(Register::A),
+                OperandB::WithRegister(WithRegister::Register, Register::A),
                 OperandA::SmallLiteral(30),
             )
             .into(),
