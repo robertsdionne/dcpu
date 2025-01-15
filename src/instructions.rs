@@ -2,7 +2,6 @@ use std::mem;
 
 const BASIC_OPCODE_MASK: u16 = 0x001f;
 const BASIC_VALUE_MASK_A: u16 = 0xfc00;
-const BASIC_SMALL_VALUE_MASK_A: u16 = 0x7c00;
 const BASIC_VALUE_MASK_B: u16 = 0x03e0;
 const BASIC_VALUE_SHIFT_A: u16 = 0x000a;
 const BASIC_VALUE_SHIFT_B: u16 = 0x0005;
@@ -16,6 +15,73 @@ pub enum Instruction {
     Basic(BasicOpcode, OperandB, OperandA),
     Special(SpecialOpcode, OperandA),
     Debug(DebugOpcode),
+}
+
+impl From<&[u16]> for Instruction {
+    fn from(value: &[u16]) -> Self {
+        let instruction = InstructionValue::from(value[0]);
+        let basic_opcode = BasicOpcode::from(instruction);
+        let special_opcode = SpecialOpcode::from(instruction);
+
+        if basic_opcode != BasicOpcode::Reserved {
+            let operand_a = OperandA::from((instruction, value[1]));
+            let operand_b = OperandB::from((instruction, value[1 + operand_a.size()]));
+            Instruction::Basic(basic_opcode, operand_b, operand_a)
+        } else if special_opcode != SpecialOpcode::Reserved {
+            let operand_a = OperandA::from((instruction, value[1]));
+            Instruction::Special(special_opcode, operand_a)
+        } else {
+            Instruction::Debug(DebugOpcode::from(instruction))
+        }
+    }
+}
+
+impl Into<Vec<u16>> for Instruction {
+    fn into(self) -> Vec<u16> {
+        match self {
+            Instruction::Basic(basic_opcode, operand_b, operand_a) => {
+                let payload_a = operand_a.payload();
+                let payload_b = operand_b.payload();
+                let basic_opcode: InstructionValue = basic_opcode.into();
+                let operand_a: InstructionValue = operand_a.into();
+                let operand_b: InstructionValue = operand_b.into();
+                let basic_opcode: u16 = basic_opcode.into();
+                let operand_a: u16 = operand_a.into();
+                let operand_b: u16 = operand_b.into();
+                let mut result = vec![
+                    basic_opcode
+                        | operand_b
+                        | operand_a
+                ];
+                if let Some(payload) = payload_a {
+                    result.push(payload);
+                }
+                if let Some(payload) = payload_b {
+                    result.push(payload);
+                }
+                result
+            }
+            Instruction::Special(special_opcode, operand_a) => {
+                let payload_a = operand_a.payload();
+                let special_opcode: InstructionValue = special_opcode.into();
+                let operand_a: InstructionValue = operand_a.into();
+                let special_opcode: u16 = special_opcode.into();
+                let operand_a: u16 = operand_a.into();
+                let mut result = vec![
+                    special_opcode
+                        | operand_a
+                ];
+                if let Some(payload) = payload_a {
+                    result.push(payload);
+                }
+                result
+            }
+            Instruction::Debug(debug_opcode) => {
+                let debug_opcode: InstructionValue = debug_opcode.into();
+                vec![debug_opcode.into()]
+            },
+        }
+    }
 }
 
 impl From<u16> for Instruction {
@@ -284,6 +350,36 @@ pub enum OperandA {
     SmallLiteral(i8), // 32 values: -1 to 30
 }
 
+impl OperandA {
+    fn size(self) -> usize {
+        match self {
+            OperandA::LeftValue(operand_b) => operand_b.size(),
+            _ => 0,
+        }
+    }
+
+    fn payload(self) -> Option<u16> {
+        match self {
+            OperandA::LeftValue(operand_b) => operand_b.payload(),
+            _ => None,
+        }
+    }
+
+    fn with_payload(self, payload: u16) -> OperandA {
+        match self {
+            OperandA::LeftValue(operand_b) => OperandA::LeftValue(operand_b.with_payload(payload)),
+            _ => self,
+        }
+    }
+}
+
+impl From<(InstructionValue, u16)> for OperandA {
+    fn from(value: (InstructionValue, u16)) -> Self {
+        let (instruction, payload) = value;
+        Self::from(instruction).with_payload(payload)
+    }
+}
+
 impl From<InstructionValue> for OperandA {
     fn from(value: InstructionValue) -> Self {
         OperandA::from(value.0 >> BASIC_VALUE_SHIFT_A)
@@ -352,6 +448,66 @@ pub enum OperandB {
     Literal(u16),
 }
 
+impl OperandB {
+    fn size(self) -> usize {
+        match self {
+            OperandB::LocationOffsetByRegisterA(_) => 1,
+            OperandB::LocationOffsetByRegisterB(_) => 1,
+            OperandB::LocationOffsetByRegisterC(_) => 1,
+            OperandB::LocationOffsetByRegisterX(_) => 1,
+            OperandB::LocationOffsetByRegisterY(_) => 1,
+            OperandB::LocationOffsetByRegisterZ(_) => 1,
+            OperandB::LocationOffsetByRegisterI(_) => 1,
+            OperandB::LocationOffsetByRegisterJ(_) => 1,
+            OperandB::Pick(_) => 1,
+            OperandB::Location(_) => 1,
+            OperandB::Literal(_) => 1,
+            _ => 0,
+        }
+    }
+
+    fn payload(self) -> Option<u16> {
+        match self {
+            OperandB::LocationOffsetByRegisterA(location)
+            | OperandB::LocationOffsetByRegisterB(location)
+            | OperandB::LocationOffsetByRegisterC(location)
+            | OperandB::LocationOffsetByRegisterX(location)
+            | OperandB::LocationOffsetByRegisterY(location)
+            | OperandB::LocationOffsetByRegisterZ(location)
+            | OperandB::LocationOffsetByRegisterI(location)
+            | OperandB::LocationOffsetByRegisterJ(location)
+            | OperandB::Location(location) => Some(location),
+            OperandB::Pick(offset) => Some(offset),
+            OperandB::Literal(literal) => Some(literal),
+            _ => None,
+        }
+    }
+
+    fn with_payload(self, payload: u16) -> OperandB {
+        match self {
+            OperandB::LocationOffsetByRegisterA(_) => OperandB::LocationOffsetByRegisterA(payload),
+            OperandB::LocationOffsetByRegisterB(_) => OperandB::LocationOffsetByRegisterB(payload),
+            OperandB::LocationOffsetByRegisterC(_) => OperandB::LocationOffsetByRegisterC(payload),
+            OperandB::LocationOffsetByRegisterX(_) => OperandB::LocationOffsetByRegisterX(payload),
+            OperandB::LocationOffsetByRegisterY(_) => OperandB::LocationOffsetByRegisterY(payload),
+            OperandB::LocationOffsetByRegisterZ(_) => OperandB::LocationOffsetByRegisterZ(payload),
+            OperandB::LocationOffsetByRegisterI(_) => OperandB::LocationOffsetByRegisterI(payload),
+            OperandB::LocationOffsetByRegisterJ(_) => OperandB::LocationOffsetByRegisterJ(payload),
+            OperandB::Pick(_) => OperandB::Pick(payload),
+            OperandB::Location(_) => OperandB::Location(payload),
+            OperandB::Literal(_) => OperandB::Literal(payload),
+            _ => self,
+        }
+    }
+}
+
+impl From<(InstructionValue, u16)> for OperandB {
+    fn from(value: (InstructionValue, u16)) -> Self {
+        let (instruction, payload) = value;
+        Self::from(instruction).with_payload(payload)
+    }
+}
+
 impl From<InstructionValue> for OperandB {
     fn from(value: InstructionValue) -> Self {
         OperandB::from((value.0 & BASIC_VALUE_MASK_B) >> BASIC_VALUE_SHIFT_B)
@@ -368,7 +524,7 @@ impl Into<InstructionValue> for OperandB {
 impl From<u16> for OperandB {
     fn from(value: u16) -> Self {
         let operand_value = OperandValue::from(value);
-        OperandB::from((operand_value, 0))
+        OperandB::from(operand_value)
     }
 }
 
@@ -379,41 +535,41 @@ impl Into<u16> for OperandB {
     }
 }
 
-impl From<(OperandValue, u16)> for OperandB {
-    fn from(value: (OperandValue, u16)) -> Self {
+impl From<OperandValue> for OperandB {
+    fn from(value: OperandValue) -> Self {
         match value {
-            (OperandValue::RegisterA, _) => OperandB::RegisterA,
-            (OperandValue::RegisterB, _) => OperandB::RegisterB,
-            (OperandValue::RegisterC, _) => OperandB::RegisterC,
-            (OperandValue::RegisterX, _) => OperandB::RegisterX,
-            (OperandValue::RegisterY, _) => OperandB::RegisterY,
-            (OperandValue::RegisterZ, _) => OperandB::RegisterZ,
-            (OperandValue::RegisterI, _) => OperandB::RegisterI,
-            (OperandValue::RegisterJ, _) => OperandB::RegisterJ,
-            (OperandValue::LocationInRegisterA, _) => OperandB::LocationInRegisterA,
-            (OperandValue::LocationInRegisterB, _) => OperandB::LocationInRegisterB,
-            (OperandValue::LocationInRegisterC, _) => OperandB::LocationInRegisterC,
-            (OperandValue::LocationInRegisterX, _) => OperandB::LocationInRegisterX,
-            (OperandValue::LocationInRegisterY, _) => OperandB::LocationInRegisterY,
-            (OperandValue::LocationInRegisterZ, _) => OperandB::LocationInRegisterZ,
-            (OperandValue::LocationInRegisterI, _) => OperandB::LocationInRegisterI,
-            (OperandValue::LocationInRegisterJ, _) => OperandB::LocationInRegisterJ,
-            (OperandValue::LocationOffsetByRegisterA, location) => OperandB::LocationOffsetByRegisterA(location),
-            (OperandValue::LocationOffsetByRegisterB, location) => OperandB::LocationOffsetByRegisterB(location),
-            (OperandValue::LocationOffsetByRegisterC, location) => OperandB::LocationOffsetByRegisterC(location),
-            (OperandValue::LocationOffsetByRegisterX, location) => OperandB::LocationOffsetByRegisterX(location),
-            (OperandValue::LocationOffsetByRegisterY, location) => OperandB::LocationOffsetByRegisterY(location),
-            (OperandValue::LocationOffsetByRegisterZ, location) => OperandB::LocationOffsetByRegisterZ(location),
-            (OperandValue::LocationOffsetByRegisterI, location) => OperandB::LocationOffsetByRegisterI(location),
-            (OperandValue::LocationOffsetByRegisterJ, location) => OperandB::LocationOffsetByRegisterJ(location),
-            (OperandValue::PushOrPop, _) => OperandB::PushOrPop,
-            (OperandValue::Peek, _) => OperandB::Peek,
-            (OperandValue::Pick, offset) => OperandB::Pick(offset),
-            (OperandValue::StackPointer, _) => OperandB::StackPointer,
-            (OperandValue::ProgramCounter, _) => OperandB::ProgramCounter,
-            (OperandValue::Extra, _) => OperandB::Extra,
-            (OperandValue::Location, location) => OperandB::Location(location),
-            (OperandValue::Literal, literal) => OperandB::Literal(literal),
+            OperandValue::RegisterA => OperandB::RegisterA,
+            OperandValue::RegisterB => OperandB::RegisterB,
+            OperandValue::RegisterC => OperandB::RegisterC,
+            OperandValue::RegisterX => OperandB::RegisterX,
+            OperandValue::RegisterY => OperandB::RegisterY,
+            OperandValue::RegisterZ => OperandB::RegisterZ,
+            OperandValue::RegisterI => OperandB::RegisterI,
+            OperandValue::RegisterJ => OperandB::RegisterJ,
+            OperandValue::LocationInRegisterA => OperandB::LocationInRegisterA,
+            OperandValue::LocationInRegisterB => OperandB::LocationInRegisterB,
+            OperandValue::LocationInRegisterC => OperandB::LocationInRegisterC,
+            OperandValue::LocationInRegisterX => OperandB::LocationInRegisterX,
+            OperandValue::LocationInRegisterY => OperandB::LocationInRegisterY,
+            OperandValue::LocationInRegisterZ => OperandB::LocationInRegisterZ,
+            OperandValue::LocationInRegisterI => OperandB::LocationInRegisterI,
+            OperandValue::LocationInRegisterJ => OperandB::LocationInRegisterJ,
+            OperandValue::LocationOffsetByRegisterA => OperandB::LocationOffsetByRegisterA(0),
+            OperandValue::LocationOffsetByRegisterB => OperandB::LocationOffsetByRegisterB(0),
+            OperandValue::LocationOffsetByRegisterC => OperandB::LocationOffsetByRegisterC(0),
+            OperandValue::LocationOffsetByRegisterX => OperandB::LocationOffsetByRegisterX(0),
+            OperandValue::LocationOffsetByRegisterY => OperandB::LocationOffsetByRegisterY(0),
+            OperandValue::LocationOffsetByRegisterZ => OperandB::LocationOffsetByRegisterZ(0),
+            OperandValue::LocationOffsetByRegisterI => OperandB::LocationOffsetByRegisterI(0),
+            OperandValue::LocationOffsetByRegisterJ => OperandB::LocationOffsetByRegisterJ(0),
+            OperandValue::PushOrPop => OperandB::PushOrPop,
+            OperandValue::Peek => OperandB::Peek,
+            OperandValue::Pick => OperandB::Pick(0),
+            OperandValue::StackPointer => OperandB::StackPointer,
+            OperandValue::ProgramCounter => OperandB::ProgramCounter,
+            OperandValue::Extra => OperandB::Extra,
+            OperandValue::Location => OperandB::Location(0),
+            OperandValue::Literal => OperandB::Literal(0),
         }
     }
 }
