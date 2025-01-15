@@ -17,6 +17,16 @@ pub enum Instruction {
     Debug(DebugOpcode),
 }
 
+impl Instruction {
+    pub fn size(self) -> usize {
+        match self {
+            Self::Basic(_, operand_a, operand_b) => 1 + operand_a.size() + operand_b.size(),
+            Self::Special(_, operand_a) => 1 + operand_a.size(),
+            _ => 1,
+        }
+    }
+}
+
 impl From<&[u16]> for Instruction {
     fn from(value: &[u16]) -> Self {
         let instruction = InstructionValue::from(value[0]);

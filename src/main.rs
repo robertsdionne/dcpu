@@ -39,8 +39,9 @@ fn print(program: &str) -> Result<(), Box<dyn error::Error>> {
 
     for instruction in data {
         println!(
-            "{:#06x?} {:?}",
+            "{:#06x?} {} {:?}",
             instruction,
+            instructions::Instruction::from(instruction).size(),
             instructions::Instruction::from(instruction)
         );
     }
