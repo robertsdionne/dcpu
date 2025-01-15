@@ -16,9 +16,29 @@ mod floppy;
 
 fn main() -> Result<(), Box<dyn error::Error>> {
     match Cli::parse() {
+        Cli::Print { program } => print(&program),
         Cli::Terminal { program, floppy_disk } => run(&program, floppy_disk),
         Cli::Cursive { program } => cursive::run(&program),
     }
+}
+
+fn print(program: &str) -> Result<(), Box<dyn error::Error>> {
+    let data = fs::read(program)?;
+
+    let data = data.chunks(2)
+        .map(|c| {
+            match c {
+                [a, b] => u16::from_le_bytes([*a, *b]),
+                [b] => *b as u16,
+                _ => unreachable!(),
+            }
+        })
+        .collect::<Vec<_>>();
+
+    for instruction in data {
+        println!("{:#06x?} {:?}", instruction, instructions::Instruction::from(instruction));
+    }
+    Ok(())
 }
 
 fn run(program: &str, floppy_disk: Option<String>) -> Result<(), Box<dyn error::Error>> {
@@ -57,4 +77,8 @@ enum Cli {
         #[clap(long)]
         floppy_disk: Option<String>,
     },
+    Print {
+        #[clap(index = 1)]
+        program: String,
+    }
 }

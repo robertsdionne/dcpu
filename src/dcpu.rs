@@ -411,35 +411,35 @@ impl Dcpu {
                 OperandB::LocationInRegisterZ => Operand::Address(&mut self.memory[self.register_z as usize]),
                 OperandB::LocationInRegisterI => Operand::Address(&mut self.memory[self.register_i as usize]),
                 OperandB::LocationInRegisterJ => Operand::Address(&mut self.memory[self.register_j as usize]),
-                OperandB::LocationOffsetByRegisterA => {
+                OperandB::LocationOffsetByRegisterA(_) => {
                     let offset = self.memory[self.program_counter as usize] + self.register_a;
                     self.address_derived_from_program_counter(offset)
                 }
-                OperandB::LocationOffsetByRegisterB => {
+                OperandB::LocationOffsetByRegisterB(_) => {
                     let offset = self.memory[self.program_counter as usize] + self.register_b;
                     self.address_derived_from_program_counter(offset)
                 }
-                OperandB::LocationOffsetByRegisterC => {
+                OperandB::LocationOffsetByRegisterC(_) => {
                     let offset = self.memory[self.program_counter as usize] + self.register_c;
                     self.address_derived_from_program_counter(offset)
                 }
-                OperandB::LocationOffsetByRegisterX => {
+                OperandB::LocationOffsetByRegisterX(_) => {
                     let offset = self.memory[self.program_counter as usize] + self.register_x;
                     self.address_derived_from_program_counter(offset)
                 }
-                OperandB::LocationOffsetByRegisterY => {
+                OperandB::LocationOffsetByRegisterY(_) => {
                     let offset = self.memory[self.program_counter as usize] + self.register_y;
                     self.address_derived_from_program_counter(offset)
                 }
-                OperandB::LocationOffsetByRegisterZ => {
+                OperandB::LocationOffsetByRegisterZ(_) => {
                     let offset = self.memory[self.program_counter as usize] + self.register_z;
                     self.address_derived_from_program_counter(offset)
                 }
-                OperandB::LocationOffsetByRegisterI => {
+                OperandB::LocationOffsetByRegisterI(_) => {
                     let offset = self.memory[self.program_counter as usize] + self.register_i;
                     self.address_derived_from_program_counter(offset)
                 }
-                OperandB::LocationOffsetByRegisterJ => {
+                OperandB::LocationOffsetByRegisterJ(_) => {
                     let offset = self.memory[self.program_counter as usize] + self.register_j;
                     self.address_derived_from_program_counter(offset)
                 }
@@ -454,18 +454,18 @@ impl Dcpu {
                     }
                 }
                 OperandB::Peek => Operand::Address(&mut self.memory[self.stack_pointer as usize]),
-                OperandB::Pick => {
+                OperandB::Pick(_) => {
                     let offset = self.stack_pointer + self.memory[self.program_counter as usize];
                     self.address_derived_from_program_counter(offset)
                 }
                 OperandB::StackPointer => Operand::Address(&mut self.stack_pointer),
                 OperandB::ProgramCounter => Operand::Address(&mut self.program_counter),
                 OperandB::Extra => Operand::Address(&mut self.extra),
-                OperandB::Location => {
+                OperandB::Location(_) => {
                     let offset = self.memory[self.program_counter as usize];
                     self.address_derived_from_program_counter(offset)
                 }
-                OperandB::Literal => {
+                OperandB::Literal(_) => {
                     self.address_derived_from_program_counter(self.program_counter)
                 }
             }
