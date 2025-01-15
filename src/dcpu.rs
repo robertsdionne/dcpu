@@ -391,55 +391,55 @@ impl Dcpu {
     }
 
     fn get_operand(&mut self, operand_a: instructions::OperandA, assignable: bool) -> Operand {
-        use instructions::{OperandA, OperandB};
+        use instructions::{OperandA, OperandB, Register};
 
         match operand_a {
             OperandA::LeftValue(operand_b) => match operand_b {
-                OperandB::RegisterA => Operand::Address(&mut self.register_a),
-                OperandB::RegisterB => Operand::Address(&mut self.register_b),
-                OperandB::RegisterC => Operand::Address(&mut self.register_c),
-                OperandB::RegisterX => Operand::Address(&mut self.register_x),
-                OperandB::RegisterY => Operand::Address(&mut self.register_y),
-                OperandB::RegisterZ => Operand::Address(&mut self.register_z),
-                OperandB::RegisterI => Operand::Address(&mut self.register_i),
-                OperandB::RegisterJ => Operand::Address(&mut self.register_j),
-                OperandB::LocationInRegisterA => Operand::Address(&mut self.memory[self.register_a as usize]),
-                OperandB::LocationInRegisterB => Operand::Address(&mut self.memory[self.register_b as usize]),
-                OperandB::LocationInRegisterC => Operand::Address(&mut self.memory[self.register_c as usize]),
-                OperandB::LocationInRegisterX => Operand::Address(&mut self.memory[self.register_x as usize]),
-                OperandB::LocationInRegisterY => Operand::Address(&mut self.memory[self.register_y as usize]),
-                OperandB::LocationInRegisterZ => Operand::Address(&mut self.memory[self.register_z as usize]),
-                OperandB::LocationInRegisterI => Operand::Address(&mut self.memory[self.register_i as usize]),
-                OperandB::LocationInRegisterJ => Operand::Address(&mut self.memory[self.register_j as usize]),
-                OperandB::LocationOffsetByRegisterA(_) => {
+                OperandB::Register(Register::A) => Operand::Address(&mut self.register_a),
+                OperandB::Register(Register::B) => Operand::Address(&mut self.register_b),
+                OperandB::Register(Register::C) => Operand::Address(&mut self.register_c),
+                OperandB::Register(Register::X) => Operand::Address(&mut self.register_x),
+                OperandB::Register(Register::Y) => Operand::Address(&mut self.register_y),
+                OperandB::Register(Register::Z) => Operand::Address(&mut self.register_z),
+                OperandB::Register(Register::I) => Operand::Address(&mut self.register_i),
+                OperandB::Register(Register::J) => Operand::Address(&mut self.register_j),
+                OperandB::LocationInRegister(Register::A) => Operand::Address(&mut self.memory[self.register_a as usize]),
+                OperandB::LocationInRegister(Register::B) => Operand::Address(&mut self.memory[self.register_b as usize]),
+                OperandB::LocationInRegister(Register::C) => Operand::Address(&mut self.memory[self.register_c as usize]),
+                OperandB::LocationInRegister(Register::X) => Operand::Address(&mut self.memory[self.register_x as usize]),
+                OperandB::LocationInRegister(Register::Y) => Operand::Address(&mut self.memory[self.register_y as usize]),
+                OperandB::LocationInRegister(Register::Z) => Operand::Address(&mut self.memory[self.register_z as usize]),
+                OperandB::LocationInRegister(Register::I) => Operand::Address(&mut self.memory[self.register_i as usize]),
+                OperandB::LocationInRegister(Register::J) => Operand::Address(&mut self.memory[self.register_j as usize]),
+                OperandB::LocationOffsetByRegister(Register::A, _) => {
                     let offset = self.memory[self.program_counter as usize] + self.register_a;
                     self.address_derived_from_program_counter(offset)
                 }
-                OperandB::LocationOffsetByRegisterB(_) => {
+                OperandB::LocationOffsetByRegister(Register::B, _) => {
                     let offset = self.memory[self.program_counter as usize] + self.register_b;
                     self.address_derived_from_program_counter(offset)
                 }
-                OperandB::LocationOffsetByRegisterC(_) => {
+                OperandB::LocationOffsetByRegister(Register::C, _) => {
                     let offset = self.memory[self.program_counter as usize] + self.register_c;
                     self.address_derived_from_program_counter(offset)
                 }
-                OperandB::LocationOffsetByRegisterX(_) => {
+                OperandB::LocationOffsetByRegister(Register::X, _) => {
                     let offset = self.memory[self.program_counter as usize] + self.register_x;
                     self.address_derived_from_program_counter(offset)
                 }
-                OperandB::LocationOffsetByRegisterY(_) => {
+                OperandB::LocationOffsetByRegister(Register::Y, _) => {
                     let offset = self.memory[self.program_counter as usize] + self.register_y;
                     self.address_derived_from_program_counter(offset)
                 }
-                OperandB::LocationOffsetByRegisterZ(_) => {
+                OperandB::LocationOffsetByRegister(Register::Z, _) => {
                     let offset = self.memory[self.program_counter as usize] + self.register_z;
                     self.address_derived_from_program_counter(offset)
                 }
-                OperandB::LocationOffsetByRegisterI(_) => {
+                OperandB::LocationOffsetByRegister(Register::I, _) => {
                     let offset = self.memory[self.program_counter as usize] + self.register_i;
                     self.address_derived_from_program_counter(offset)
                 }
-                OperandB::LocationOffsetByRegisterJ(_) => {
+                OperandB::LocationOffsetByRegister(Register::J, _) => {
                     let offset = self.memory[self.program_counter as usize] + self.register_j;
                     self.address_derived_from_program_counter(offset)
                 }
