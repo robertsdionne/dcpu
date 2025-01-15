@@ -1,6 +1,6 @@
-use std::{collections, mem};
 use crate::dcpu::Dcpu;
 use crate::hardware;
+use std::{collections, mem};
 
 #[derive(Debug, Default)]
 pub struct Keyboard {

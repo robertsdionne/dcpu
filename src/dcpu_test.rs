@@ -5,10 +5,23 @@ use crate::instructions::{BasicOpcode, Instruction, OperandA, OperandB, Register
 fn add_small_literal_to_register() {
     let mut cpu = Dcpu::default();
     let mut hardware = vec![];
-    cpu.load(0, &vec![
-        Instruction::Basic(BasicOpcode::Set, OperandB::Register(Register::A), OperandA::SmallLiteral(13)).into(),
-        Instruction::Basic(BasicOpcode::Add, OperandB::Register(Register::A), OperandA::SmallLiteral(14)).into(),
-    ]);
+    cpu.load(
+        0,
+        &vec![
+            Instruction::Basic(
+                BasicOpcode::Set,
+                OperandB::Register(Register::A),
+                OperandA::SmallLiteral(13),
+            )
+            .into(),
+            Instruction::Basic(
+                BasicOpcode::Add,
+                OperandB::Register(Register::A),
+                OperandA::SmallLiteral(14),
+            )
+            .into(),
+        ],
+    );
 
     cpu.execute_instructions(&mut hardware, 2);
     assert_eq!(0x1b, cpu.register_a);
@@ -19,10 +32,23 @@ fn add_small_literal_to_register() {
 fn add_register_with_overflow() {
     let mut cpu = Dcpu::default();
     let mut hardware = vec![];
-    cpu.load(0, &vec![
-        Instruction::Basic(BasicOpcode::Set, OperandB::Register(Register::A), OperandA::SmallLiteral(-1)).into(),
-        Instruction::Basic(BasicOpcode::Add, OperandB::Register(Register::A), OperandA::SmallLiteral(-1)).into(),
-    ]);
+    cpu.load(
+        0,
+        &vec![
+            Instruction::Basic(
+                BasicOpcode::Set,
+                OperandB::Register(Register::A),
+                OperandA::SmallLiteral(-1),
+            )
+            .into(),
+            Instruction::Basic(
+                BasicOpcode::Add,
+                OperandB::Register(Register::A),
+                OperandA::SmallLiteral(-1),
+            )
+            .into(),
+        ],
+    );
 
     cpu.execute_instructions(&mut hardware, 2);
     assert_eq!(0xfffe, cpu.register_a);
@@ -33,10 +59,23 @@ fn add_register_with_overflow() {
 fn subtract_small_literal_from_register() {
     let mut cpu = Dcpu::default();
     let mut hardware = vec![];
-    cpu.load(0, &vec![
-        Instruction::Basic(BasicOpcode::Set, OperandB::Register(Register::A), OperandA::SmallLiteral(30)).into(),
-        Instruction::Basic(BasicOpcode::Subtract, OperandB::Register(Register::A), OperandA::SmallLiteral(16)).into(),
-    ]);
+    cpu.load(
+        0,
+        &vec![
+            Instruction::Basic(
+                BasicOpcode::Set,
+                OperandB::Register(Register::A),
+                OperandA::SmallLiteral(30),
+            )
+            .into(),
+            Instruction::Basic(
+                BasicOpcode::Subtract,
+                OperandB::Register(Register::A),
+                OperandA::SmallLiteral(16),
+            )
+            .into(),
+        ],
+    );
 
     cpu.execute_instructions(&mut hardware, 2);
     assert_eq!(0xe, cpu.register_a);
@@ -47,10 +86,23 @@ fn subtract_small_literal_from_register() {
 fn subtract_register_with_underflow() {
     let mut cpu = Dcpu::default();
     let mut hardware = vec![];
-    cpu.load(0, &vec![
-        Instruction::Basic(BasicOpcode::Set, OperandB::Register(Register::A), OperandA::SmallLiteral(16)).into(),
-        Instruction::Basic(BasicOpcode::Subtract, OperandB::Register(Register::A), OperandA::SmallLiteral(30)).into(),
-    ]);
+    cpu.load(
+        0,
+        &vec![
+            Instruction::Basic(
+                BasicOpcode::Set,
+                OperandB::Register(Register::A),
+                OperandA::SmallLiteral(16),
+            )
+            .into(),
+            Instruction::Basic(
+                BasicOpcode::Subtract,
+                OperandB::Register(Register::A),
+                OperandA::SmallLiteral(30),
+            )
+            .into(),
+        ],
+    );
 
     cpu.execute_instructions(&mut hardware, 2);
     assert_eq!(0xfff2, cpu.register_a);
@@ -61,10 +113,23 @@ fn subtract_register_with_underflow() {
 fn multiply_small_literal_with_register() {
     let mut cpu = Dcpu::default();
     let mut hardware = vec![];
-    cpu.load(0, &vec![
-        Instruction::Basic(BasicOpcode::Set, OperandB::Register(Register::A), OperandA::SmallLiteral(16)).into(),
-        Instruction::Basic(BasicOpcode::Multiply, OperandB::Register(Register::A), OperandA::SmallLiteral(30)).into(),
-    ]);
+    cpu.load(
+        0,
+        &vec![
+            Instruction::Basic(
+                BasicOpcode::Set,
+                OperandB::Register(Register::A),
+                OperandA::SmallLiteral(16),
+            )
+            .into(),
+            Instruction::Basic(
+                BasicOpcode::Multiply,
+                OperandB::Register(Register::A),
+                OperandA::SmallLiteral(30),
+            )
+            .into(),
+        ],
+    );
 
     cpu.execute_instructions(&mut hardware, 2);
     assert_eq!(0x1e0, cpu.register_a);
@@ -75,10 +140,23 @@ fn multiply_small_literal_with_register() {
 fn multiply_multiply_register_with_overflow() {
     let mut cpu = Dcpu::default();
     let mut hardware = vec![];
-    cpu.load(0, &vec![
-        Instruction::Basic(BasicOpcode::Set, OperandB::Register(Register::A), OperandA::SmallLiteral(-1)).into(),
-        Instruction::Basic(BasicOpcode::Multiply, OperandB::Register(Register::A), OperandA::SmallLiteral(-1)).into(),
-    ]);
+    cpu.load(
+        0,
+        &vec![
+            Instruction::Basic(
+                BasicOpcode::Set,
+                OperandB::Register(Register::A),
+                OperandA::SmallLiteral(-1),
+            )
+            .into(),
+            Instruction::Basic(
+                BasicOpcode::Multiply,
+                OperandB::Register(Register::A),
+                OperandA::SmallLiteral(-1),
+            )
+            .into(),
+        ],
+    );
 
     cpu.execute_instructions(&mut hardware, 2);
     assert_eq!(0x1, cpu.register_a);
@@ -89,12 +167,35 @@ fn multiply_multiply_register_with_overflow() {
 fn if_clear_with_common_bits() {
     let mut cpu = Dcpu::default();
     let mut hardware = vec![];
-    cpu.load(0, &vec![
-        Instruction::Basic(BasicOpcode::Set, OperandB::Register(Register::A), OperandA::SmallLiteral(30)).into(),
-        Instruction::Basic(BasicOpcode::IfClear, OperandB::Register(Register::A), OperandA::SmallLiteral(16)).into(),
-        Instruction::Basic(BasicOpcode::Set, OperandB::PushOrPop, OperandA::SmallLiteral(13)).into(),
-        Instruction::Basic(BasicOpcode::Set, OperandB::PushOrPop, OperandA::SmallLiteral(14)).into(),
-    ]);
+    cpu.load(
+        0,
+        &vec![
+            Instruction::Basic(
+                BasicOpcode::Set,
+                OperandB::Register(Register::A),
+                OperandA::SmallLiteral(30),
+            )
+            .into(),
+            Instruction::Basic(
+                BasicOpcode::IfClear,
+                OperandB::Register(Register::A),
+                OperandA::SmallLiteral(16),
+            )
+            .into(),
+            Instruction::Basic(
+                BasicOpcode::Set,
+                OperandB::PushOrPop,
+                OperandA::SmallLiteral(13),
+            )
+            .into(),
+            Instruction::Basic(
+                BasicOpcode::Set,
+                OperandB::PushOrPop,
+                OperandA::SmallLiteral(14),
+            )
+            .into(),
+        ],
+    );
 
     cpu.execute_instructions(&mut hardware, 3);
     assert_eq!(14, cpu.memory[cpu.stack_pointer as usize]);
@@ -105,12 +206,35 @@ fn if_clear_with_common_bits() {
 fn if_clear_without_common_bits() {
     let mut cpu = Dcpu::default();
     let mut hardware = vec![];
-    cpu.load(0, &vec![
-        Instruction::Basic(BasicOpcode::Set, OperandB::Register(Register::A), OperandA::SmallLiteral(15)).into(),
-        Instruction::Basic(BasicOpcode::IfClear, OperandB::Register(Register::A), OperandA::SmallLiteral(16)).into(),
-        Instruction::Basic(BasicOpcode::Set, OperandB::PushOrPop, OperandA::SmallLiteral(13)).into(),
-        Instruction::Basic(BasicOpcode::Set, OperandB::PushOrPop, OperandA::SmallLiteral(14)).into(),
-    ]);
+    cpu.load(
+        0,
+        &vec![
+            Instruction::Basic(
+                BasicOpcode::Set,
+                OperandB::Register(Register::A),
+                OperandA::SmallLiteral(15),
+            )
+            .into(),
+            Instruction::Basic(
+                BasicOpcode::IfClear,
+                OperandB::Register(Register::A),
+                OperandA::SmallLiteral(16),
+            )
+            .into(),
+            Instruction::Basic(
+                BasicOpcode::Set,
+                OperandB::PushOrPop,
+                OperandA::SmallLiteral(13),
+            )
+            .into(),
+            Instruction::Basic(
+                BasicOpcode::Set,
+                OperandB::PushOrPop,
+                OperandA::SmallLiteral(14),
+            )
+            .into(),
+        ],
+    );
 
     cpu.execute_instructions(&mut hardware, 3);
     assert_eq!(13, cpu.memory[cpu.stack_pointer as usize]);
@@ -121,12 +245,35 @@ fn if_clear_without_common_bits() {
 fn if_equal_register_with_equal_small_literal() {
     let mut cpu = Dcpu::default();
     let mut hardware = vec![];
-    cpu.load(0, &vec![
-        Instruction::Basic(BasicOpcode::Set, OperandB::Register(Register::A), OperandA::SmallLiteral(15)).into(),
-        Instruction::Basic(BasicOpcode::IfEqual, OperandB::Register(Register::A), OperandA::SmallLiteral(15)).into(),
-        Instruction::Basic(BasicOpcode::Set, OperandB::PushOrPop, OperandA::SmallLiteral(13)).into(),
-        Instruction::Basic(BasicOpcode::Set, OperandB::PushOrPop, OperandA::SmallLiteral(14)).into(),
-    ]);
+    cpu.load(
+        0,
+        &vec![
+            Instruction::Basic(
+                BasicOpcode::Set,
+                OperandB::Register(Register::A),
+                OperandA::SmallLiteral(15),
+            )
+            .into(),
+            Instruction::Basic(
+                BasicOpcode::IfEqual,
+                OperandB::Register(Register::A),
+                OperandA::SmallLiteral(15),
+            )
+            .into(),
+            Instruction::Basic(
+                BasicOpcode::Set,
+                OperandB::PushOrPop,
+                OperandA::SmallLiteral(13),
+            )
+            .into(),
+            Instruction::Basic(
+                BasicOpcode::Set,
+                OperandB::PushOrPop,
+                OperandA::SmallLiteral(14),
+            )
+            .into(),
+        ],
+    );
 
     cpu.execute_instructions(&mut hardware, 3);
     assert_eq!(13, cpu.memory[cpu.stack_pointer as usize]);
@@ -137,12 +284,35 @@ fn if_equal_register_with_equal_small_literal() {
 fn if_equal_register_with_unequal_small_literal() {
     let mut cpu = Dcpu::default();
     let mut hardware = vec![];
-    cpu.load(0, &vec![
-        Instruction::Basic(BasicOpcode::Set, OperandB::Register(Register::A), OperandA::SmallLiteral(15)).into(),
-        Instruction::Basic(BasicOpcode::IfEqual, OperandB::Register(Register::A), OperandA::SmallLiteral(10)).into(),
-        Instruction::Basic(BasicOpcode::Set, OperandB::PushOrPop, OperandA::SmallLiteral(13)).into(),
-        Instruction::Basic(BasicOpcode::Set, OperandB::PushOrPop, OperandA::SmallLiteral(14)).into(),
-    ]);
+    cpu.load(
+        0,
+        &vec![
+            Instruction::Basic(
+                BasicOpcode::Set,
+                OperandB::Register(Register::A),
+                OperandA::SmallLiteral(15),
+            )
+            .into(),
+            Instruction::Basic(
+                BasicOpcode::IfEqual,
+                OperandB::Register(Register::A),
+                OperandA::SmallLiteral(10),
+            )
+            .into(),
+            Instruction::Basic(
+                BasicOpcode::Set,
+                OperandB::PushOrPop,
+                OperandA::SmallLiteral(13),
+            )
+            .into(),
+            Instruction::Basic(
+                BasicOpcode::Set,
+                OperandB::PushOrPop,
+                OperandA::SmallLiteral(14),
+            )
+            .into(),
+        ],
+    );
 
     cpu.execute_instructions(&mut hardware, 3);
     assert_eq!(14, cpu.memory[cpu.stack_pointer as usize]);
@@ -153,13 +323,41 @@ fn if_equal_register_with_unequal_small_literal() {
 fn if_equal_skips_conditionals_when_not_equal() {
     let mut cpu = Dcpu::default();
     let mut hardware = vec![];
-    cpu.load(0, &vec![
-        Instruction::Basic(BasicOpcode::Set, OperandB::Register(Register::A), OperandA::SmallLiteral(15)).into(),
-        Instruction::Basic(BasicOpcode::IfEqual, OperandB::Register(Register::A), OperandA::SmallLiteral(0)).into(),
-        Instruction::Basic(BasicOpcode::IfEqual, OperandB::Register(Register::B), OperandA::SmallLiteral(0)).into(),
-        Instruction::Basic(BasicOpcode::Set, OperandB::PushOrPop, OperandA::SmallLiteral(12)).into(),
-        Instruction::Basic(BasicOpcode::Set, OperandB::PushOrPop, OperandA::SmallLiteral(13)).into(),
-    ]);
+    cpu.load(
+        0,
+        &vec![
+            Instruction::Basic(
+                BasicOpcode::Set,
+                OperandB::Register(Register::A),
+                OperandA::SmallLiteral(15),
+            )
+            .into(),
+            Instruction::Basic(
+                BasicOpcode::IfEqual,
+                OperandB::Register(Register::A),
+                OperandA::SmallLiteral(0),
+            )
+            .into(),
+            Instruction::Basic(
+                BasicOpcode::IfEqual,
+                OperandB::Register(Register::B),
+                OperandA::SmallLiteral(0),
+            )
+            .into(),
+            Instruction::Basic(
+                BasicOpcode::Set,
+                OperandB::PushOrPop,
+                OperandA::SmallLiteral(12),
+            )
+            .into(),
+            Instruction::Basic(
+                BasicOpcode::Set,
+                OperandB::PushOrPop,
+                OperandA::SmallLiteral(13),
+            )
+            .into(),
+        ],
+    );
 
     cpu.execute_instructions(&mut hardware, 3);
     assert_eq!(13, cpu.memory[cpu.stack_pointer as usize]);
@@ -170,13 +368,41 @@ fn if_equal_skips_conditionals_when_not_equal() {
 fn if_equal_does_not_skip_conditionals_when_equal() {
     let mut cpu = Dcpu::default();
     let mut hardware = vec![];
-    cpu.load(0, &vec![
-        Instruction::Basic(BasicOpcode::Set, OperandB::Register(Register::A), OperandA::SmallLiteral(15)).into(),
-        Instruction::Basic(BasicOpcode::IfEqual, OperandB::Register(Register::A), OperandA::SmallLiteral(15)).into(),
-        Instruction::Basic(BasicOpcode::IfEqual, OperandB::Register(Register::B), OperandA::SmallLiteral(0)).into(),
-        Instruction::Basic(BasicOpcode::Set, OperandB::PushOrPop, OperandA::SmallLiteral(12)).into(),
-        Instruction::Basic(BasicOpcode::Set, OperandB::PushOrPop, OperandA::SmallLiteral(13)).into(),
-    ]);
+    cpu.load(
+        0,
+        &vec![
+            Instruction::Basic(
+                BasicOpcode::Set,
+                OperandB::Register(Register::A),
+                OperandA::SmallLiteral(15),
+            )
+            .into(),
+            Instruction::Basic(
+                BasicOpcode::IfEqual,
+                OperandB::Register(Register::A),
+                OperandA::SmallLiteral(15),
+            )
+            .into(),
+            Instruction::Basic(
+                BasicOpcode::IfEqual,
+                OperandB::Register(Register::B),
+                OperandA::SmallLiteral(0),
+            )
+            .into(),
+            Instruction::Basic(
+                BasicOpcode::Set,
+                OperandB::PushOrPop,
+                OperandA::SmallLiteral(12),
+            )
+            .into(),
+            Instruction::Basic(
+                BasicOpcode::Set,
+                OperandB::PushOrPop,
+                OperandA::SmallLiteral(13),
+            )
+            .into(),
+        ],
+    );
 
     cpu.execute_instructions(&mut hardware, 4);
     assert_eq!(12, cpu.memory[cpu.stack_pointer as usize]);
@@ -187,12 +413,35 @@ fn if_equal_does_not_skip_conditionals_when_equal() {
 fn if_above_with_lesser_small_literal() {
     let mut cpu = Dcpu::default();
     let mut hardware = vec![];
-    cpu.load(0, &vec![
-        Instruction::Basic(BasicOpcode::Set, OperandB::Register(Register::A), OperandA::SmallLiteral(30)).into(),
-        Instruction::Basic(BasicOpcode::IfAbove, OperandB::Register(Register::A), OperandA::SmallLiteral(-1)).into(),
-        Instruction::Basic(BasicOpcode::Set, OperandB::PushOrPop, OperandA::SmallLiteral(13)).into(),
-        Instruction::Basic(BasicOpcode::Set, OperandB::PushOrPop, OperandA::SmallLiteral(14)).into(),
-    ]);
+    cpu.load(
+        0,
+        &vec![
+            Instruction::Basic(
+                BasicOpcode::Set,
+                OperandB::Register(Register::A),
+                OperandA::SmallLiteral(30),
+            )
+            .into(),
+            Instruction::Basic(
+                BasicOpcode::IfAbove,
+                OperandB::Register(Register::A),
+                OperandA::SmallLiteral(-1),
+            )
+            .into(),
+            Instruction::Basic(
+                BasicOpcode::Set,
+                OperandB::PushOrPop,
+                OperandA::SmallLiteral(13),
+            )
+            .into(),
+            Instruction::Basic(
+                BasicOpcode::Set,
+                OperandB::PushOrPop,
+                OperandA::SmallLiteral(14),
+            )
+            .into(),
+        ],
+    );
 
     cpu.execute_instructions(&mut hardware, 3);
     assert_eq!(13, cpu.memory[cpu.stack_pointer as usize]);
@@ -203,12 +452,35 @@ fn if_above_with_lesser_small_literal() {
 fn if_above_with_greater_small_literal() {
     let mut cpu = Dcpu::default();
     let mut hardware = vec![];
-    cpu.load(0, &vec![
-        Instruction::Basic(BasicOpcode::Set, OperandB::Register(Register::A), OperandA::SmallLiteral(-1)).into(),
-        Instruction::Basic(BasicOpcode::IfAbove, OperandB::Register(Register::A), OperandA::SmallLiteral(30)).into(),
-        Instruction::Basic(BasicOpcode::Set, OperandB::PushOrPop, OperandA::SmallLiteral(13)).into(),
-        Instruction::Basic(BasicOpcode::Set, OperandB::PushOrPop, OperandA::SmallLiteral(14)).into(),
-    ]);
+    cpu.load(
+        0,
+        &vec![
+            Instruction::Basic(
+                BasicOpcode::Set,
+                OperandB::Register(Register::A),
+                OperandA::SmallLiteral(-1),
+            )
+            .into(),
+            Instruction::Basic(
+                BasicOpcode::IfAbove,
+                OperandB::Register(Register::A),
+                OperandA::SmallLiteral(30),
+            )
+            .into(),
+            Instruction::Basic(
+                BasicOpcode::Set,
+                OperandB::PushOrPop,
+                OperandA::SmallLiteral(13),
+            )
+            .into(),
+            Instruction::Basic(
+                BasicOpcode::Set,
+                OperandB::PushOrPop,
+                OperandA::SmallLiteral(14),
+            )
+            .into(),
+        ],
+    );
 
     cpu.execute_instructions(&mut hardware, 3);
     assert_eq!(14, cpu.memory[cpu.stack_pointer as usize]);

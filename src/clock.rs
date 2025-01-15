@@ -1,6 +1,6 @@
-use std::{mem, time};
 use crate::dcpu;
 use crate::hardware;
+use std::{mem, time};
 
 #[derive(Debug, Default)]
 pub struct Clock {

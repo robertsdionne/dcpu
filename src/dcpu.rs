@@ -1,5 +1,5 @@
-use std::fmt;
 use crate::{hardware, instructions};
+use std::fmt;
 
 const MEMORY_SIZE: usize = 0x10000;
 
@@ -24,13 +24,12 @@ pub struct Dcpu {
 
 impl Dcpu {
     pub fn load_bytes(&mut self, i: usize, program: &Vec<u8>) {
-        let program = program.chunks(2)
-            .map(|c| {
-                match c {
-                    [a, b] => u16::from_le_bytes([*a, *b]),
-                    [b] => *b as u16,
-                    _ => unreachable!(),
-                }
+        let program = program
+            .chunks(2)
+            .map(|c| match c {
+                [a, b] => u16::from_le_bytes([*a, *b]),
+                [b] => *b as u16,
+                _ => unreachable!(),
             })
             .collect::<Vec<_>>();
         self.load(i, &program);
@@ -51,7 +50,11 @@ impl Dcpu {
     }
 
     #[allow(dead_code)]
-    pub fn execute_instructions(&mut self, hardware: &mut [&mut dyn hardware::Hardware], count: usize) {
+    pub fn execute_instructions(
+        &mut self,
+        hardware: &mut [&mut dyn hardware::Hardware],
+        count: usize,
+    ) {
         for _ in 0..count {
             self.execute_instruction(hardware, false);
             for hardware in &mut *hardware {
@@ -103,7 +106,7 @@ impl Dcpu {
                         | BasicOpcode::IfAbove
                         | BasicOpcode::IfLessThan
                         | BasicOpcode::IfUnder => self.execute_instruction(hardware, true),
-                        _ => {},
+                        _ => {}
                     }
 
                     return;
@@ -111,83 +114,125 @@ impl Dcpu {
 
                 match basic_opcode {
                     BasicOpcode::Reserved => unreachable!("BasicOpcode::Reserved"),
-                    BasicOpcode::Set => if let Some(pb) = pb {
-                        Self::set(pb, a);
+                    BasicOpcode::Set => {
+                        if let Some(pb) = pb {
+                            Self::set(pb, a);
+                        }
                     }
-                    BasicOpcode::Add => if let Some(pb) = pb {
-                        self.extra = Self::add(pb, b, a);
+                    BasicOpcode::Add => {
+                        if let Some(pb) = pb {
+                            self.extra = Self::add(pb, b, a);
+                        }
                     }
-                    BasicOpcode::Subtract => if let Some(pb) = pb {
-                        self.extra = Self::subtract(pb, b, a);
+                    BasicOpcode::Subtract => {
+                        if let Some(pb) = pb {
+                            self.extra = Self::subtract(pb, b, a);
+                        }
                     }
-                    BasicOpcode::Multiply => if let Some(pb) = pb {
-                        self.extra = Self::multiply(pb, b, a);
+                    BasicOpcode::Multiply => {
+                        if let Some(pb) = pb {
+                            self.extra = Self::multiply(pb, b, a);
+                        }
                     }
-                    BasicOpcode::MultiplySigned => if let Some(pb) = pb {
-                        self.extra = Self::multiply_signed(pb, b, a);
+                    BasicOpcode::MultiplySigned => {
+                        if let Some(pb) = pb {
+                            self.extra = Self::multiply_signed(pb, b, a);
+                        }
                     }
-                    BasicOpcode::Divide => if let Some(pb) = pb {
-                        self.extra = Self::divide(pb, b, a);
+                    BasicOpcode::Divide => {
+                        if let Some(pb) = pb {
+                            self.extra = Self::divide(pb, b, a);
+                        }
                     }
-                    BasicOpcode::DivideSigned => if let Some(pb) = pb {
-                        self.extra = Self::divide_signed(pb, b, a);
+                    BasicOpcode::DivideSigned => {
+                        if let Some(pb) = pb {
+                            self.extra = Self::divide_signed(pb, b, a);
+                        }
                     }
-                    BasicOpcode::Modulo => if let Some(pb) = pb {
-                        Self::modulo(pb, b, a);
+                    BasicOpcode::Modulo => {
+                        if let Some(pb) = pb {
+                            Self::modulo(pb, b, a);
+                        }
                     }
-                    BasicOpcode::ModuloSigned => if let Some(pb) = pb {
-                        Self::modulo_signed(pb, b, a);
+                    BasicOpcode::ModuloSigned => {
+                        if let Some(pb) = pb {
+                            Self::modulo_signed(pb, b, a);
+                        }
                     }
-                    BasicOpcode::BinaryAnd => if let Some(pb) = pb {
-                        *pb = b & a;
+                    BasicOpcode::BinaryAnd => {
+                        if let Some(pb) = pb {
+                            *pb = b & a;
+                        }
                     }
-                    BasicOpcode::BinaryOr => if let Some(pb) = pb {
-                        *pb = b | a;
+                    BasicOpcode::BinaryOr => {
+                        if let Some(pb) = pb {
+                            *pb = b | a;
+                        }
                     }
-                    BasicOpcode::BinaryExclusiveOr => if let Some(pb) = pb {
-                        *pb = b ^ a;
+                    BasicOpcode::BinaryExclusiveOr => {
+                        if let Some(pb) = pb {
+                            *pb = b ^ a;
+                        }
                     }
-                    BasicOpcode::ShiftRight => if let Some(pb) = pb {
-                        self.extra = Self::shift_right(pb, b, a);
+                    BasicOpcode::ShiftRight => {
+                        if let Some(pb) = pb {
+                            self.extra = Self::shift_right(pb, b, a);
+                        }
                     }
-                    BasicOpcode::ArithmeticShiftRight => if let Some(pb) = pb {
-                        self.extra = Self::arithmetic_shift_right(pb, b, a);
-                    },
-                    BasicOpcode::ShiftLeft => if let Some(pb) = pb {
-                        self.extra = Self::shift_left(pb, b, a);
+                    BasicOpcode::ArithmeticShiftRight => {
+                        if let Some(pb) = pb {
+                            self.extra = Self::arithmetic_shift_right(pb, b, a);
+                        }
+                    }
+                    BasicOpcode::ShiftLeft => {
+                        if let Some(pb) = pb {
+                            self.extra = Self::shift_left(pb, b, a);
+                        }
                     }
                     BasicOpcode::IfBitSet => self.do_next_instruction_if(hardware, (b & a) != 0),
                     BasicOpcode::IfClear => self.do_next_instruction_if(hardware, (b & a) == 0),
                     BasicOpcode::IfEqual => self.do_next_instruction_if(hardware, b == a),
                     BasicOpcode::IfNotEqual => self.do_next_instruction_if(hardware, b != a),
                     BasicOpcode::IfGreaterThan => self.do_next_instruction_if(hardware, b > a),
-                    BasicOpcode::IfAbove => self.do_next_instruction_if(hardware, (b as i16) > (a as i16)),
+                    BasicOpcode::IfAbove => {
+                        self.do_next_instruction_if(hardware, (b as i16) > (a as i16))
+                    }
                     BasicOpcode::IfLessThan => self.do_next_instruction_if(hardware, b < a),
-                    BasicOpcode::IfUnder => self.do_next_instruction_if(hardware, (b as i16) < (a as i16)),
-                    BasicOpcode::SetThenIncrement => if let Some(pb) = pb {
-                        *pb = a;
-                        self.register_i = self.register_i.wrapping_add(1);
-                        self.register_j = self.register_j.wrapping_add(1);
+                    BasicOpcode::IfUnder => {
+                        self.do_next_instruction_if(hardware, (b as i16) < (a as i16))
                     }
-                    BasicOpcode::SetThenDecrement => if let Some(pb) = pb {
-                        *pb = a;
-                        self.register_i = self.register_i.wrapping_sub(1);
-                        self.register_j = self.register_j.wrapping_sub(1);
+                    BasicOpcode::SetThenIncrement => {
+                        if let Some(pb) = pb {
+                            *pb = a;
+                            self.register_i = self.register_i.wrapping_add(1);
+                            self.register_j = self.register_j.wrapping_add(1);
+                        }
                     }
-                    BasicOpcode::AddWithCarry => if let Some(pb) = pb {
-                        self.extra = Self::add_with_carry(pb, b, a, carry);
+                    BasicOpcode::SetThenDecrement => {
+                        if let Some(pb) = pb {
+                            *pb = a;
+                            self.register_i = self.register_i.wrapping_sub(1);
+                            self.register_j = self.register_j.wrapping_sub(1);
+                        }
                     }
-                    BasicOpcode::SubtractWithCarry => if let Some(pb) = pb {
-                        self.extra = Self::subtract_with_carry(pb, b, a, carry);
-                    },
+                    BasicOpcode::AddWithCarry => {
+                        if let Some(pb) = pb {
+                            self.extra = Self::add_with_carry(pb, b, a, carry);
+                        }
+                    }
+                    BasicOpcode::SubtractWithCarry => {
+                        if let Some(pb) = pb {
+                            self.extra = Self::subtract_with_carry(pb, b, a, carry);
+                        }
+                    }
                     _ => todo!(),
                 }
             }
             Instruction::Special(special_opcode, operand_a) => {
                 use instructions::SpecialOpcode;
 
-                let assignable = special_opcode == SpecialOpcode::InterruptAddressGet ||
-                    special_opcode == SpecialOpcode::HardwareNumberConnected;
+                let assignable = special_opcode == SpecialOpcode::InterruptAddressGet
+                    || special_opcode == SpecialOpcode::HardwareNumberConnected;
 
                 let interrupt_address = self.interrupt_address;
 
@@ -203,16 +248,20 @@ impl Dcpu {
                     SpecialOpcode::Reserved => unreachable!("SpecialOpcode::Reserved"),
                     SpecialOpcode::JumpSubroutine => self.jump_sub_routine(a),
                     SpecialOpcode::InterruptTrigger => self.interrupt(a),
-                    SpecialOpcode::InterruptAddressGet => if let Some(pa) = pa {
-                        *pa = interrupt_address;
+                    SpecialOpcode::InterruptAddressGet => {
+                        if let Some(pa) = pa {
+                            *pa = interrupt_address;
+                        }
                     }
                     SpecialOpcode::InterruptAddressSet => {
                         self.interrupt_address = a;
                     }
                     SpecialOpcode::ReturnFromInterrupt => self.return_from_interrupt(),
                     SpecialOpcode::InterruptAddToQueue => self.queue_interrupts = a > 0,
-                    SpecialOpcode::HardwareNumberConnected => if let Some(pa) = pa {
-                        *pa = hardware.len() as u16;
+                    SpecialOpcode::HardwareNumberConnected => {
+                        if let Some(pa) = pa {
+                            *pa = hardware.len() as u16;
+                        }
                     }
                     SpecialOpcode::HardwareQuery => self.hardware_query(hardware, a),
                     SpecialOpcode::HardwareInterrupt => {
@@ -232,16 +281,18 @@ impl Dcpu {
                 }
 
                 match debug_opcode {
-                    DebugOpcode::Noop => {},
+                    DebugOpcode::Noop => {}
                     DebugOpcode::Alert => {
                         let length = self.memory[0xf000];
                         if length > 0 {
-                            let _alert = String::from_utf16_lossy(&self.memory[0xf001..0xf001+length as usize]);
+                            let _alert = String::from_utf16_lossy(
+                                &self.memory[0xf001..0xf001 + length as usize],
+                            );
                             // println!("alert: {}", alert);
                         } else {
                             // println!("alert");
                         }
-                    },
+                    }
                     DebugOpcode::DumpState => {} //println!("{:04x?} {:04x?}", self, hardware),
                     _ => todo!(),
                 }
@@ -325,7 +376,11 @@ impl Dcpu {
         (result >> 16) as u16
     }
 
-    fn do_next_instruction_if(&mut self, hardware: &mut [&mut dyn hardware::Hardware], condition: bool) {
+    fn do_next_instruction_if(
+        &mut self,
+        hardware: &mut [&mut dyn hardware::Hardware],
+        condition: bool,
+    ) {
         if !condition {
             self.execute_instruction(hardware, true);
         }
@@ -403,14 +458,30 @@ impl Dcpu {
                 OperandB::Register(Register::Z) => Operand::Address(&mut self.register_z),
                 OperandB::Register(Register::I) => Operand::Address(&mut self.register_i),
                 OperandB::Register(Register::J) => Operand::Address(&mut self.register_j),
-                OperandB::LocationInRegister(Register::A) => Operand::Address(&mut self.memory[self.register_a as usize]),
-                OperandB::LocationInRegister(Register::B) => Operand::Address(&mut self.memory[self.register_b as usize]),
-                OperandB::LocationInRegister(Register::C) => Operand::Address(&mut self.memory[self.register_c as usize]),
-                OperandB::LocationInRegister(Register::X) => Operand::Address(&mut self.memory[self.register_x as usize]),
-                OperandB::LocationInRegister(Register::Y) => Operand::Address(&mut self.memory[self.register_y as usize]),
-                OperandB::LocationInRegister(Register::Z) => Operand::Address(&mut self.memory[self.register_z as usize]),
-                OperandB::LocationInRegister(Register::I) => Operand::Address(&mut self.memory[self.register_i as usize]),
-                OperandB::LocationInRegister(Register::J) => Operand::Address(&mut self.memory[self.register_j as usize]),
+                OperandB::LocationInRegister(Register::A) => {
+                    Operand::Address(&mut self.memory[self.register_a as usize])
+                }
+                OperandB::LocationInRegister(Register::B) => {
+                    Operand::Address(&mut self.memory[self.register_b as usize])
+                }
+                OperandB::LocationInRegister(Register::C) => {
+                    Operand::Address(&mut self.memory[self.register_c as usize])
+                }
+                OperandB::LocationInRegister(Register::X) => {
+                    Operand::Address(&mut self.memory[self.register_x as usize])
+                }
+                OperandB::LocationInRegister(Register::Y) => {
+                    Operand::Address(&mut self.memory[self.register_y as usize])
+                }
+                OperandB::LocationInRegister(Register::Z) => {
+                    Operand::Address(&mut self.memory[self.register_z as usize])
+                }
+                OperandB::LocationInRegister(Register::I) => {
+                    Operand::Address(&mut self.memory[self.register_i as usize])
+                }
+                OperandB::LocationInRegister(Register::J) => {
+                    Operand::Address(&mut self.memory[self.register_j as usize])
+                }
                 OperandB::LocationOffsetByRegister(Register::A, _) => {
                     let offset = self.memory[self.program_counter as usize] + self.register_a;
                     self.address_derived_from_program_counter(offset)
@@ -468,7 +539,7 @@ impl Dcpu {
                 OperandB::Literal(_) => {
                     self.address_derived_from_program_counter(self.program_counter)
                 }
-            }
+            },
             OperandA::SmallLiteral(literal) => Operand::Literal(literal as u16),
         }
     }
@@ -499,7 +570,7 @@ enum Operand<'a> {
     Literal(u16),
 }
 
-impl <'a> Operand<'a> {
+impl<'a> Operand<'a> {
     fn dereference(self) -> (Option<&'a mut u16>, u16) {
         match self {
             Operand::Address(address) => {

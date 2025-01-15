@@ -1,8 +1,8 @@
-use cursive;
-use cursive::{event, view, views, CursiveExt};
-use cursive::event::Key;
-use std::{error, fs};
 use crate::{clock, dcpu, hardware, keyboard};
+use cursive;
+use cursive::event::Key;
+use cursive::{event, view, views, CursiveExt};
+use std::{error, fs};
 
 pub fn run(program: &str) -> Result<(), Box<dyn error::Error>> {
     let data = fs::read(program)?;
@@ -64,28 +64,24 @@ impl view::ViewWrapper for View {
                 let mut hardware = vec![&mut self.clock as &mut dyn hardware::Hardware];
                 hardware.push(&mut self.keyboard as &mut dyn hardware::Hardware);
                 self.cpu.execute_instructions(&mut hardware, 3333);
-                self.view.set_content(
-                    format!(
-                        "{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}",
-                        String::from_utf16_lossy(&self.cpu.memory[0xf000..0xf020]),
-                        String::from_utf16_lossy(&self.cpu.memory[0xf020..0xf040]),
-                        String::from_utf16_lossy(&self.cpu.memory[0xf040..0xf060]),
-                        String::from_utf16_lossy(&self.cpu.memory[0xf060..0xf080]),
-                        String::from_utf16_lossy(&self.cpu.memory[0xf080..0xf0a0]),
-                        String::from_utf16_lossy(&self.cpu.memory[0xf0a0..0xf0c0]),
-                        String::from_utf16_lossy(&self.cpu.memory[0xf0c0..0xf0e0]),
-                        String::from_utf16_lossy(&self.cpu.memory[0xf0e0..0xf100]),
-                        String::from_utf16_lossy(&self.cpu.memory[0xf100..0xf120]),
-                        String::from_utf16_lossy(&self.cpu.memory[0xf120..0xf140]),
-                        String::from_utf16_lossy(&self.cpu.memory[0xf140..0xf160]),
-                        String::from_utf16_lossy(&self.cpu.memory[0xf160..0xf180]),
-                    ),
-                );
+                self.view.set_content(format!(
+                    "{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}",
+                    String::from_utf16_lossy(&self.cpu.memory[0xf000..0xf020]),
+                    String::from_utf16_lossy(&self.cpu.memory[0xf020..0xf040]),
+                    String::from_utf16_lossy(&self.cpu.memory[0xf040..0xf060]),
+                    String::from_utf16_lossy(&self.cpu.memory[0xf060..0xf080]),
+                    String::from_utf16_lossy(&self.cpu.memory[0xf080..0xf0a0]),
+                    String::from_utf16_lossy(&self.cpu.memory[0xf0a0..0xf0c0]),
+                    String::from_utf16_lossy(&self.cpu.memory[0xf0c0..0xf0e0]),
+                    String::from_utf16_lossy(&self.cpu.memory[0xf0e0..0xf100]),
+                    String::from_utf16_lossy(&self.cpu.memory[0xf100..0xf120]),
+                    String::from_utf16_lossy(&self.cpu.memory[0xf120..0xf140]),
+                    String::from_utf16_lossy(&self.cpu.memory[0xf140..0xf160]),
+                    String::from_utf16_lossy(&self.cpu.memory[0xf160..0xf180]),
+                ));
                 event::EventResult::Consumed(None)
             }
-            _ => {
-                event::EventResult::Ignored
-            }
+            _ => event::EventResult::Ignored,
         }
     }
 }

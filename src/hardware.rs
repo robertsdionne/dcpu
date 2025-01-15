@@ -1,5 +1,5 @@
-use std::fmt;
 use crate::dcpu;
+use std::fmt;
 
 pub trait Hardware: fmt::Debug {
     fn execute(&mut self, _dcpu: &mut dcpu::Dcpu) {}

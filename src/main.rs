@@ -1,23 +1,26 @@
-use std::{error, fs};
 use clap::Parser;
+use std::{error, fs};
 
 mod clock;
 mod cursive;
 mod dcpu;
 #[cfg(test)]
 mod dcpu_test;
+mod floppy;
 mod hardware;
 mod instructions;
 mod keyboard;
 mod stderr;
 mod stdin;
 mod stdout;
-mod floppy;
 
 fn main() -> Result<(), Box<dyn error::Error>> {
     match Cli::parse() {
         Cli::Print { program } => print(&program),
-        Cli::Terminal { program, floppy_disk } => run(&program, floppy_disk),
+        Cli::Terminal {
+            program,
+            floppy_disk,
+        } => run(&program, floppy_disk),
         Cli::Cursive { program } => cursive::run(&program),
     }
 }
@@ -25,18 +28,21 @@ fn main() -> Result<(), Box<dyn error::Error>> {
 fn print(program: &str) -> Result<(), Box<dyn error::Error>> {
     let data = fs::read(program)?;
 
-    let data = data.chunks(2)
-        .map(|c| {
-            match c {
-                [a, b] => u16::from_le_bytes([*a, *b]),
-                [b] => *b as u16,
-                _ => unreachable!(),
-            }
+    let data = data
+        .chunks(2)
+        .map(|c| match c {
+            [a, b] => u16::from_le_bytes([*a, *b]),
+            [b] => *b as u16,
+            _ => unreachable!(),
         })
         .collect::<Vec<_>>();
 
     for instruction in data {
-        println!("{:#06x?} {:?}", instruction, instructions::Instruction::from(instruction));
+        println!(
+            "{:#06x?} {:?}",
+            instruction,
+            instructions::Instruction::from(instruction)
+        );
     }
     Ok(())
 }
@@ -80,5 +86,5 @@ enum Cli {
     Print {
         #[clap(index = 1)]
         program: String,
-    }
+    },
 }

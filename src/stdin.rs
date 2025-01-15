@@ -1,7 +1,7 @@
-use std::io;
-use std::io::Read;
 use crate::dcpu::Dcpu;
 use crate::hardware;
+use std::io;
+use std::io::Read;
 
 #[derive(Debug)]
 pub struct Stdin;
@@ -39,13 +39,15 @@ impl hardware::Hardware for Stdin {
             }
             Message::ReadWords => {
                 for i in (0..n).step_by(2) {
-                    dcpu.memory[(start + i/2) as usize] = u16::from_be_bytes([buffer[i as usize], buffer[(i + 1) as usize]]);
+                    dcpu.memory[(start + i / 2) as usize] =
+                        u16::from_be_bytes([buffer[i as usize], buffer[(i + 1) as usize]]);
                 }
             }
             Message::ReadUTF8 => {
                 let data = String::from_utf8(buffer).unwrap();
                 let data = data.encode_utf16().collect::<Vec<u16>>();
-                dcpu.memory[start as usize..(start + data.len() as u16) as usize].copy_from_slice(&data);
+                dcpu.memory[start as usize..(start + data.len() as u16) as usize]
+                    .copy_from_slice(&data);
             }
             _ => todo!(),
         }

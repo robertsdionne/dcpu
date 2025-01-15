@@ -1,6 +1,6 @@
-use std::{error, fs, io, mem};
-use std::io::{Read, Seek, Write};
 use crate::{dcpu, hardware};
+use std::io::{Read, Seek, Write};
+use std::{error, fs, io, mem};
 
 #[derive(Debug, Default)]
 pub struct Drive {
@@ -11,11 +11,17 @@ pub struct Drive {
 }
 
 impl Drive {
-    pub fn insert(&mut self, disk: &str, write_protected: bool) -> Result<(), Box<dyn error::Error>> {
-        self.file = Some(fs::OpenOptions::new()
-            .read(true)
-            .write(!write_protected)
-            .open(disk)?);
+    pub fn insert(
+        &mut self,
+        disk: &str,
+        write_protected: bool,
+    ) -> Result<(), Box<dyn error::Error>> {
+        self.file = Some(
+            fs::OpenOptions::new()
+                .read(true)
+                .write(!write_protected)
+                .open(disk)?,
+        );
 
         self.state = if write_protected {
             State::ReadyWriteProtected
@@ -79,19 +85,32 @@ impl hardware::Hardware for Drive {
                 }
 
                 let offset = 1024 * (dcpu.register_x as u64 % 1440);
-                self.file.as_mut().unwrap().seek(io::SeekFrom::Start(offset)).unwrap();
+                self.file
+                    .as_mut()
+                    .unwrap()
+                    .seek(io::SeekFrom::Start(offset))
+                    .unwrap();
 
                 let mut data = Vec::with_capacity(1024);
                 self.file.as_mut().unwrap().read_exact(&mut data).unwrap();
 
-                let data = data.chunks(2)
+                let data = data
+                    .chunks(2)
                     .map(|c| u16::from_be_bytes([c[0], c[1]]))
                     .collect::<Vec<_>>();
 
-                dcpu.memory[dcpu.register_y as usize .. (dcpu.register_y + 512) as usize]
+                dcpu.memory[dcpu.register_y as usize..(dcpu.register_y + 512) as usize]
                     .copy_from_slice(&data);
 
-                self.state = if self.file.as_ref().unwrap().metadata().unwrap().permissions().readonly() {
+                self.state = if self
+                    .file
+                    .as_ref()
+                    .unwrap()
+                    .metadata()
+                    .unwrap()
+                    .permissions()
+                    .readonly()
+                {
                     State::ReadyWriteProtected
                 } else {
                     State::Ready
@@ -124,9 +143,14 @@ impl hardware::Hardware for Drive {
                 }
 
                 let offset = 1024 * (dcpu.register_x as u64 % 1440);
-                self.file.as_mut().unwrap().seek(io::SeekFrom::Start(offset)).unwrap();
+                self.file
+                    .as_mut()
+                    .unwrap()
+                    .seek(io::SeekFrom::Start(offset))
+                    .unwrap();
 
-                let data = dcpu.memory[dcpu.register_y as usize .. (dcpu.register_y + 512) as usize].iter()
+                let data = dcpu.memory[dcpu.register_y as usize..(dcpu.register_y + 512) as usize]
+                    .iter()
                     .flat_map(|c| c.to_be_bytes())
                     .collect::<Vec<_>>();
                 self.file.as_mut().unwrap().write_all(&data).unwrap();

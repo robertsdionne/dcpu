@@ -1,7 +1,7 @@
-use std::io;
-use std::io::Write;
 use crate::dcpu::Dcpu;
 use crate::hardware;
+use std::io;
+use std::io::Write;
 
 #[derive(Debug)]
 pub struct Stderr;
