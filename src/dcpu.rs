@@ -449,89 +449,30 @@ impl Dcpu {
     }
 
     fn get_operand(&mut self, operand_a: instructions::OperandA, assignable: bool) -> Operand {
-        use instructions::{OperandA, OperandB, Register, WithPayload, WithRegister};
+        use instructions::{OperandA, OperandB, WithPayload, WithRegister};
 
         match operand_a {
             OperandA::LeftValue(operand_b) => match operand_b {
-                OperandB::WithRegister(WithRegister::Register, Register::A) => {
-                    Operand::Address(&mut self.register_a)
-                }
-                OperandB::WithRegister(WithRegister::Register, Register::B) => {
-                    Operand::Address(&mut self.register_b)
-                }
-                OperandB::WithRegister(WithRegister::Register, Register::C) => {
-                    Operand::Address(&mut self.register_c)
-                }
-                OperandB::WithRegister(WithRegister::Register, Register::X) => {
-                    Operand::Address(&mut self.register_x)
-                }
-                OperandB::WithRegister(WithRegister::Register, Register::Y) => {
-                    Operand::Address(&mut self.register_y)
-                }
-                OperandB::WithRegister(WithRegister::Register, Register::Z) => {
-                    Operand::Address(&mut self.register_z)
-                }
-                OperandB::WithRegister(WithRegister::Register, Register::I) => {
-                    Operand::Address(&mut self.register_i)
-                }
-                OperandB::WithRegister(WithRegister::Register, Register::J) => {
-                    Operand::Address(&mut self.register_j)
-                }
-                OperandB::WithRegister(WithRegister::LocationInRegister, Register::A) => {
-                    Operand::Address(&mut self.memory[self.register_a as usize])
-                }
-                OperandB::WithRegister(WithRegister::LocationInRegister, Register::B) => {
-                    Operand::Address(&mut self.memory[self.register_b as usize])
-                }
-                OperandB::WithRegister(WithRegister::LocationInRegister, Register::C) => {
-                    Operand::Address(&mut self.memory[self.register_c as usize])
-                }
-                OperandB::WithRegister(WithRegister::LocationInRegister, Register::X) => {
-                    Operand::Address(&mut self.memory[self.register_x as usize])
-                }
-                OperandB::WithRegister(WithRegister::LocationInRegister, Register::Y) => {
-                    Operand::Address(&mut self.memory[self.register_y as usize])
-                }
-                OperandB::WithRegister(WithRegister::LocationInRegister, Register::Z) => {
-                    Operand::Address(&mut self.memory[self.register_z as usize])
-                }
-                OperandB::WithRegister(WithRegister::LocationInRegister, Register::I) => {
-                    Operand::Address(&mut self.memory[self.register_i as usize])
-                }
-                OperandB::WithRegister(WithRegister::LocationInRegister, Register::J) => {
-                    Operand::Address(&mut self.memory[self.register_j as usize])
-                }
-                OperandB::WithPayload(WithPayload::LocationOffsetByRegister(Register::A), _) => {
-                    let offset = self.memory[self.program_counter as usize] + self.register_a;
-                    self.address_derived_from_program_counter(offset)
-                }
-                OperandB::WithPayload(WithPayload::LocationOffsetByRegister(Register::B), _) => {
-                    let offset = self.memory[self.program_counter as usize] + self.register_b;
-                    self.address_derived_from_program_counter(offset)
-                }
-                OperandB::WithPayload(WithPayload::LocationOffsetByRegister(Register::C), _) => {
-                    let offset = self.memory[self.program_counter as usize] + self.register_c;
-                    self.address_derived_from_program_counter(offset)
-                }
-                OperandB::WithPayload(WithPayload::LocationOffsetByRegister(Register::X), _) => {
-                    let offset = self.memory[self.program_counter as usize] + self.register_x;
-                    self.address_derived_from_program_counter(offset)
-                }
-                OperandB::WithPayload(WithPayload::LocationOffsetByRegister(Register::Y), _) => {
-                    let offset = self.memory[self.program_counter as usize] + self.register_y;
-                    self.address_derived_from_program_counter(offset)
-                }
-                OperandB::WithPayload(WithPayload::LocationOffsetByRegister(Register::Z), _) => {
-                    let offset = self.memory[self.program_counter as usize] + self.register_z;
-                    self.address_derived_from_program_counter(offset)
-                }
-                OperandB::WithPayload(WithPayload::LocationOffsetByRegister(Register::I), _) => {
-                    let offset = self.memory[self.program_counter as usize] + self.register_z;
-                    self.address_derived_from_program_counter(offset)
-                }
-                OperandB::WithPayload(WithPayload::LocationOffsetByRegister(Register::J), _) => {
-                    let offset = self.memory[self.program_counter as usize] + self.register_z;
-                    self.address_derived_from_program_counter(offset)
+                OperandB::WithRegister(with_register, register) => Operand::Address(
+                    match with_register {
+                        WithRegister::Register => self.register_address(register),
+                        WithRegister::LocationInRegister => self.location_in_register_address(register),
+                    }
+                ),
+                OperandB::WithPayload(with_payload, payload) => match with_payload {
+                    WithPayload::LocationOffsetByRegister(register) => {
+                        Operand::Address(self.location_offset_by_register_address(payload, register))
+                    }
+                    WithPayload::Pick => {
+                        Operand::Address(self.address_derived_from_program_counter(self.stack_pointer + payload))
+                    }
+                    WithPayload::Location => {
+                        Operand::Address(self.address_derived_from_program_counter(payload))
+                    }
+                    WithPayload::Literal => {
+                        self.program_counter = self.program_counter.wrapping_add(1);
+                        Operand::Literal(payload)
+                    }
                 }
                 OperandB::PushOrPop => {
                     if assignable {
@@ -544,29 +485,60 @@ impl Dcpu {
                     }
                 }
                 OperandB::Peek => Operand::Address(&mut self.memory[self.stack_pointer as usize]),
-                OperandB::WithPayload(WithPayload::Pick, _) => {
-                    let offset = self.stack_pointer + self.memory[self.program_counter as usize];
-                    self.address_derived_from_program_counter(offset)
-                }
                 OperandB::StackPointer => Operand::Address(&mut self.stack_pointer),
                 OperandB::ProgramCounter => Operand::Address(&mut self.program_counter),
                 OperandB::Extra => Operand::Address(&mut self.extra),
-                OperandB::WithPayload(WithPayload::Location, _) => {
-                    let offset = self.memory[self.program_counter as usize];
-                    self.address_derived_from_program_counter(offset)
-                }
-                OperandB::WithPayload(WithPayload::Literal, _) => {
-                    self.address_derived_from_program_counter(self.program_counter)
-                }
             },
             OperandA::SmallLiteral(literal) => Operand::Literal(literal as u16),
         }
     }
 
-    fn address_derived_from_program_counter(&mut self, offset: u16) -> Operand {
-        let operand = Operand::Address(&mut self.memory[offset as usize]);
+    fn register_address(&mut self, register: instructions::Register) -> &mut u16 {
+        use instructions::Register;
+        match register {
+            Register::A => &mut self.register_a,
+            Register::B => &mut self.register_b,
+            Register::C => &mut self.register_c,
+            Register::X => &mut self.register_x,
+            Register::Y => &mut self.register_y,
+            Register::Z => &mut self.register_z,
+            Register::I => &mut self.register_i,
+            Register::J => &mut self.register_j,
+        }
+    }
+
+    fn location_in_register_address(&mut self, register: instructions::Register) -> &mut u16 {
+        use instructions::Register;
+        match register {
+            Register::A => &mut self.memory[self.register_a as usize],
+            Register::B => &mut self.memory[self.register_b as usize],
+            Register::C => &mut self.memory[self.register_c as usize],
+            Register::X => &mut self.memory[self.register_x as usize],
+            Register::Y => &mut self.memory[self.register_y as usize],
+            Register::Z => &mut self.memory[self.register_z as usize],
+            Register::I => &mut self.memory[self.register_i as usize],
+            Register::J => &mut self.memory[self.register_j as usize],
+        }
+    }
+
+    fn location_offset_by_register_address(&mut self, location: u16, register: instructions::Register) ->  &mut u16 {
+        use instructions::Register;
+        match register {
+            Register::A => self.address_derived_from_program_counter(location + self.register_a),
+            Register::B => self.address_derived_from_program_counter(location + self.register_b),
+            Register::C => self.address_derived_from_program_counter(location + self.register_c),
+            Register::X => self.address_derived_from_program_counter(location + self.register_x),
+            Register::Y => self.address_derived_from_program_counter(location + self.register_y),
+            Register::Z => self.address_derived_from_program_counter(location + self.register_z),
+            Register::I => self.address_derived_from_program_counter(location + self.register_i),
+            Register::J => self.address_derived_from_program_counter(location + self.register_j),
+        }
+    }
+
+    fn address_derived_from_program_counter(&mut self, offset: u16) -> &mut u16 {
+        let address = &mut self.memory[offset as usize];
         self.program_counter = self.program_counter.wrapping_add(1);
-        operand
+        address
     }
 
     fn maybe_trigger_interrupt(&mut self, interrupt: u16) {
