@@ -20,7 +20,7 @@ pub enum Instruction {
 impl Instruction {
     pub fn size(self) -> usize {
         match self {
-            Self::Basic(_, operand_a, operand_b) => 1 + operand_a.size() + operand_b.size(),
+            Self::Basic(_, operand_b, operand_a) => 1 + operand_b.size() + operand_a.size(),
             Self::Special(_, operand_a) => 1 + operand_a.size(),
             _ => 1,
         }
