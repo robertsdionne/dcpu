@@ -12,8 +12,6 @@ import (
 	"github.com/robertsdionne/dcpu/parser"
 )
 
-//go:generate java -jar $HOME/Downloads/antlr-4.6-complete.jar -Dlanguage=Go -package parser DCPU.g4 -visitor
-
 func AssembleFile(filename string) (program []uint16, err error) {
 	source, err := ioutil.ReadFile(filename)
 	if err != nil {
