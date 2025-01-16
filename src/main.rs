@@ -13,9 +13,11 @@ mod keyboard;
 mod stderr;
 mod stdin;
 mod stdout;
+mod assembler;
 
 fn main() -> Result<(), Box<dyn error::Error>> {
     match Cli::parse() {
+        Cli::Assemble { program } => assembler::assemble(&program),
         Cli::Print { program } => print(&program),
         Cli::Terminal {
             program,
@@ -77,6 +79,10 @@ fn run(program: &str, floppy_disk: Option<String>) -> Result<(), Box<dyn error::
 
 #[derive(clap::Parser)]
 enum Cli {
+    Assemble {
+        #[clap(index = 1)]
+        program: String,
+    },
     Cursive {
         #[clap(index = 1)]
         program: String,
