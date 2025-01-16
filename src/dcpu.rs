@@ -77,9 +77,12 @@ impl Dcpu {
 
         let carry = self.extra;
         let stack_pointer = self.stack_pointer;
-        let instruction = self.memory[self.program_counter as usize];
+        let instruction_words = (0..3).into_iter()
+            .map(|i| self.program_counter.wrapping_add(i))
+            .map(|i| self.memory[i as usize])
+            .collect::<Vec<_>>();
+        let instruction = Instruction::from(&instruction_words[..]);
         self.program_counter = self.program_counter.wrapping_add(1);
-        let instruction = Instruction::from(instruction);
 
         if !skip {
             // println!("{:?}", instruction);

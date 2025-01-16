@@ -36,10 +36,13 @@ fn print(program: &str) -> Result<(), Box<dyn error::Error>> {
             _ => unreachable!(),
         })
         .collect::<Vec<_>>();
+    let data = (0..data.len() - 3).into_iter()
+        .map(|i| &data[i..i+3])
+        .collect::<Vec<_>>();
 
     for instruction in data {
         println!(
-            "{:#06x?} {} {:?}",
+            "{:04x?} {} {:?}",
             instruction,
             instructions::Instruction::from(instruction).size(),
             instructions::Instruction::from(instruction)
