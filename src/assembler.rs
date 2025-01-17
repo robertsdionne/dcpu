@@ -64,6 +64,8 @@ impl Statement {
     fn data_section_parser() -> impl Parser<char, Self, Error = Simple<char>> {
         just(".DAT")
             .or(just(".dat"))
+            .or(just("DAT"))
+            .or(just("dat"))
             .padded()
             .ignore_then(Data::parser())
             .map(|data| Statement::DataSection(data))
