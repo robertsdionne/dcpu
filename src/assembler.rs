@@ -93,31 +93,22 @@ impl InstructionWithLabels {
     ///     : basicOpcode operandB ',' operandA
     ///     ;
     fn basic_parser() -> impl Parser<char, Self, Error = Simple<char>> {
-        use instructions::{OperandA, OperandB, Register, WithRegister};
-
         instructions::BasicOpcode::parser().padded()
-            .then(text::ident().or(text::digits(10))).padded()
+            .then(OperandBWithLabel::parser()).padded()
             .then_ignore(just(',')).padded()
-            .then(text::digits(10).or(text::ident()))
-            .map(|((basic_opcode, _), _)|
-                InstructionWithLabels::Basic(
-                    basic_opcode,
-                    OperandBWithLabel::Without(OperandB::WithRegister(WithRegister::Register, Register::A)),
-                    OperandAWithLabel::Without(OperandA::SmallLiteral(0))))
+            .then(OperandAWithLabel::parser())
+            .map(|((basic_opcode, operand_b), operand_a)|
+                InstructionWithLabels::Basic(basic_opcode, operand_b, operand_a))
     }
 
     /// special
     ///     : specialOpcode operandA
     ///     ;
     fn special_parser() -> impl Parser<char, Self, Error = Simple<char>> {
-        use instructions::OperandA;
-
         instructions::SpecialOpcode::parser().padded()
-            .then(text::digits(10))
-            .map(|(special_opcode, _)|
-                InstructionWithLabels::Special(
-                    special_opcode,
-                    OperandAWithLabel::Without(OperandA::SmallLiteral(0))))
+            .then(OperandAWithLabel::parser())
+            .map(|(special_opcode, operand_a)|
+                InstructionWithLabels::Special(special_opcode, operand_a))
     }
 
     /// debug
@@ -242,10 +233,87 @@ enum OperandBWithLabel {
     Without(instructions::OperandB),
 }
 
+impl OperandBWithLabel {
+    /// operandB
+    ///     : register
+    ///     | locationInRegister
+    ///     | locationOffsetByRegister
+    ///     | PUSH
+    ///     | PEEK
+    ///     | pick
+    ///     | STACK_POINTER
+    ///     | PROGRAM_COUNTER
+    ///     | EXTRA
+    ///     | location
+    ///     | literal
+    ///     ;
+    fn parser() -> impl Parser<char, Self, Error = Simple<char>> {
+        use instructions::{OperandB, Register, WithRegister, WithPayload};
+
+        let register = Register::parser()
+            .map(|register|
+                OperandBWithLabel::Without(OperandB::WithRegister(WithRegister::Register, register)));
+
+        let literal = text::ident().or(text::digits(10))
+            .map(|_| OperandBWithLabel::Without(OperandB::WithPayload(WithPayload::Literal, 0)));
+
+        register
+            .or(literal)
+    }
+}
+
 #[derive(Debug)]
 enum OperandAWithLabel {
     With(instructions::WithPayload, String),
     Without(instructions::OperandA),
+}
+
+impl OperandAWithLabel {
+    /// operandA
+    ///     : register
+    ///     | locationInRegister
+    ///     | locationOffsetByRegister
+    ///     | POP
+    ///     | PEEK
+    ///     | pick
+    ///     | STACK_POINTER
+    ///     | PROGRAM_COUNTER
+    ///     | EXTRA
+    ///     | location
+    ///     | literal
+    ///     | smallLiteral
+    ///     ;
+    fn parser() -> impl Parser<char, Self, Error = Simple<char>> {
+        use instructions::{OperandA, OperandB, Register, WithRegister};
+
+        let register = Register::parser()
+            .map(|register|
+                OperandAWithLabel::Without(OperandA::LeftValue(OperandB::WithRegister(WithRegister::Register, register))));
+
+        let literal = text::ident().or(text::digits(10))
+            .map(|_| OperandAWithLabel::Without(OperandA::SmallLiteral(0)));
+
+        register
+            .or(literal)
+    }
+}
+
+impl instructions::Register {
+    fn parser() -> impl Parser<char, Self, Error = Simple<char>> {
+        use instructions::Register;
+
+        choice([
+            just('A').or(just('a')).to(Register::A),
+            just('B').or(just('b')).to(Register::B),
+            just('C').or(just('c')).to(Register::C),
+            just('X').or(just('x')).to(Register::X),
+            just('Y').or(just('y')).to(Register::Y),
+            just('Z').or(just('z')).to(Register::Z),
+            just('I').or(just('i')).to(Register::I),
+            just('J').or(just('j')).to(Register::J),
+        ]).padded()
+            .then_ignore(just(',').rewind())
+    }
 }
 
 #[derive(Debug)]
