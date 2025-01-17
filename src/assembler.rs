@@ -14,6 +14,9 @@ pub fn assemble(program: &str) -> Result<(), Box<dyn error::Error>> {
 struct Program(Vec<Statement>);
 
 impl Program {
+    /// program
+    ///     : statement+ EOF
+    ///     ;
     fn parser() -> impl Parser<char, Self, Error = Simple<char>> {
         Statement::parser().padded()
             .repeated().at_least(1)
@@ -30,12 +33,20 @@ enum Statement {
 }
 
 impl Statement {
+    /// statement
+    ///     : labelDefinition
+    ///     | instruction
+    ///     | dataSection
+    ///     ;
     fn parser() -> impl Parser<char, Self, Error = Simple<char>> {
         Self::label_definition_parser()
             .or(Self::instruction_parser())
             .or(Self::data_section_parser())
     }
 
+    /// labelDefinition
+    ///     : ':' IDENTIFIER
+    ///     ;
     fn label_definition_parser() -> impl Parser<char, Self, Error = Simple<char>> {
         just(':')
             .ignore_then(text::ident())
@@ -47,6 +58,9 @@ impl Statement {
             .map(|instruction| Statement::Instruction(instruction))
     }
 
+    /// dataSection
+    ///     : ('.dat' | '.DAT') data
+    ///     ;
     fn data_section_parser() -> impl Parser<char, Self, Error = Simple<char>> {
         just(".DAT")
             .or(just(".dat"))
@@ -64,12 +78,20 @@ enum InstructionWithLabels {
 }
 
 impl InstructionWithLabels {
+    /// instruction
+    ///     : basic
+    ///     : special
+    ///     : debug
+    ///     ;
     fn parser() -> impl Parser<char, Self, Error = Simple<char>> {
         Self::basic_parser()
             .or(Self::special_parser())
             .or(Self::debug_parser())
     }
 
+    /// basic
+    ///     : basicOpcode operandB ',' operandA
+    ///     ;
     fn basic_parser() -> impl Parser<char, Self, Error = Simple<char>> {
         use instructions::{OperandA, OperandB, Register, WithRegister};
 
@@ -84,6 +106,9 @@ impl InstructionWithLabels {
                     OperandAWithLabel::Without(OperandA::SmallLiteral(0))))
     }
 
+    /// special
+    ///     : specialOpcode operandA
+    ///     ;
     fn special_parser() -> impl Parser<char, Self, Error = Simple<char>> {
         use instructions::OperandA;
 
@@ -95,6 +120,9 @@ impl InstructionWithLabels {
                     OperandAWithLabel::Without(OperandA::SmallLiteral(0))))
     }
 
+    /// debug
+    ///     : debugOpcode
+    ///     ;
     fn debug_parser() -> impl Parser<char, Self, Error = Simple<char>> {
         instructions::DebugOpcode::parser().padded()
             .map(|debug_opcode| InstructionWithLabels::Debug(debug_opcode))
@@ -102,6 +130,33 @@ impl InstructionWithLabels {
 }
 
 impl instructions::BasicOpcode {
+    /// basicOpcode
+    ///     : SET
+    ///     | ADD
+    ///     | SUB
+    ///     | MUL
+    ///     | MLI
+    ///     | DIV
+    ///     | DVI
+    ///     | AND
+    ///     | BOR
+    ///     | XOR
+    ///     | SHR
+    ///     | ASR
+    ///     | SHL
+    ///     | IFB
+    ///     | IFC
+    ///     | IFE
+    ///     | IFN
+    ///     | IFG
+    ///     | IFA
+    ///     | IFL
+    ///     | IFU
+    ///     | ADX
+    ///     | SBX
+    ///     | STI
+    ///     | STD
+    ///     ;
     fn parser() -> impl Parser<char, Self, Error = Simple<char>> {
         use instructions::BasicOpcode;
 
@@ -138,6 +193,17 @@ impl instructions::BasicOpcode {
 }
 
 impl instructions::SpecialOpcode {
+    /// specialOpcode
+    ///     : JSR
+    ///     | INT
+    ///     | IAG
+    ///     | IAS
+    ///     | RFI
+    ///     | IAQ
+    ///     | HWN
+    ///     | HWQ
+    ///     | HWI
+    ///     ;
     fn parser() -> impl Parser<char, Self, Error = Simple<char>> {
         use instructions::SpecialOpcode;
 
@@ -156,6 +222,10 @@ impl instructions::SpecialOpcode {
 }
 
 impl instructions::DebugOpcode {
+    /// debugOpcode
+    ///     : ALT
+    ///     : DUM
+    ///     ;
     fn parser() -> impl Parser<char, Self, Error = Simple<char>> {
         use instructions::DebugOpcode;
 
@@ -182,6 +252,9 @@ enum OperandAWithLabel {
 struct Data(Vec<Datum>);
 
 impl Data {
+    /// data
+    ///     : datum (',' datum)*
+    ///     ;
     fn parser() -> impl Parser<char, Self, Error = Simple<char>> {
         Datum::parser().padded()
             .separated_by(just(','))
@@ -197,12 +270,20 @@ enum Datum {
 }
 
 impl Datum {
+    /// datum
+    ///     : STRING
+    ///     | IDENTIFIER
+    ///     | NUMBER
+    ///     ;
     fn parser() -> impl Parser<char, Self, Error = Simple<char>> {
         Self::string_parser()
             .or(Self::identifier_parser())
             .or(Self::number_parser())
     }
 
+    /// STRING
+    ///     : '"' (ESCAPE|.)*? '"'
+    ///     ;
     fn string_parser() -> impl Parser<char, Self, Error = Simple<char>> {
         none_of::<char, &str, Simple<char>>("\"")
             .repeated()
@@ -211,11 +292,19 @@ impl Datum {
             .map(|string| Datum::String(string))
     }
 
+    /// IDENTIFIER
+    ///     : [._a-zA-Z]+[._a-zA-Z0-9]*
+    ///     ;
     fn identifier_parser() -> impl Parser<char, Self, Error = Simple<char>> {
         text::ident()
             .map(|identifier| Datum::String(identifier))
     }
 
+    /// NUMBER
+    ///     : '0x' [0-9a-fA-F]+
+    ///     | '0b' [0-1]+
+    ///     | '-'? [0-9]+
+    ///     ;
     fn number_parser() -> impl Parser<char, Self, Error = Simple<char>> {
         let decimal = just('-').or_not()
             .then(text::digits(10))
