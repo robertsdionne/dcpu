@@ -1,8 +1,5 @@
 use std::{error, fs};
-use chumsky::{prelude, primitive, text};
-use chumsky::prelude::Simple;
-use chumsky::Parser;
-use chumsky::text::TextParser;
+use chumsky::prelude::*;
 use crate::instructions;
 
 pub fn assemble(program: &str) -> Result<(), Box<dyn error::Error>> {
@@ -20,7 +17,7 @@ impl Program {
     fn parser() -> impl Parser<char, Self, Error = Simple<char>> {
         Statement::parser().padded()
             .repeated().at_least(1)
-            .then_ignore(prelude::end())
+            .then_ignore(end())
             .map(|statements| Program(statements))
     }
 }
@@ -40,7 +37,7 @@ impl Statement {
     }
 
     fn label_definition_parser() -> impl Parser<char, Self, Error = Simple<char>> {
-        primitive::just(':')
+        just(':')
             .ignore_then(text::ident())
             .map(|label| Statement::LabelDefinition(label))
     }
@@ -51,8 +48,8 @@ impl Statement {
     }
 
     fn data_section_parser() -> impl Parser<char, Self, Error = Simple<char>> {
-        primitive::just(".DAT")
-            .or(primitive::just(".dat"))
+        just(".DAT")
+            .or(just(".dat"))
             .padded()
             .ignore_then(Data::parser())
             .map(|data| Statement::DataSection(data))
@@ -70,20 +67,102 @@ impl InstructionWithLabels {
     fn parser() -> impl Parser<char, Self, Error = Simple<char>> {
         Self::basic_parser()
             .or(Self::special_parser())
+            .or(Self::debug_parser())
     }
 
     fn basic_parser() -> impl Parser<char, Self, Error = Simple<char>> {
-        text::ident().padded()
+        use instructions::{OperandA, OperandB, Register, WithRegister};
+
+        instructions::BasicOpcode::parser().padded()
             .then(text::ident().or(text::digits(10))).padded()
-            .then_ignore(primitive::just(',')).padded()
+            .then_ignore(just(',')).padded()
             .then(text::digits(10).or(text::ident()))
-            .map(|_| InstructionWithLabels::Debug(instructions::DebugOpcode::Noop))
+            .map(|((basic_opcode, _), _)|
+                InstructionWithLabels::Basic(
+                    basic_opcode,
+                    OperandBWithLabel::Without(OperandB::WithRegister(WithRegister::Register, Register::A)),
+                    OperandAWithLabel::Without(OperandA::SmallLiteral(0))))
     }
 
     fn special_parser() -> impl Parser<char, Self, Error = Simple<char>> {
-        text::ident().padded()
+        use instructions::OperandA;
+
+        instructions::SpecialOpcode::parser().padded()
             .then(text::digits(10))
-            .map(|_| InstructionWithLabels::Debug(instructions::DebugOpcode::Noop))
+            .map(|(special_opcode, _)|
+                InstructionWithLabels::Special(
+                    special_opcode,
+                    OperandAWithLabel::Without(OperandA::SmallLiteral(0))))
+    }
+
+    fn debug_parser() -> impl Parser<char, Self, Error = Simple<char>> {
+        instructions::DebugOpcode::parser().padded()
+            .map(|debug_opcode| InstructionWithLabels::Debug(debug_opcode))
+    }
+}
+
+impl instructions::BasicOpcode {
+    fn parser() -> impl Parser<char, Self, Error = Simple<char>> {
+        use instructions::BasicOpcode;
+
+        choice([
+            just("SET").or(just("set")).to(BasicOpcode::Set),
+            just("ADD").or(just("add")).to(BasicOpcode::Add),
+            just("SUB").or(just("sub")).to(BasicOpcode::Subtract),
+            just("MUL").or(just("mul")).to(BasicOpcode::Multiply),
+            just("MLI").or(just("mli")).to(BasicOpcode::MultiplySigned),
+            just("DIV").or(just("div")).to(BasicOpcode::Divide),
+            just("DVI").or(just("dvi")).to(BasicOpcode::DivideSigned),
+            just("MOD").or(just("mod")).to(BasicOpcode::Modulo),
+            just("MDI").or(just("mdi")).to(BasicOpcode::ModuloSigned),
+            just("AND").or(just("and")).to(BasicOpcode::BinaryAnd),
+            just("BOR").or(just("bor")).to(BasicOpcode::BinaryOr),
+            just("XOR").or(just("xor")).to(BasicOpcode::BinaryExclusiveOr),
+            just("SHR").or(just("shr")).to(BasicOpcode::ShiftRight),
+            just("ASR").or(just("asr")).to(BasicOpcode::ArithmeticShiftRight),
+            just("SHL").or(just("shl")).to(BasicOpcode::ShiftLeft),
+            just("IFB").or(just("ifb")).to(BasicOpcode::IfBitSet),
+            just("IFC").or(just("ifc")).to(BasicOpcode::IfClear),
+            just("IFE").or(just("ife")).to(BasicOpcode::IfEqual),
+            just("IFN").or(just("ifn")).to(BasicOpcode::IfNotEqual),
+            just("IFG").or(just("ifg")).to(BasicOpcode::IfGreaterThan),
+            just("IFA").or(just("ifa")).to(BasicOpcode::IfAbove),
+            just("IFL").or(just("ifl")).to(BasicOpcode::IfLessThan),
+            just("IFU").or(just("ifu")).to(BasicOpcode::IfUnder),
+            just("ADX").or(just("adx")).to(BasicOpcode::AddWithCarry),
+            just("SBX").or(just("sbx")).to(BasicOpcode::SubtractWithCarry),
+            just("STI").or(just("sti")).to(BasicOpcode::SetThenIncrement),
+            just("STD").or(just("std")).to(BasicOpcode::SetThenDecrement),
+        ])
+    }
+}
+
+impl instructions::SpecialOpcode {
+    fn parser() -> impl Parser<char, Self, Error = Simple<char>> {
+        use instructions::SpecialOpcode;
+
+        choice([
+            just("JSR").or(just("jsr")).to(SpecialOpcode::JumpSubroutine),
+            just("INT").or(just("int")).to(SpecialOpcode::InterruptTrigger),
+            just("IAG").or(just("iag")).to(SpecialOpcode::InterruptAddressGet),
+            just("IAS").or(just("ias")).to(SpecialOpcode::InterruptAddressSet),
+            just("RFI").or(just("rfi")).to(SpecialOpcode::ReturnFromInterrupt),
+            just("IAQ").or(just("iaq")).to(SpecialOpcode::InterruptAddToQueue),
+            just("HWN").or(just("hwn")).to(SpecialOpcode::HardwareNumberConnected),
+            just("HWQ").or(just("hwq")).to(SpecialOpcode::HardwareQuery),
+            just("HWI").or(just("hwi")).to(SpecialOpcode::HardwareInterrupt),
+        ])
+    }
+}
+
+impl instructions::DebugOpcode {
+    fn parser() -> impl Parser<char, Self, Error = Simple<char>> {
+        use instructions::DebugOpcode;
+
+        choice([
+            just("ALT").or(just("alt")).to(DebugOpcode::Alert),
+            just("DUM").or(just("dum")).to(DebugOpcode::DumpState),
+        ])
     }
 }
 
@@ -105,7 +184,7 @@ struct Data(Vec<Datum>);
 impl Data {
     fn parser() -> impl Parser<char, Self, Error = Simple<char>> {
         Datum::parser().padded()
-            .separated_by(primitive::just(','))
+            .separated_by(just(','))
             .map(|data| Data(data))
     }
 }
@@ -125,9 +204,9 @@ impl Datum {
     }
 
     fn string_parser() -> impl Parser<char, Self, Error = Simple<char>> {
-        primitive::none_of::<char, &str, Simple<char>>("\"")
+        none_of::<char, &str, Simple<char>>("\"")
             .repeated()
-            .delimited_by(primitive::just("\""), primitive::just("\""))
+            .delimited_by(just("\""), just("\""))
             .collect::<String>()
             .map(|string| Datum::String(string))
     }
@@ -138,7 +217,7 @@ impl Datum {
     }
 
     fn number_parser() -> impl Parser<char, Self, Error = Simple<char>> {
-        let decimal = primitive::just('-').or_not()
+        let decimal = just('-').or_not()
             .then(text::digits(10))
             .map(|(minus_sign, digits)| {
                 let value = digits.parse().unwrap();
@@ -149,7 +228,7 @@ impl Datum {
             })
             .map(|number| Datum::Number(number));
 
-        let binary = primitive::just("0b")
+        let binary = just("0b")
             .ignore_then(text::digits(2))
             .map(|digits| {
                 let digits: String = digits;
@@ -157,7 +236,7 @@ impl Datum {
             })
             .map(|number: u16| Datum::Number(number));
 
-        let hexadecimal = primitive::just("0x")
+        let hexadecimal = just("0x")
             .ignore_then(text::digits(16))
             .map(|text: String| u16::from_str_radix(text.as_str(), 16).unwrap())
             .map(|number| Datum::Number(number));
