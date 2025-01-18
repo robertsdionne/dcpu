@@ -301,20 +301,25 @@ impl OperandAWithLabel {
 }
 
 impl instructions::Register {
+    /// REGSITER
+    ///     : [abcxyzijABCXYZIJ]
+    ///     ;
     fn parser() -> impl Parser<char, Self, Error = Simple<char>> {
         use instructions::Register;
 
-        choice([
-            just('A').or(just('a')).to(Register::A),
-            just('B').or(just('b')).to(Register::B),
-            just('C').or(just('c')).to(Register::C),
-            just('X').or(just('x')).to(Register::X),
-            just('Y').or(just('y')).to(Register::Y),
-            just('Z').or(just('z')).to(Register::Z),
-            just('I').or(just('i')).to(Register::I),
-            just('J').or(just('j')).to(Register::J),
-        ]).padded()
+        one_of("abcxyzijABCXYZIJ")
             .then_ignore(just(',').rewind())
+            .map(|register| match register {
+                'a' | 'A' => Register::A,
+                'b' | 'B' => Register::B,
+                'c' | 'C' => Register::C,
+                'x' | 'X' => Register::X,
+                'y' | 'Y' => Register::Y,
+                'z' | 'Z' => Register::Z,
+                'i' | 'I' => Register::I,
+                'j' | 'J' => Register::J,
+                _ => unreachable!(),
+            })
     }
 }
 
