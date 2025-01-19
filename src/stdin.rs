@@ -8,14 +8,17 @@ pub struct Stdin;
 
 impl hardware::Hardware for Stdin {
     fn get_id(&self) -> u32 {
+        const ID: u32 = 0x00000000;
         ID
     }
 
     fn get_manufacturer_id(&self) -> u32 {
+        const MANUFACTURER_ID: u32 = 0x76543210;
         MANUFACTURER_ID
     }
 
     fn get_version(&self) -> u16 {
+        const VERSION: u16 = 0x0000;
         VERSION
     }
 
@@ -53,10 +56,6 @@ impl hardware::Hardware for Stdin {
         }
     }
 }
-
-const ID: u32 = 0x00000000;
-const MANUFACTURER_ID: u32 = 0x76543210;
-const VERSION: u16 = 0x000;
 
 #[allow(dead_code)]
 #[repr(u16)]

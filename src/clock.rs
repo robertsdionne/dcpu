@@ -32,6 +32,7 @@ impl hardware::Hardware for Clock {
     }
 
     fn get_id(&self) -> u32 {
+        const ID: u32 = 0x12d0b402;
         ID
     }
 
@@ -40,6 +41,7 @@ impl hardware::Hardware for Clock {
     }
 
     fn get_version(&self) -> u16 {
+        const VERSION: u16 = 0x0001;
         VERSION
     }
 
@@ -60,8 +62,6 @@ impl hardware::Hardware for Clock {
 }
 
 const DURATION: time::Duration = time::Duration::from_nanos(16666666);
-const ID: u32 = 0x12d0b402;
-const VERSION: u16 = 0x0001;
 
 #[allow(dead_code)]
 #[repr(u16)]

@@ -8,14 +8,17 @@ pub struct Stdout;
 
 impl hardware::Hardware for Stdout {
     fn get_id(&self) -> u32 {
+        const ID: u32 = 0x00000001;
         ID
     }
 
     fn get_manufacturer_id(&self) -> u32 {
+        const MANUFACTURER_ID: u32 = 0x76543210;
         MANUFACTURER_ID
     }
 
     fn get_version(&self) -> u16 {
+        const VERSION: u16 = 0x000;
         VERSION
     }
 
@@ -45,10 +48,6 @@ impl hardware::Hardware for Stdout {
         output.flush().unwrap();
     }
 }
-
-const ID: u32 = 0x00000001;
-const MANUFACTURER_ID: u32 = 0x76543210;
-const VERSION: u16 = 0x000;
 
 #[allow(dead_code)]
 #[repr(u16)]

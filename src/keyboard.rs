@@ -10,9 +10,6 @@ pub struct Keyboard {
     previous_state: collections::HashSet<u16>,
 }
 
-const ID: u32 = 0x30fc7406;
-const VERSION: u16 = 0x0001;
-
 impl Keyboard {
     pub fn event(&mut self, key: u16, dcpu: &mut Dcpu) {
         self.buffer.push(key);
@@ -30,6 +27,7 @@ impl hardware::Hardware for Keyboard {
     }
 
     fn get_id(&self) -> u32 {
+        const ID: u32 = 0x30fc7406;
         ID
     }
 
@@ -38,6 +36,7 @@ impl hardware::Hardware for Keyboard {
     }
 
     fn get_version(&self) -> u16 {
+        const VERSION: u16 = 0x0001;
         VERSION
     }
 

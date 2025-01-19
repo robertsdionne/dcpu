@@ -45,14 +45,17 @@ impl Drive {
 
 impl hardware::Hardware for Drive {
     fn get_id(&self) -> u32 {
+        const ID: u32 = 0x4fd524c5;
         ID
     }
 
     fn get_manufacturer_id(&self) -> u32 {
+        const MANUFACTURER_ID: u32 = 0x1eb37e91;
         MANUFACTURER_ID
     }
 
     fn get_version(&self) -> u16 {
+        const VERSION: u16 = 0x000b;
         VERSION
     }
 
@@ -164,10 +167,6 @@ impl hardware::Hardware for Drive {
         }
     }
 }
-
-const ID: u32 = 0x4fd524c5;
-const MANUFACTURER_ID: u32 = 0x1eb37e91;
-const VERSION: u16 = 0x000b;
 
 #[allow(dead_code)]
 #[derive(Debug)]
