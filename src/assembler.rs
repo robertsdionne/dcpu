@@ -4,7 +4,7 @@ use std::{error, fs};
 
 pub fn assemble(program: &str) -> Result<(), Box<dyn error::Error>> {
     let source = fs::read_to_string(program)?;
-    let program = Program::parser().parse_recovery_verbose(source);
+    let program = Program::parser().parse(source);
 
     println!("{:#?}", program);
     Ok(())
@@ -29,6 +29,7 @@ impl Program {
 
 #[derive(Debug)]
 enum Statement {
+    Comment(String),
     LabelDefinition(String),
     Instruction(InstructionWithLabels),
     DataSection(Data),
@@ -36,14 +37,27 @@ enum Statement {
 
 impl Statement {
     /// statement
-    ///     : labelDefinition
+    ///     : COMMENT
+    ///     | labelDefinition
     ///     | instruction
     ///     | dataSection
     ///     ;
     fn parser() -> impl Parser<char, Self, Error = Simple<char>> {
-        Self::label_definition_parser()
+        Self::comment_parser()
+            .or(Self::label_definition_parser())
             .or(Self::instruction_parser())
             .or(Self::data_section_parser())
+    }
+
+    /// COMMENT
+    ///     : ';' ~[\r\n]* -> skip
+    ///     ;
+    fn comment_parser() -> impl Parser<char, Self, Error = Simple<char>> {
+        none_of::<char, &str, Simple<char>>("\r\n")
+            .repeated()
+            .delimited_by(just(";"), text::newline())
+            .collect::<String>()
+            .map(|comment| Statement::Comment(comment))
     }
 
     /// labelDefinition
