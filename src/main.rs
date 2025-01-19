@@ -9,16 +9,17 @@ mod dcpu;
 mod dcpu_test;
 mod floppy;
 mod hardware;
+mod harold;
 mod instructions;
 mod keyboard;
+mod kulog;
+mod monitor;
+mod printer;
+mod sleep_chamber;
+mod sped3;
 mod stderr;
 mod stdin;
 mod stdout;
-mod sped3;
-mod monitor;
-mod harold;
-mod kulog;
-mod sleep_chamber;
 
 fn main() -> Result<(), Box<dyn error::Error>> {
     match Cli::parse() {
@@ -72,6 +73,7 @@ fn run(program: &str, floppy_disk: Option<String>) -> Result<(), Box<dyn error::
     let mut clock = clock::Clock::default();
     let mut monitor = monitor::Device::default();
     let mut floppy = floppy::Drive::default();
+    let mut printer = printer::Printer::default();
     if let Some(floppy_disk) = floppy_disk {
         floppy.insert(&floppy_disk, false)?;
     }
@@ -82,6 +84,7 @@ fn run(program: &str, floppy_disk: Option<String>) -> Result<(), Box<dyn error::
     hardware.push(&mut clock);
     hardware.push(&mut floppy);
     hardware.push(&mut monitor);
+    hardware.push(&mut printer);
     let mut dcpu = dcpu::Dcpu::default();
     dcpu.load(0, &program);
 
