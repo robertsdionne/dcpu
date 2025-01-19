@@ -23,11 +23,14 @@ pub fn assemble(program: &str) -> Result<Vec<u16>, Box<dyn error::Error>> {
                 address += statement.size() as u16;
             }
 
-            let program = program.0.iter()
+            let program = program
+                .0
+                .iter()
                 .map(|statement| statement.resolve_labels(&label_addresses))
                 .collect::<Result<Vec<_>, _>>()?;
 
-            let binary: Vec<u16> = program.iter()
+            let binary: Vec<u16> = program
+                .iter()
                 .flat_map::<Vec<u16>, _>(|statement| statement.clone().into())
                 .collect();
 
@@ -63,7 +66,10 @@ enum Statement {
 }
 
 impl Statement {
-    fn resolve_labels(&self, labels: &collections::HashMap<String, u16>) -> Result<Statement, Box<dyn error::Error>> {
+    fn resolve_labels(
+        &self,
+        labels: &collections::HashMap<String, u16>,
+    ) -> Result<Statement, Box<dyn error::Error>> {
         match self {
             Statement::Instruction(instruction) => match instruction.resolve_labels(&labels) {
                 Ok(instruction) => Ok(Statement::Instruction(instruction)),
@@ -160,14 +166,19 @@ enum InstructionWithLabels {
 }
 
 impl InstructionWithLabels {
-    fn resolve_labels(&self, labels: &collections::HashMap<String, u16>) -> Result<InstructionWithLabels, Box<dyn error::Error>> {
+    fn resolve_labels(
+        &self,
+        labels: &collections::HashMap<String, u16>,
+    ) -> Result<InstructionWithLabels, Box<dyn error::Error>> {
         Ok(match self {
-            Self::Basic(basic_opcode, operand_b, operand_a) => {
-                InstructionWithLabels::Basic(*basic_opcode, operand_b.resolve_labels(labels)?, operand_a.resolve_labels(labels)?)
-            },
+            Self::Basic(basic_opcode, operand_b, operand_a) => InstructionWithLabels::Basic(
+                *basic_opcode,
+                operand_b.resolve_labels(labels)?,
+                operand_a.resolve_labels(labels)?,
+            ),
             Self::Special(special_opcode, operand_a) => {
                 InstructionWithLabels::Special(*special_opcode, operand_a.resolve_labels(labels)?)
-            },
+            }
             _ => self.clone(),
         })
     }
@@ -243,7 +254,8 @@ impl Into<Vec<u16>> for InstructionWithLabels {
                 Instruction::Special(special_opcode, operand_a.into())
             }
             Self::Debug(debug_opcode) => Instruction::Debug(debug_opcode),
-        }.into()
+        }
+        .into()
     }
 }
 
@@ -387,20 +399,29 @@ enum OperandBWithLabel {
 }
 
 impl OperandBWithLabel {
-    fn resolve_labels(&self, labels: &collections::HashMap<String, u16>) -> Result<OperandBWithLabel, Box<dyn error::Error>> {
+    fn resolve_labels(
+        &self,
+        labels: &collections::HashMap<String, u16>,
+    ) -> Result<OperandBWithLabel, Box<dyn error::Error>> {
         use instructions::{OperandB, Register, WithRegister};
 
         match self {
             OperandBWithLabel::With(with_payload, label) => {
                 match Register::parser().parse(label.clone()) {
-                    Ok(register) => Ok(OperandBWithLabel::Without(OperandB::WithRegister(WithRegister::Register, register))),
+                    Ok(register) => Ok(OperandBWithLabel::Without(OperandB::WithRegister(
+                        WithRegister::Register,
+                        register,
+                    ))),
                     _ => match labels.get(label) {
-                        Some(address) => Ok(OperandBWithLabel::Without(OperandB::WithPayload(*with_payload, *address))),
+                        Some(address) => Ok(OperandBWithLabel::Without(OperandB::WithPayload(
+                            *with_payload,
+                            *address,
+                        ))),
                         None => Err(format!("Label undefined: {}", label))?,
-                    }
+                    },
                 }
-            },
-            _ => Ok(self.clone())
+            }
+            _ => Ok(self.clone()),
         }
     }
 
@@ -591,20 +612,27 @@ enum OperandAWithLabel {
 }
 
 impl OperandAWithLabel {
-    fn resolve_labels(&self, labels: &collections::HashMap<String, u16>) -> Result<OperandAWithLabel, Box<dyn error::Error>> {
+    fn resolve_labels(
+        &self,
+        labels: &collections::HashMap<String, u16>,
+    ) -> Result<OperandAWithLabel, Box<dyn error::Error>> {
         use instructions::{OperandA, OperandB, Register, WithRegister};
 
         match self {
             OperandAWithLabel::With(with_payload, label) => {
                 match Register::parser().parse(format!("{},", label.clone())) {
-                    Ok(register) => Ok(OperandAWithLabel::Without(OperandA::LeftValue(OperandB::WithRegister(WithRegister::Register, register)))),
+                    Ok(register) => Ok(OperandAWithLabel::Without(OperandA::LeftValue(
+                        OperandB::WithRegister(WithRegister::Register, register),
+                    ))),
                     _ => match labels.get(label) {
-                        Some(address) => Ok(OperandAWithLabel::Without(OperandA::LeftValue(OperandB::WithPayload(*with_payload, *address)))),
+                        Some(address) => Ok(OperandAWithLabel::Without(OperandA::LeftValue(
+                            OperandB::WithPayload(*with_payload, *address),
+                        ))),
                         None => Err(format!("Label undefined: {}", label))?,
-                    }
+                    },
                 }
-            },
-            _ => Ok(self.clone())
+            }
+            _ => Ok(self.clone()),
         }
     }
 
@@ -676,17 +704,20 @@ impl instructions::Register {
 struct Data(Vec<Datum>);
 
 impl Data {
-    fn resolve_labels(&self, labels: &collections::HashMap<String, u16>) -> Result<Data, Box<dyn error::Error>> {
-        Ok(Self(self.0.iter()
-            .map(|datum| datum.resolve_labels(labels))
-            .collect::<Result<Vec<_>, _>>()?
+    fn resolve_labels(
+        &self,
+        labels: &collections::HashMap<String, u16>,
+    ) -> Result<Data, Box<dyn error::Error>> {
+        Ok(Self(
+            self.0
+                .iter()
+                .map(|datum| datum.resolve_labels(labels))
+                .collect::<Result<Vec<_>, _>>()?,
         ))
     }
 
     fn size(&self) -> usize {
-        self.0.iter()
-            .map(|datum| datum.size())
-            .sum()
+        self.0.iter().map(|datum| datum.size()).sum()
     }
 
     /// data
@@ -702,7 +733,8 @@ impl Data {
 
 impl Into<Vec<u16>> for Data {
     fn into(self) -> Vec<u16> {
-        self.0.iter()
+        self.0
+            .iter()
             .flat_map::<Vec<u16>, _>(|datum| datum.clone().into())
             .collect()
     }
@@ -716,12 +748,15 @@ enum Datum {
 }
 
 impl Datum {
-    fn resolve_labels(&self, labels: &collections::HashMap<String, u16>) -> Result<Datum, Box<dyn error::Error>> {
+    fn resolve_labels(
+        &self,
+        labels: &collections::HashMap<String, u16>,
+    ) -> Result<Datum, Box<dyn error::Error>> {
         match self {
             Datum::Identifier(label) => match labels.get(label) {
                 Some(address) => Ok(Datum::Number(*address)),
                 None => Err(format!("Label undefined: {}", label))?,
-            }
+            },
             _ => Ok(self.clone()),
         }
     }
@@ -801,7 +836,12 @@ impl Datum {
 impl Into<Vec<u16>> for Datum {
     fn into(self) -> Vec<u16> {
         match self {
-            Self::String(string) => string.as_bytes().to_vec().iter().map(|byte| *byte as u16).collect(),
+            Self::String(string) => string
+                .as_bytes()
+                .to_vec()
+                .iter()
+                .map(|byte| *byte as u16)
+                .collect(),
             Self::Number(value) => vec![value],
             _ => panic!("Converting unresolved identifier into address"),
         }

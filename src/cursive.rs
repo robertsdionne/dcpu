@@ -1,16 +1,16 @@
-use crate::{clock, dcpu, hardware, keyboard};
+use crate::{assembler, clock, dcpu, hardware, keyboard};
 use cursive;
 use cursive::event::Key;
 use cursive::{event, view, views, CursiveExt};
-use std::{error, fs};
+use std::error;
 
 pub fn run(program: &str) -> Result<(), Box<dyn error::Error>> {
-    let data = fs::read(program)?;
+    let program = assembler::assemble(&program)?;
 
     let clock = clock::Clock::default();
     let keyboard = keyboard::Keyboard::default();
     let mut dcpu = dcpu::Dcpu::default();
-    dcpu.load_bytes(0, &data);
+    dcpu.load(0, &program);
 
     let data = vec![0x20; 0x180];
     dcpu.load(0xf000, &data);

@@ -23,6 +23,7 @@ pub struct Dcpu {
 }
 
 impl Dcpu {
+    #[allow(dead_code)]
     pub fn load_bytes(&mut self, i: usize, program: &Vec<u8>) {
         let program = program
             .chunks(2)

@@ -21,7 +21,7 @@ fn main() -> Result<(), Box<dyn error::Error>> {
             let program = assembler::assemble(&program)?;
             println!("{:#06x?}", program);
             Ok(())
-        },
+        }
         Cli::Print { program } => print(&program),
         Cli::Terminal {
             program,
@@ -59,7 +59,7 @@ fn print(program: &str) -> Result<(), Box<dyn error::Error>> {
 }
 
 fn run(program: &str, floppy_disk: Option<String>) -> Result<(), Box<dyn error::Error>> {
-    let data = fs::read(program)?;
+    let program = assembler::assemble(&program)?;
 
     let mut stdin = stdin::Stdin;
     let mut stdout = stdout::Stdout;
@@ -76,7 +76,7 @@ fn run(program: &str, floppy_disk: Option<String>) -> Result<(), Box<dyn error::
     hardware.push(&mut clock);
     hardware.push(&mut floppy);
     let mut dcpu = dcpu::Dcpu::default();
-    dcpu.load_bytes(0, &data);
+    dcpu.load(0, &program);
 
     dcpu.execute(&mut hardware);
     Ok(())
