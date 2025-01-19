@@ -467,9 +467,11 @@ impl Dcpu {
                     WithPayload::LocationOffsetByRegister(register) => Operand::Address(
                         self.location_offset_by_register_address(payload, register),
                     ),
-                    WithPayload::Pick => Operand::Address(
-                        self.address_derived_from_program_counter(self.stack_pointer + payload),
-                    ),
+                    WithPayload::Pick => {
+                        Operand::Address(self.address_derived_from_program_counter(
+                            self.stack_pointer.wrapping_add(payload),
+                        ))
+                    }
                     WithPayload::Location => {
                         Operand::Address(self.address_derived_from_program_counter(payload))
                     }

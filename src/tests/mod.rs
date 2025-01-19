@@ -15,6 +15,7 @@ mod if_under;
 mod modulo;
 mod multiply;
 mod multiply_signed;
+mod set;
 mod shift_left;
 mod shift_right;
 mod subtract;
