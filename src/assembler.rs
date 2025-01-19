@@ -2,11 +2,9 @@ use crate::instructions;
 use chumsky::prelude::*;
 use std::{collections, error, fs};
 
-pub fn assemble(program: &str) -> Result<(), Box<dyn error::Error>> {
+pub fn assemble(program: &str) -> Result<Vec<u16>, Box<dyn error::Error>> {
     let source = fs::read_to_string(program)?;
     let program = Program::parser().parse(source);
-
-    println!("{:#?}", program);
 
     match program {
         Err(errors) => {
@@ -24,31 +22,16 @@ pub fn assemble(program: &str) -> Result<(), Box<dyn error::Error>> {
                 }
                 address += statement.size() as u16;
             }
-            println!("{:#06x?}", label_addresses);
 
-            let binaries = program.0.iter()
-                .map::<Result<Vec<u16>, _>, _>(|statement| {
-                    match statement {
-                        Statement::Instruction(instruction) => match instruction.resolve_labels(&label_addresses) {
-                            Ok(instruction) => Ok(instruction.into()),
-                            Err(err) => Err(err),
-                        },
-                        Statement::DataSection(data) => match data.resolve_labels(&label_addresses) {
-                            Ok(data) => Ok(data.into()),
-                            Err(err) => Err(err),
-                        },
-                        _ => Ok(vec![]),
-                    }
-                })
-                .collect::<Result<Vec<Vec<u16>>, _>>()?;
+            let program = program.0.iter()
+                .map(|statement| statement.resolve_labels(&label_addresses))
+                .collect::<Result<Vec<_>, _>>()?;
 
-            let binary = binaries
-                .iter()
-                .flatten()
-                .collect::<Vec<_>>();
+            let binary: Vec<u16> = program.iter()
+                .flat_map::<Vec<u16>, _>(|statement| statement.clone().into())
+                .collect();
 
-            println!("{:#06x?}", binary);
-            Ok(())
+            Ok(binary)
         }
     }
 }
@@ -70,7 +53,8 @@ impl Program {
     }
 }
 
-#[derive(Debug)]
+#[allow(dead_code)]
+#[derive(Clone, Debug)]
 enum Statement {
     Comment(String),
     LabelDefinition(String),
@@ -79,6 +63,20 @@ enum Statement {
 }
 
 impl Statement {
+    fn resolve_labels(&self, labels: &collections::HashMap<String, u16>) -> Result<Statement, Box<dyn error::Error>> {
+        match self {
+            Statement::Instruction(instruction) => match instruction.resolve_labels(&labels) {
+                Ok(instruction) => Ok(Statement::Instruction(instruction)),
+                Err(err) => Err(err),
+            },
+            Statement::DataSection(data) => match data.resolve_labels(&labels) {
+                Ok(data) => Ok(Statement::DataSection(data)),
+                Err(err) => Err(err),
+            },
+            _ => Ok(self.clone()),
+        }
+    }
+
     fn size(&self) -> usize {
         match self {
             Statement::Comment(_) => 0,
@@ -139,7 +137,18 @@ impl Statement {
     }
 }
 
-#[derive(Debug)]
+impl Into<Vec<u16>> for Statement {
+    fn into(self) -> Vec<u16> {
+        match self {
+            Statement::Comment(_) => vec![],
+            Statement::LabelDefinition(_) => vec![],
+            Statement::Instruction(instruction) => instruction.into(),
+            Statement::DataSection(section) => section.into(),
+        }
+    }
+}
+
+#[derive(Clone, Debug)]
 enum InstructionWithLabels {
     Basic(
         instructions::BasicOpcode,
@@ -151,17 +160,15 @@ enum InstructionWithLabels {
 }
 
 impl InstructionWithLabels {
-    fn resolve_labels(&self, labels: &collections::HashMap<String, u16>) -> Result<instructions::Instruction, Box<dyn error::Error>> {
-        use instructions::Instruction;
-
+    fn resolve_labels(&self, labels: &collections::HashMap<String, u16>) -> Result<InstructionWithLabels, Box<dyn error::Error>> {
         Ok(match self {
             Self::Basic(basic_opcode, operand_b, operand_a) => {
-                Instruction::Basic(*basic_opcode, operand_b.resolve_labels(labels)?, operand_a.resolve_labels(labels)?)
+                InstructionWithLabels::Basic(*basic_opcode, operand_b.resolve_labels(labels)?, operand_a.resolve_labels(labels)?)
             },
             Self::Special(special_opcode, operand_a) => {
-                Instruction::Special(*special_opcode, operand_a.resolve_labels(labels)?)
+                InstructionWithLabels::Special(*special_opcode, operand_a.resolve_labels(labels)?)
             },
-            Self::Debug(debug_opcode) => Instruction::Debug(*debug_opcode),
+            _ => self.clone(),
         })
     }
 
@@ -221,6 +228,22 @@ impl InstructionWithLabels {
         instructions::DebugOpcode::parser()
             .padded()
             .map(|debug_opcode| InstructionWithLabels::Debug(debug_opcode))
+    }
+}
+
+impl Into<Vec<u16>> for InstructionWithLabels {
+    fn into(self) -> Vec<u16> {
+        use instructions::Instruction;
+
+        match self {
+            Self::Basic(basic_opcode, operand_b, operand_a) => {
+                Instruction::Basic(basic_opcode, operand_b.into(), operand_a.into())
+            }
+            Self::Special(special_opcode, operand_a) => {
+                Instruction::Special(special_opcode, operand_a.into())
+            }
+            Self::Debug(debug_opcode) => Instruction::Debug(debug_opcode),
+        }.into()
     }
 }
 
@@ -357,27 +380,27 @@ impl instructions::DebugOpcode {
     }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 enum OperandBWithLabel {
     With(instructions::WithPayload, String),
     Without(instructions::OperandB),
 }
 
 impl OperandBWithLabel {
-    fn resolve_labels(&self, labels: &collections::HashMap<String, u16>) -> Result<instructions::OperandB, Box<dyn error::Error>> {
+    fn resolve_labels(&self, labels: &collections::HashMap<String, u16>) -> Result<OperandBWithLabel, Box<dyn error::Error>> {
         use instructions::{OperandB, Register, WithRegister};
 
         match self {
             OperandBWithLabel::With(with_payload, label) => {
                 match Register::parser().parse(label.clone()) {
-                    Ok(register) => Ok(OperandB::WithRegister(WithRegister::Register, register)),
+                    Ok(register) => Ok(OperandBWithLabel::Without(OperandB::WithRegister(WithRegister::Register, register))),
                     _ => match labels.get(label) {
-                        Some(address) => Ok(OperandB::WithPayload(*with_payload, *address)),
+                        Some(address) => Ok(OperandBWithLabel::Without(OperandB::WithPayload(*with_payload, *address))),
                         None => Err(format!("Label undefined: {}", label))?,
                     }
                 }
             },
-            OperandBWithLabel::Without(operand_b) => Ok(*operand_b),
+            _ => Ok(self.clone())
         }
     }
 
@@ -552,27 +575,36 @@ impl OperandBWithLabel {
     }
 }
 
-#[derive(Debug)]
+impl Into<instructions::OperandB> for OperandBWithLabel {
+    fn into(self) -> instructions::OperandB {
+        match self {
+            Self::Without(operand_b) => operand_b,
+            _ => panic!("Cannot convert a labelled OperandB without resolving labels"),
+        }
+    }
+}
+
+#[derive(Clone, Debug)]
 enum OperandAWithLabel {
     With(instructions::WithPayload, String),
     Without(instructions::OperandA),
 }
 
 impl OperandAWithLabel {
-    fn resolve_labels(&self, labels: &collections::HashMap<String, u16>) -> Result<instructions::OperandA, Box<dyn error::Error>> {
+    fn resolve_labels(&self, labels: &collections::HashMap<String, u16>) -> Result<OperandAWithLabel, Box<dyn error::Error>> {
         use instructions::{OperandA, OperandB, Register, WithRegister};
 
         match self {
             OperandAWithLabel::With(with_payload, label) => {
                 match Register::parser().parse(format!("{},", label.clone())) {
-                    Ok(register) => Ok(OperandA::LeftValue(OperandB::WithRegister(WithRegister::Register, register))),
+                    Ok(register) => Ok(OperandAWithLabel::Without(OperandA::LeftValue(OperandB::WithRegister(WithRegister::Register, register)))),
                     _ => match labels.get(label) {
-                        Some(address) => Ok(OperandA::LeftValue(OperandB::WithPayload(*with_payload, *address))),
+                        Some(address) => Ok(OperandAWithLabel::Without(OperandA::LeftValue(OperandB::WithPayload(*with_payload, *address)))),
                         None => Err(format!("Label undefined: {}", label))?,
                     }
                 }
             },
-            OperandAWithLabel::Without(operand_a) => Ok(*operand_a),
+            _ => Ok(self.clone())
         }
     }
 
@@ -605,6 +637,15 @@ impl OperandAWithLabel {
                 OperandAWithLabel::Without(OperandA::LeftValue(operand_b))
             }
         })
+    }
+}
+
+impl Into<instructions::OperandA> for OperandAWithLabel {
+    fn into(self) -> instructions::OperandA {
+        match self {
+            Self::Without(operand_a) => operand_a,
+            _ => panic!("Cannot convert a labelled OperandA without resolving labels"),
+        }
     }
 }
 

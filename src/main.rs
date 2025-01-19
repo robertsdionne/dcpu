@@ -17,7 +17,11 @@ mod stdout;
 
 fn main() -> Result<(), Box<dyn error::Error>> {
     match Cli::parse() {
-        Cli::Assemble { program } => assembler::assemble(&program),
+        Cli::Assemble { program } => {
+            let program = assembler::assemble(&program)?;
+            println!("{:#06x?}", program);
+            Ok(())
+        },
         Cli::Print { program } => print(&program),
         Cli::Terminal {
             program,
