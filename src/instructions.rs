@@ -17,6 +17,15 @@ pub enum Instruction {
     Debug(DebugOpcode),
 }
 
+pub fn assemble(instructions: Vec<Instruction>) -> Vec<u16> {
+    instructions.iter()
+        .flat_map(|instruction| {
+            let words: Vec<u16> = instruction.clone().into();
+            words
+        })
+        .collect()
+}
+
 impl Instruction {
     pub fn size(self) -> usize {
         match self {

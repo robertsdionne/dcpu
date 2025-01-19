@@ -4,3 +4,4 @@ mod if_clear;
 mod if_equal;
 mod multiply;
 mod subtract;
+mod binary_and;

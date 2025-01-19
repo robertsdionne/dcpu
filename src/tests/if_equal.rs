@@ -1,4 +1,5 @@
 use crate::dcpu::Dcpu;
+use crate::instructions;
 use crate::instructions::{BasicOpcode, Instruction, OperandA, OperandB, Register, WithRegister};
 
 #[test]
@@ -7,7 +8,7 @@ fn if_equal_register_with_equal_small_literal() {
     let mut hardware = vec![];
     cpu.load(
         0,
-        &vec![
+        &instructions::assemble(vec![
             Instruction::Basic(
                 BasicOpcode::Set,
                 OperandB::WithRegister(WithRegister::Register, Register::A),
@@ -32,7 +33,7 @@ fn if_equal_register_with_equal_small_literal() {
                 OperandA::SmallLiteral(14),
             )
             .into(),
-        ],
+        ]),
     );
 
     cpu.execute_instructions(&mut hardware, 3);
@@ -46,7 +47,7 @@ fn if_equal_register_with_unequal_small_literal() {
     let mut hardware = vec![];
     cpu.load(
         0,
-        &vec![
+        &instructions::assemble(vec![
             Instruction::Basic(
                 BasicOpcode::Set,
                 OperandB::WithRegister(WithRegister::Register, Register::A),
@@ -71,7 +72,7 @@ fn if_equal_register_with_unequal_small_literal() {
                 OperandA::SmallLiteral(14),
             )
             .into(),
-        ],
+        ]),
     );
 
     cpu.execute_instructions(&mut hardware, 3);
@@ -85,7 +86,7 @@ fn if_equal_skips_conditionals_when_not_equal() {
     let mut hardware = vec![];
     cpu.load(
         0,
-        &vec![
+        &instructions::assemble(vec![
             Instruction::Basic(
                 BasicOpcode::Set,
                 OperandB::WithRegister(WithRegister::Register, Register::A),
@@ -116,7 +117,7 @@ fn if_equal_skips_conditionals_when_not_equal() {
                 OperandA::SmallLiteral(13),
             )
             .into(),
-        ],
+        ]),
     );
 
     cpu.execute_instructions(&mut hardware, 3);
@@ -130,7 +131,7 @@ fn if_equal_does_not_skip_conditionals_when_equal() {
     let mut hardware = vec![];
     cpu.load(
         0,
-        &vec![
+        &instructions::assemble(vec![
             Instruction::Basic(
                 BasicOpcode::Set,
                 OperandB::WithRegister(WithRegister::Register, Register::A),
@@ -161,7 +162,7 @@ fn if_equal_does_not_skip_conditionals_when_equal() {
                 OperandA::SmallLiteral(13),
             )
             .into(),
-        ],
+        ]),
     );
 
     cpu.execute_instructions(&mut hardware, 4);

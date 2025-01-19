@@ -1,4 +1,5 @@
 use crate::dcpu::Dcpu;
+use crate::instructions;
 use crate::instructions::{BasicOpcode, Instruction, OperandA, OperandB, Register, WithRegister};
 
 #[test]
@@ -7,7 +8,7 @@ fn multiply_small_literal_with_register() {
     let mut hardware = vec![];
     cpu.load(
         0,
-        &vec![
+        &instructions::assemble(vec![
             Instruction::Basic(
                 BasicOpcode::Set,
                 OperandB::WithRegister(WithRegister::Register, Register::A),
@@ -20,7 +21,7 @@ fn multiply_small_literal_with_register() {
                 OperandA::SmallLiteral(30),
             )
             .into(),
-        ],
+        ]),
     );
 
     cpu.execute_instructions(&mut hardware, 2);
@@ -34,7 +35,7 @@ fn multiply_register_with_overflow() {
     let mut hardware = vec![];
     cpu.load(
         0,
-        &vec![
+        &instructions::assemble(vec![
             Instruction::Basic(
                 BasicOpcode::Set,
                 OperandB::WithRegister(WithRegister::Register, Register::A),
@@ -47,7 +48,7 @@ fn multiply_register_with_overflow() {
                 OperandA::SmallLiteral(-1),
             )
             .into(),
-        ],
+        ]),
     );
 
     cpu.execute_instructions(&mut hardware, 2);

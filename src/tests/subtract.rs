@@ -1,4 +1,5 @@
 use crate::dcpu::Dcpu;
+use crate::instructions;
 use crate::instructions::{BasicOpcode, Instruction, OperandA, OperandB, Register, WithRegister};
 
 #[test]
@@ -7,7 +8,7 @@ fn subtract_small_literal_from_register() {
     let mut hardware = vec![];
     cpu.load(
         0,
-        &vec![
+        &instructions::assemble(vec![
             Instruction::Basic(
                 BasicOpcode::Set,
                 OperandB::WithRegister(WithRegister::Register, Register::A),
@@ -20,7 +21,7 @@ fn subtract_small_literal_from_register() {
                 OperandA::SmallLiteral(16),
             )
             .into(),
-        ],
+        ]),
     );
 
     cpu.execute_instructions(&mut hardware, 2);
@@ -34,7 +35,7 @@ fn subtract_register_with_underflow() {
     let mut hardware = vec![];
     cpu.load(
         0,
-        &vec![
+        &instructions::assemble(vec![
             Instruction::Basic(
                 BasicOpcode::Set,
                 OperandB::WithRegister(WithRegister::Register, Register::A),
@@ -47,7 +48,7 @@ fn subtract_register_with_underflow() {
                 OperandA::SmallLiteral(30),
             )
             .into(),
-        ],
+        ]),
     );
 
     cpu.execute_instructions(&mut hardware, 2);

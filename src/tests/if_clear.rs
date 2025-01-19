@@ -1,4 +1,5 @@
 use crate::dcpu::Dcpu;
+use crate::instructions;
 use crate::instructions::{BasicOpcode, Instruction, OperandA, OperandB, Register, WithRegister};
 
 #[test]
@@ -7,7 +8,7 @@ fn if_clear_with_common_bits() {
     let mut hardware = vec![];
     cpu.load(
         0,
-        &vec![
+        &instructions::assemble(vec![
             Instruction::Basic(
                 BasicOpcode::Set,
                 OperandB::WithRegister(WithRegister::Register, Register::A),
@@ -32,7 +33,7 @@ fn if_clear_with_common_bits() {
                 OperandA::SmallLiteral(14),
             )
             .into(),
-        ],
+        ]),
     );
 
     cpu.execute_instructions(&mut hardware, 3);
@@ -46,7 +47,7 @@ fn if_clear_without_common_bits() {
     let mut hardware = vec![];
     cpu.load(
         0,
-        &vec![
+        &instructions::assemble(vec![
             Instruction::Basic(
                 BasicOpcode::Set,
                 OperandB::WithRegister(WithRegister::Register, Register::A),
@@ -71,7 +72,7 @@ fn if_clear_without_common_bits() {
                 OperandA::SmallLiteral(14),
             )
             .into(),
-        ],
+        ]),
     );
 
     cpu.execute_instructions(&mut hardware, 3);
