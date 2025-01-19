@@ -7,6 +7,7 @@ mod divide_signed;
 mod if_above;
 mod if_clear;
 mod if_equal;
+mod modulo;
 mod multiply;
 mod multiply_signed;
 mod subtract;
