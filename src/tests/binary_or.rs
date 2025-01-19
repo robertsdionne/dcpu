@@ -5,7 +5,7 @@ use crate::instructions::{
 };
 
 #[test]
-fn binary_and_register_with_small_literal() {
+fn binary_or_register_with_small_literal() {
     let mut cpu = Dcpu::default();
     let mut hardware = vec![];
     cpu.load(
@@ -18,7 +18,7 @@ fn binary_and_register_with_small_literal() {
             )
             .into(),
             Instruction::Basic(
-                BasicOpcode::BinaryAnd,
+                BasicOpcode::BinaryOr,
                 OperandB::WithRegister(WithRegister::Register, Register::A),
                 OperandA::LeftValue(OperandB::WithPayload(WithPayload::Literal, 0x00ff)),
             )
@@ -27,5 +27,5 @@ fn binary_and_register_with_small_literal() {
     );
 
     cpu.execute_instructions(&mut hardware, 2);
-    assert_eq!(0x00f0, cpu.register_a);
+    assert_eq!(0xf0ff, cpu.register_a);
 }

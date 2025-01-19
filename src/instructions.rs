@@ -18,7 +18,8 @@ pub enum Instruction {
 }
 
 pub fn assemble(instructions: Vec<Instruction>) -> Vec<u16> {
-    instructions.iter()
+    instructions
+        .iter()
         .flat_map(|instruction| {
             let words: Vec<u16> = instruction.clone().into();
             words

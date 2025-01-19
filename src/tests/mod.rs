@@ -1,7 +1,9 @@
 mod add;
+mod binary_and;
+mod binary_exclusive_or;
+mod binary_or;
 mod if_above;
 mod if_clear;
 mod if_equal;
 mod multiply;
 mod subtract;
-mod binary_and;
