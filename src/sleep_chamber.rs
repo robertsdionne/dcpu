@@ -1,6 +1,6 @@
-use std::mem;
 use crate::dcpu::Dcpu;
 use crate::hardware;
+use std::mem;
 
 #[derive(Debug)]
 pub struct Device;

@@ -71,18 +71,18 @@ impl view::ViewWrapper for View {
                 let video = self.monitor.video_address as usize;
                 self.view.set_content(format!(
                     "{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}",
-                    String::from_utf16_lossy(&self.cpu.memory[video .. video + 0x20]),
-                    String::from_utf16_lossy(&self.cpu.memory[video + 0x20 .. video + 0x40]),
-                    String::from_utf16_lossy(&self.cpu.memory[video + 0x40 .. video + 0x60]),
-                    String::from_utf16_lossy(&self.cpu.memory[video + 0x60 .. video + 0x80]),
-                    String::from_utf16_lossy(&self.cpu.memory[video + 0x80 .. video + 0xa0]),
-                    String::from_utf16_lossy(&self.cpu.memory[video + 0xa0 .. video + 0xc0]),
-                    String::from_utf16_lossy(&self.cpu.memory[video + 0xc0 .. video + 0xe0]),
-                    String::from_utf16_lossy(&self.cpu.memory[video + 0xe0 .. video + 0x100]),
-                    String::from_utf16_lossy(&self.cpu.memory[video + 0x100 .. video + 0x120]),
-                    String::from_utf16_lossy(&self.cpu.memory[video + 0x120 .. video + 0x140]),
-                    String::from_utf16_lossy(&self.cpu.memory[video + 0x140 .. video + 0x160]),
-                    String::from_utf16_lossy(&self.cpu.memory[video + 0x160 .. video + 0x180]),
+                    String::from_utf16_lossy(&self.cpu.memory[video..video + 0x20]),
+                    String::from_utf16_lossy(&self.cpu.memory[video + 0x20..video + 0x40]),
+                    String::from_utf16_lossy(&self.cpu.memory[video + 0x40..video + 0x60]),
+                    String::from_utf16_lossy(&self.cpu.memory[video + 0x60..video + 0x80]),
+                    String::from_utf16_lossy(&self.cpu.memory[video + 0x80..video + 0xa0]),
+                    String::from_utf16_lossy(&self.cpu.memory[video + 0xa0..video + 0xc0]),
+                    String::from_utf16_lossy(&self.cpu.memory[video + 0xc0..video + 0xe0]),
+                    String::from_utf16_lossy(&self.cpu.memory[video + 0xe0..video + 0x100]),
+                    String::from_utf16_lossy(&self.cpu.memory[video + 0x100..video + 0x120]),
+                    String::from_utf16_lossy(&self.cpu.memory[video + 0x120..video + 0x140]),
+                    String::from_utf16_lossy(&self.cpu.memory[video + 0x140..video + 0x160]),
+                    String::from_utf16_lossy(&self.cpu.memory[video + 0x160..video + 0x180]),
                 ));
                 event::EventResult::Consumed(None)
             }

@@ -32,13 +32,13 @@ impl hardware::Hardware for Device {
             Message::PollDevice => {
                 dcpu.register_b = self.state;
                 dcpu.register_c = self.last_error;
-            },
+            }
             Message::MapRegion => {
                 self.region_address = dcpu.register_x;
                 self.vertex_count = dcpu.register_y;
-            },
+            }
             Message::RotateDevice => self.target_rotation = dcpu.register_x,
-            _ => {},
+            _ => {}
         }
     }
 }

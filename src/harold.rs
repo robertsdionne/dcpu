@@ -1,6 +1,6 @@
-use std::fs;
 use crate::dcpu::Dcpu;
 use crate::hardware;
+use std::fs;
 
 #[derive(Debug, Default)]
 pub struct Device {
@@ -80,4 +80,3 @@ enum Error {
     InvalidSector,
     Pending,
 }
-

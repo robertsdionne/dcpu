@@ -6,7 +6,6 @@ use std::io::Write;
 #[derive(Debug)]
 pub struct Stderr;
 
-
 impl hardware::Hardware for Stderr {
     fn get_id(&self) -> u32 {
         const ID: u32 = 0x00000002;
