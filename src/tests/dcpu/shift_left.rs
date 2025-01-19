@@ -1,8 +1,6 @@
 use crate::dcpu::Dcpu;
 use crate::instructions;
-use crate::instructions::{
-    BasicOpcode, Instruction, OperandA, OperandB, Register, WithPayload, WithRegister,
-};
+use crate::instructions::{BasicOpcode, Instruction, OperandA, OperandB, Register, WithRegister};
 
 #[test]
 fn register_with_small_literal() {
