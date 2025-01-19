@@ -355,7 +355,7 @@ pub enum OperandA {
 }
 
 impl OperandA {
-    fn size(self) -> usize {
+    pub fn size(self) -> usize {
         match self {
             OperandA::LeftValue(operand_b) => operand_b.size(),
             _ => 0,
@@ -427,7 +427,7 @@ pub enum OperandB {
 }
 
 impl OperandB {
-    fn size(self) -> usize {
+    pub fn size(self) -> usize {
         match self {
             OperandB::WithPayload(_, _) => 1,
             _ => 0,
