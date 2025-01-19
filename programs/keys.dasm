@@ -11,6 +11,9 @@
 	set a, 3
 	set b, 2
 	hwi 1
+	set a, 0
+	set b, 0xf000
+	hwi 2
 	sub pc, 1
 
 :handleInterrupt

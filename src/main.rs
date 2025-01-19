@@ -67,6 +67,7 @@ fn run(program: &str, floppy_disk: Option<String>) -> Result<(), Box<dyn error::
     let mut stdout = stdout::Stdout;
     let mut stderr = stderr::Stderr;
     let mut clock = clock::Clock::default();
+    let mut monitor = monitor::Device::default();
     let mut floppy = floppy::Drive::default();
     if let Some(floppy_disk) = floppy_disk {
         floppy.insert(&floppy_disk, false)?;
@@ -77,6 +78,7 @@ fn run(program: &str, floppy_disk: Option<String>) -> Result<(), Box<dyn error::
     hardware.push(&mut stderr);
     hardware.push(&mut clock);
     hardware.push(&mut floppy);
+    hardware.push(&mut monitor);
     let mut dcpu = dcpu::Dcpu::default();
     dcpu.load(0, &program);
 

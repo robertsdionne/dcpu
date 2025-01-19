@@ -7,7 +7,7 @@ pub struct Device {
     border_color: u16,
     font_address: u16,
     palette_address: u16,
-    video_address: u16,
+    pub video_address: u16,
     boot_png_path: Option<String>,
     start_time: Option<time::Instant>,
 }

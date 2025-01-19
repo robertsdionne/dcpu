@@ -1,4 +1,4 @@
-use crate::{assembler, clock, dcpu, hardware, keyboard};
+use crate::{assembler, clock, dcpu, hardware, keyboard, monitor};
 use cursive;
 use cursive::event::Key;
 use cursive::{event, view, views, CursiveExt};
@@ -9,6 +9,7 @@ pub fn run(program: &str) -> Result<(), Box<dyn error::Error>> {
 
     let clock = clock::Clock::default();
     let keyboard = keyboard::Keyboard::default();
+    let monitor = monitor::Device::default();
     let mut dcpu = dcpu::Dcpu::default();
     dcpu.load(0, &program);
 
@@ -21,6 +22,7 @@ pub fn run(program: &str) -> Result<(), Box<dyn error::Error>> {
         cpu: dcpu,
         clock,
         keyboard,
+        monitor,
     });
     siv.set_autorefresh(true);
 
@@ -34,6 +36,7 @@ struct View {
     cpu: dcpu::Dcpu,
     clock: clock::Clock,
     keyboard: keyboard::Keyboard,
+    monitor: monitor::Device,
 }
 
 impl view::ViewWrapper for View {
@@ -62,22 +65,24 @@ impl view::ViewWrapper for View {
             }
             event::Event::Refresh => {
                 let mut hardware = vec![&mut self.clock as &mut dyn hardware::Hardware];
-                hardware.push(&mut self.keyboard as &mut dyn hardware::Hardware);
+                hardware.push(&mut self.keyboard);
+                hardware.push(&mut self.monitor);
                 self.cpu.execute_instructions(&mut hardware, 3333);
+                let video = self.monitor.video_address as usize;
                 self.view.set_content(format!(
                     "{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}",
-                    String::from_utf16_lossy(&self.cpu.memory[0xf000..0xf020]),
-                    String::from_utf16_lossy(&self.cpu.memory[0xf020..0xf040]),
-                    String::from_utf16_lossy(&self.cpu.memory[0xf040..0xf060]),
-                    String::from_utf16_lossy(&self.cpu.memory[0xf060..0xf080]),
-                    String::from_utf16_lossy(&self.cpu.memory[0xf080..0xf0a0]),
-                    String::from_utf16_lossy(&self.cpu.memory[0xf0a0..0xf0c0]),
-                    String::from_utf16_lossy(&self.cpu.memory[0xf0c0..0xf0e0]),
-                    String::from_utf16_lossy(&self.cpu.memory[0xf0e0..0xf100]),
-                    String::from_utf16_lossy(&self.cpu.memory[0xf100..0xf120]),
-                    String::from_utf16_lossy(&self.cpu.memory[0xf120..0xf140]),
-                    String::from_utf16_lossy(&self.cpu.memory[0xf140..0xf160]),
-                    String::from_utf16_lossy(&self.cpu.memory[0xf160..0xf180]),
+                    String::from_utf16_lossy(&self.cpu.memory[video .. video + 0x20]),
+                    String::from_utf16_lossy(&self.cpu.memory[video + 0x20 .. video + 0x40]),
+                    String::from_utf16_lossy(&self.cpu.memory[video + 0x40 .. video + 0x60]),
+                    String::from_utf16_lossy(&self.cpu.memory[video + 0x60 .. video + 0x80]),
+                    String::from_utf16_lossy(&self.cpu.memory[video + 0x80 .. video + 0xa0]),
+                    String::from_utf16_lossy(&self.cpu.memory[video + 0xa0 .. video + 0xc0]),
+                    String::from_utf16_lossy(&self.cpu.memory[video + 0xc0 .. video + 0xe0]),
+                    String::from_utf16_lossy(&self.cpu.memory[video + 0xe0 .. video + 0x100]),
+                    String::from_utf16_lossy(&self.cpu.memory[video + 0x100 .. video + 0x120]),
+                    String::from_utf16_lossy(&self.cpu.memory[video + 0x120 .. video + 0x140]),
+                    String::from_utf16_lossy(&self.cpu.memory[video + 0x140 .. video + 0x160]),
+                    String::from_utf16_lossy(&self.cpu.memory[video + 0x160 .. video + 0x180]),
                 ));
                 event::EventResult::Consumed(None)
             }
