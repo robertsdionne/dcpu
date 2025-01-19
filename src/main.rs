@@ -17,6 +17,7 @@ mod stdout;
 mod sped3;
 mod monitor;
 mod harold;
+mod kulog;
 
 fn main() -> Result<(), Box<dyn error::Error>> {
     match Cli::parse() {
