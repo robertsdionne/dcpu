@@ -1,6 +1,7 @@
 use std::{error, fs};
 use chumsky::prelude::*;
 use crate::instructions;
+use crate::instructions::OperandB::WithPayload;
 
 pub fn assemble(program: &str) -> Result<(), Box<dyn error::Error>> {
     let source = fs::read_to_string(program)?;
@@ -96,7 +97,7 @@ impl InstructionWithLabels {
     ///     ;
     fn basic_parser() -> impl Parser<char, Self, Error = Simple<char>> {
         instructions::BasicOpcode::parser().padded()
-            .then(OperandBWithLabel::parser()).padded()
+            .then(OperandBWithLabel::parser(true)).padded()
             .then_ignore(just(',')).padded()
             .then(OperandAWithLabel::parser())
             .map(|((basic_opcode, operand_b), operand_a)|
@@ -240,7 +241,7 @@ impl OperandBWithLabel {
     ///     : register
     ///     | locationInRegister
     ///     | locationOffsetByRegister
-    ///     | PUSH
+    ///     | pushOrPop
     ///     | PEEK
     ///     | pick
     ///     | STACK_POINTER
@@ -249,17 +250,115 @@ impl OperandBWithLabel {
     ///     | location
     ///     | literal
     ///     ;
-    fn parser() -> impl Parser<char, Self, Error = Simple<char>> {
+    fn parser(operand_b: bool) -> impl Parser<char, Self, Error = Simple<char>> {
         use instructions::{OperandB, Register, WithRegister, WithPayload};
 
         let register = Register::parser()
             .map(|register|
                 OperandBWithLabel::Without(OperandB::WithRegister(WithRegister::Register, register)));
 
-        let literal = text::ident().or(text::digits(10))
-            .map(|_| OperandBWithLabel::Without(OperandB::WithPayload(WithPayload::Literal, 0)));
+        // locationInRegister
+        //     : '[' REGISTER ']'
+        //     ;
+        let location_in_register = Register::parser()
+            .delimited_by(just('['), just(']'))
+            .map(|register|
+                OperandBWithLabel::Without(OperandB::WithRegister(WithRegister::LocationInRegister, register)));
+
+        // registerOffsetByLiteral
+        //     : REGISTER '+' (label | value)
+        //     ;
+        let register_offset_by_literal = Register::parser().padded()
+            .then_ignore(just('+').padded())
+            .then(Datum::identifier_parser().or(Datum::number_parser()).padded());
+
+        // literalOffsetByRegister
+        //     : (label | value) '+' REGISTER
+        //     ;
+        let literal_offset_by_register = Datum::identifier_parser()
+            .or(Datum::number_parser()).padded()
+            .then_ignore(just('+').padded())
+            .then(Register::parser()).padded()
+            .map(|(datum, register)| (register, datum));
+
+        // locationOffsetByRegister
+        //     : '[' (registerOffsetByLiteral | literalOffsetByRegister) ']'
+        //     ;
+        let location_offset_by_register = register_offset_by_literal.or(literal_offset_by_register)
+            .delimited_by(just('['), just(']'))
+            .map(|(register, datum)| match datum {
+                Datum::Identifier(label) =>
+                    OperandBWithLabel::With(WithPayload::LocationOffsetByRegister(register), label),
+                Datum::Number(value) =>
+                    OperandBWithLabel::Without(OperandB::WithPayload(WithPayload::LocationOffsetByRegister(register), value)),
+                _ => unreachable!(),
+            });
+
+        // pushOrPop
+        //     : PUSH
+        //     | POP
+        //     ;
+        let push_or_pop = if operand_b {
+            just("push").or(just("PUSH"))
+        } else {
+            just("pop").or(just("POP"))
+        }.ignored()
+            .map(|_| OperandBWithLabel::Without(OperandB::PushOrPop));
+
+        let peek = just("peek").or(just("PEEK")).ignored()
+            .map(|_| OperandBWithLabel::Without(OperandB::Peek));
+
+        // pick
+        //     : PICK (label | value)
+        //     ;
+        let pick = just("pick").or(just("PICK")).padded().ignored()
+            .then(Datum::identifier_parser().or(Datum::number_parser()))
+            .map(|(_, datum)| match datum {
+                Datum::Identifier(label) => OperandBWithLabel::With(WithPayload::Pick, label),
+                Datum::Number(value) => OperandBWithLabel::Without(OperandB::WithPayload(WithPayload::Pick, value)),
+                _ => unreachable!(),
+            });
+
+        let stack_pointer = just("sp").or(just("SP")).ignored()
+            .map(|_| OperandBWithLabel::Without(OperandB::StackPointer));
+
+        let program_counter = just("pc").or(just("PC")).ignored()
+            .map(|_| OperandBWithLabel::Without(OperandB::ProgramCounter));
+
+        let extra = just("ex").or(just("EX")).ignored()
+            .map(|_| OperandBWithLabel::Without(OperandB::Extra));
+
+        // location
+        //     : '[' (label | value) ']'
+        //     ;
+        let location = Datum::identifier_parser().or(Datum::number_parser()).padded()
+            .delimited_by(just('['), just(']'))
+            .map(|datum| match datum {
+                Datum::Identifier(label) => OperandBWithLabel::With(WithPayload::Location, label),
+                Datum::Number(value) => OperandBWithLabel::Without(OperandB::WithPayload(WithPayload::Location, value)),
+                _ => unreachable!(),
+            });
+
+        // literal
+        //     : (label | value)
+        //     ;
+        let literal = Datum::identifier_parser().or(Datum::number_parser()).padded()
+            .map(|datum| match datum {
+                Datum::Identifier(label) => OperandBWithLabel::With(WithPayload::Literal, label),
+                Datum::Number(value) => OperandBWithLabel::Without(OperandB::WithPayload(WithPayload::Literal, value)),
+                _ => unreachable!(),
+            });
 
         register
+            .or(location_in_register)
+            .or(location_offset_by_register)
+            .or(push_or_pop)
+            .or(peek)
+            .or(pick)
+            .or(stack_pointer)
+            .or(program_counter)
+            .or(extra)
+            .or(location)
             .or(literal)
     }
 }
@@ -272,31 +371,26 @@ enum OperandAWithLabel {
 
 impl OperandAWithLabel {
     /// operandA
-    ///     : register
-    ///     | locationInRegister
-    ///     | locationOffsetByRegister
-    ///     | POP
-    ///     | PEEK
-    ///     | pick
-    ///     | STACK_POINTER
-    ///     | PROGRAM_COUNTER
-    ///     | EXTRA
-    ///     | location
-    ///     | literal
+    ///     : operandB
     ///     | smallLiteral
     ///     ;
     fn parser() -> impl Parser<char, Self, Error = Simple<char>> {
-        use instructions::{OperandA, OperandB, Register, WithRegister};
+        use instructions::{OperandA, OperandB};
 
-        let register = Register::parser()
-            .map(|register|
-                OperandAWithLabel::Without(OperandA::LeftValue(OperandB::WithRegister(WithRegister::Register, register))));
-
-        let literal = text::ident().or(text::digits(10))
-            .map(|_| OperandAWithLabel::Without(OperandA::SmallLiteral(0)));
-
-        register
-            .or(literal)
+        OperandBWithLabel::parser(false)
+            .map(|operand_b| match operand_b {
+                OperandBWithLabel::With(with_payload, label) =>
+                    OperandAWithLabel::With(with_payload, label),
+                OperandBWithLabel::Without(operand_b @ OperandB::WithPayload(_, payload)) => {
+                    if payload == 0xffff || payload <= 30 {
+                        OperandAWithLabel::Without(OperandA::SmallLiteral(payload as i8))
+                    } else {
+                        OperandAWithLabel::Without(OperandA::LeftValue(operand_b))
+                    }
+                }
+                OperandBWithLabel::Without(operand_b) =>
+                    OperandAWithLabel::Without(OperandA::LeftValue(operand_b)),
+            })
     }
 }
 
@@ -307,8 +401,8 @@ impl instructions::Register {
     fn parser() -> impl Parser<char, Self, Error = Simple<char>> {
         use instructions::Register;
 
-        one_of("abcxyzijABCXYZIJ")
-            .then_ignore(just(',').rewind())
+        one_of("abcxyzijABCXYZIJ").padded()
+            .then_ignore(one_of(",+[]").rewind())
             .map(|register| match register {
                 'a' | 'A' => Register::A,
                 'b' | 'B' => Register::B,
@@ -372,7 +466,7 @@ impl Datum {
     ///     ;
     fn identifier_parser() -> impl Parser<char, Self, Error = Simple<char>> {
         text::ident()
-            .map(|identifier| Datum::String(identifier))
+            .map(|identifier| Datum::Identifier(identifier))
     }
 
     /// NUMBER
