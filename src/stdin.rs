@@ -4,9 +4,9 @@ use std::io;
 use std::io::Read;
 
 #[derive(Debug)]
-pub struct Stdin;
+pub struct Device;
 
-impl hardware::Hardware for Stdin {
+impl hardware::Hardware for Device {
     fn get_id(&self) -> u32 {
         const ID: u32 = 0x00000000;
         ID

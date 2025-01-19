@@ -2,11 +2,11 @@ use crate::dcpu::Dcpu;
 use crate::hardware;
 
 #[derive(Debug, Default)]
-pub struct Printer {
+pub struct Device {
     mode: u16,
 }
 
-impl hardware::Hardware for Printer {
+impl hardware::Hardware for Device {
     fn get_id(&self) -> u32 {
         const ID: u32 = 0xcff2a11d;
         ID

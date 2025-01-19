@@ -67,13 +67,13 @@ fn print(program: &str) -> Result<(), Box<dyn error::Error>> {
 fn run(program: &str, floppy_disk: Option<String>) -> Result<(), Box<dyn error::Error>> {
     let program = assembler::assemble(&program)?;
 
-    let mut stdin = stdin::Stdin;
-    let mut stdout = stdout::Stdout;
-    let mut stderr = stderr::Stderr;
-    let mut clock = clock::Clock::default();
+    let mut stdin = stdin::Device;
+    let mut stdout = stdout::Device;
+    let mut stderr = stderr::Device;
+    let mut clock = clock::Device::default();
     let mut monitor = monitor::Device::default();
-    let mut floppy = floppy::Drive::default();
-    let mut printer = printer::Printer::default();
+    let mut floppy = floppy::Device::default();
+    let mut printer = printer::Device::default();
     if let Some(floppy_disk) = floppy_disk {
         floppy.insert(&floppy_disk, false)?;
     }

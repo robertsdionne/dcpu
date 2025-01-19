@@ -3,14 +3,14 @@ use crate::hardware;
 use std::{collections, mem};
 
 #[derive(Debug, Default)]
-pub struct Keyboard {
+pub struct Device {
     message: u16,
     buffer: Vec<u16>,
     state: collections::HashSet<u16>,
     previous_state: collections::HashSet<u16>,
 }
 
-impl Keyboard {
+impl Device {
     pub fn event(&mut self, key: u16, dcpu: &mut Dcpu) {
         self.buffer.push(key);
         self.state.insert(key);
@@ -20,7 +20,7 @@ impl Keyboard {
     }
 }
 
-impl hardware::Hardware for Keyboard {
+impl hardware::Hardware for Device {
     fn execute(&mut self, _dcpu: &mut Dcpu) {
         self.previous_state = self.state.clone();
         self.state.clear();

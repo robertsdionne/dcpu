@@ -4,9 +4,9 @@ use std::io;
 use std::io::Write;
 
 #[derive(Debug)]
-pub struct Stderr;
+pub struct Device;
 
-impl hardware::Hardware for Stderr {
+impl hardware::Hardware for Device {
     fn get_id(&self) -> u32 {
         const ID: u32 = 0x00000002;
         ID

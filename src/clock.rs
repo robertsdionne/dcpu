@@ -3,14 +3,14 @@ use crate::hardware;
 use std::{mem, time};
 
 #[derive(Debug, Default)]
-pub struct Clock {
+pub struct Device {
     interval: u16,
     message: u16,
     ticks: u16,
     last_tick: Option<time::Instant>,
 }
 
-impl Clock {
+impl Device {
     fn tick(&mut self, dcpu: &mut dcpu::Dcpu) {
         self.last_tick = Some(time::Instant::now());
         self.ticks = self.ticks.wrapping_add(1);
@@ -20,7 +20,7 @@ impl Clock {
     }
 }
 
-impl hardware::Hardware for Clock {
+impl hardware::Hardware for Device {
     fn execute(&mut self, dcpu: &mut dcpu::Dcpu) {
         if self.interval > 0 {
             if self.last_tick.is_none()

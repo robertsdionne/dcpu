@@ -7,8 +7,8 @@ use std::error;
 pub fn run(program: &str) -> Result<(), Box<dyn error::Error>> {
     let program = assembler::assemble(&program)?;
 
-    let clock = clock::Clock::default();
-    let keyboard = keyboard::Keyboard::default();
+    let clock = clock::Device::default();
+    let keyboard = keyboard::Device::default();
     let monitor = monitor::Device::default();
     let mut dcpu = dcpu::Dcpu::default();
     dcpu.load(0, &program);
@@ -34,8 +34,8 @@ pub fn run(program: &str) -> Result<(), Box<dyn error::Error>> {
 struct View {
     view: views::TextView,
     cpu: dcpu::Dcpu,
-    clock: clock::Clock,
-    keyboard: keyboard::Keyboard,
+    clock: clock::Device,
+    keyboard: keyboard::Device,
     monitor: monitor::Device,
 }
 

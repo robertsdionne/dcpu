@@ -3,14 +3,14 @@ use std::io::{Read, Seek, Write};
 use std::{error, fs, io, mem};
 
 #[derive(Debug, Default)]
-pub struct Drive {
+pub struct Device {
     file: Option<fs::File>,
     last_error: u16,
     message: u16,
     state: u16,
 }
 
-impl Drive {
+impl Device {
     pub fn insert(
         &mut self,
         disk: &str,
@@ -43,7 +43,7 @@ impl Drive {
     }
 }
 
-impl hardware::Hardware for Drive {
+impl hardware::Hardware for Device {
     fn get_id(&self) -> u32 {
         const ID: u32 = 0x4fd524c5;
         ID
