@@ -18,6 +18,7 @@ mod sped3;
 mod monitor;
 mod harold;
 mod kulog;
+mod sleep_chamber;
 
 fn main() -> Result<(), Box<dyn error::Error>> {
     match Cli::parse() {

@@ -60,3 +60,9 @@ enum Message {
     _Unused1e,
     _Unused1f,
 }
+
+impl From<u16> for Message {
+    fn from(value: u16) -> Message {
+        unsafe { std::mem::transmute(value & 0x1f) }
+    }
+}
