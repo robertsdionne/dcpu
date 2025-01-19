@@ -2,8 +2,12 @@ use crate::instructions;
 use chumsky::prelude::*;
 use std::{collections, error, fs};
 
-pub fn assemble(program: &str) -> Result<Vec<u16>, Box<dyn error::Error>> {
+pub fn assemble_file(program: &str) -> Result<Vec<u16>, Box<dyn error::Error>> {
     let source = fs::read_to_string(program)?;
+    assemble(&source)
+}
+
+pub fn assemble(source: &str) -> Result<Vec<u16>, Box<dyn error::Error>> {
     let program = Program::parser().parse(source);
 
     match program {

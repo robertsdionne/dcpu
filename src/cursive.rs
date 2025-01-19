@@ -5,7 +5,7 @@ use cursive::{event, view, views, CursiveExt};
 use std::error;
 
 pub fn run(program: &str) -> Result<(), Box<dyn error::Error>> {
-    let program = assembler::assemble(&program)?;
+    let program = assembler::assemble_file(&program)?;
 
     let clock = clock::Device::default();
     let keyboard = keyboard::Device::default();

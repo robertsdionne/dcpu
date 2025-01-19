@@ -24,7 +24,7 @@ mod tests;
 fn main() -> Result<(), Box<dyn error::Error>> {
     match Cli::parse() {
         Cli::Assemble { program } => {
-            let program = assembler::assemble(&program)?;
+            let program = assembler::assemble_file(&program)?;
             println!("{:#06x?}", program);
             Ok(())
         }
@@ -65,7 +65,7 @@ fn print(program: &str) -> Result<(), Box<dyn error::Error>> {
 }
 
 fn run(program: &str, floppy_disk: Option<String>) -> Result<(), Box<dyn error::Error>> {
-    let program = assembler::assemble(&program)?;
+    let program = assembler::assemble_file(&program)?;
 
     let mut stdin = stdin::Device;
     let mut stdout = stdout::Device;
