@@ -211,7 +211,7 @@ enum Error {
     Eject,
     BadSector,
     Broken,
-    _Unused08,
+    _Unused07,
 }
 
 impl From<u16> for Error {
