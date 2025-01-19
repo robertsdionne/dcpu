@@ -20,7 +20,7 @@ fn divide_signed_register_with_small_literal() {
             Instruction::Basic(
                 BasicOpcode::DivideSigned,
                 OperandB::WithRegister(WithRegister::Register, Register::A),
-                OperandA::LeftValue(OperandB::WithPayload(WithPayload::Literal, 0xfffe)),
+                OperandA::Operand(OperandB::WithPayload(WithPayload::Literal, 0xfffe)),
             )
             .into(),
         ]),

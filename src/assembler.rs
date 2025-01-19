@@ -621,11 +621,11 @@ impl OperandAWithLabel {
         match self {
             OperandAWithLabel::With(with_payload, label) => {
                 match Register::parser().parse(format!("{},", label.clone())) {
-                    Ok(register) => Ok(OperandAWithLabel::Without(OperandA::LeftValue(
+                    Ok(register) => Ok(OperandAWithLabel::Without(OperandA::Operand(
                         OperandB::WithRegister(WithRegister::Register, register),
                     ))),
                     _ => match labels.get(label) {
-                        Some(address) => Ok(OperandAWithLabel::Without(OperandA::LeftValue(
+                        Some(address) => Ok(OperandAWithLabel::Without(OperandA::Operand(
                             OperandB::WithPayload(*with_payload, *address),
                         ))),
                         None => Err(format!("Label undefined: {}", label))?,
@@ -658,11 +658,11 @@ impl OperandAWithLabel {
                 if payload == 0xffff || payload <= 30 {
                     OperandAWithLabel::Without(OperandA::SmallLiteral(payload as i8))
                 } else {
-                    OperandAWithLabel::Without(OperandA::LeftValue(operand_b))
+                    OperandAWithLabel::Without(OperandA::Operand(operand_b))
                 }
             }
             OperandBWithLabel::Without(operand_b) => {
-                OperandAWithLabel::Without(OperandA::LeftValue(operand_b))
+                OperandAWithLabel::Without(OperandA::Operand(operand_b))
             }
         })
     }

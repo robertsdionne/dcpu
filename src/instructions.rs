@@ -360,28 +360,28 @@ impl From<u16> for DebugOpcode {
 
 #[derive(Copy, Clone, Debug, PartialEq)]
 pub enum OperandA {
-    LeftValue(OperandB),
+    Operand(OperandB),
     SmallLiteral(i8), // 32 values: -1 to 30
 }
 
 impl OperandA {
     pub fn size(self) -> usize {
         match self {
-            OperandA::LeftValue(operand_b) => operand_b.size(),
+            OperandA::Operand(operand_b) => operand_b.size(),
             _ => 0,
         }
     }
 
     fn payload(self) -> Option<u16> {
         match self {
-            OperandA::LeftValue(operand_b) => operand_b.payload(),
+            OperandA::Operand(operand_b) => operand_b.payload(),
             _ => None,
         }
     }
 
     fn with_payload(self, payload: u16) -> OperandA {
         match self {
-            OperandA::LeftValue(operand_b) => OperandA::LeftValue(operand_b.with_payload(payload)),
+            OperandA::Operand(operand_b) => OperandA::Operand(operand_b.with_payload(payload)),
             _ => self,
         }
     }
@@ -410,7 +410,7 @@ impl Into<InstructionValue> for OperandA {
 impl Into<u16> for OperandA {
     fn into(self) -> u16 {
         match self {
-            OperandA::LeftValue(operand_b) => operand_b.into(),
+            OperandA::Operand(operand_b) => operand_b.into(),
             OperandA::SmallLiteral(literal) => 0x20 | ((literal + 1) as u16 & BASIC_OPCODE_MASK),
         }
     }
@@ -419,7 +419,7 @@ impl Into<u16> for OperandA {
 impl From<u16> for OperandA {
     fn from(value: u16) -> Self {
         match value & 0x20 {
-            0 => OperandA::LeftValue(OperandB::from(value)),
+            0 => OperandA::Operand(OperandB::from(value)),
             _ => OperandA::SmallLiteral((value & BASIC_OPCODE_MASK) as i8 - 1),
         }
     }
@@ -721,7 +721,7 @@ mod tests {
         let instruction = Instruction::Basic(
             BasicOpcode::Add,
             OperandB::Extra,
-            OperandA::LeftValue(OperandB::WithPayload(
+            OperandA::Operand(OperandB::WithPayload(
                 WithPayload::LocationOffsetByRegister(Register::A),
                 0,
             )),
@@ -739,7 +739,7 @@ mod tests {
 
         let instruction = Instruction::Special(
             SpecialOpcode::HardwareNumberConnected,
-            OperandA::LeftValue(OperandB::WithPayload(
+            OperandA::Operand(OperandB::WithPayload(
                 WithPayload::LocationOffsetByRegister(Register::A),
                 0,
             )),

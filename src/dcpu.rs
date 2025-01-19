@@ -97,7 +97,7 @@ impl Dcpu {
                 let a = self.get_operand(operand_a, false);
                 let (_, a) = a.dereference();
 
-                let b = self.get_operand(OperandA::LeftValue(operand_b), true);
+                let b = self.get_operand(OperandA::Operand(operand_b), true);
                 let (pb, b) = b.dereference();
 
                 if skip {
@@ -454,7 +454,7 @@ impl Dcpu {
         use instructions::{OperandA, OperandB, WithPayload, WithRegister};
 
         match operand_a {
-            OperandA::LeftValue(operand_b) => match operand_b {
+            OperandA::Operand(operand_b) => match operand_b {
                 OperandB::WithRegister(with_register, register) => {
                     Operand::Address(match with_register {
                         WithRegister::Register => self.register_address(register),

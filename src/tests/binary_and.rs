@@ -14,13 +14,13 @@ fn binary_and_register_with_small_literal() {
             Instruction::Basic(
                 BasicOpcode::Set,
                 OperandB::WithRegister(WithRegister::Register, Register::A),
-                OperandA::LeftValue(OperandB::WithPayload(WithPayload::Literal, 0xf0f0)),
+                OperandA::Operand(OperandB::WithPayload(WithPayload::Literal, 0xf0f0)),
             )
             .into(),
             Instruction::Basic(
                 BasicOpcode::BinaryAnd,
                 OperandB::WithRegister(WithRegister::Register, Register::A),
-                OperandA::LeftValue(OperandB::WithPayload(WithPayload::Literal, 0x00ff)),
+                OperandA::Operand(OperandB::WithPayload(WithPayload::Literal, 0x00ff)),
             )
             .into(),
         ]),

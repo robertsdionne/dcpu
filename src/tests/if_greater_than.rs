@@ -98,7 +98,7 @@ fn if_greater_than_with_greater_literal() {
             Instruction::Basic(
                 BasicOpcode::IfGreaterThan,
                 OperandB::WithPayload(WithPayload::Literal, 0x0a),
-                OperandA::LeftValue(OperandB::WithRegister(WithRegister::Register, Register::A)),
+                OperandA::Operand(OperandB::WithRegister(WithRegister::Register, Register::A)),
             )
             .into(),
             Instruction::Basic(
@@ -137,7 +137,7 @@ fn if_greater_than_with_lesser_literal() {
             Instruction::Basic(
                 BasicOpcode::IfGreaterThan,
                 OperandB::WithPayload(WithPayload::Literal, 0x1e),
-                OperandA::LeftValue(OperandB::WithRegister(WithRegister::Register, Register::A)),
+                OperandA::Operand(OperandB::WithRegister(WithRegister::Register, Register::A)),
             )
             .into(),
             Instruction::Basic(
