@@ -365,17 +365,17 @@ impl Dcpu {
         *pb = (b as i16 % a as i16) as u16;
     }
 
-    fn shift_right(pb: &mut u16, a: u16, b: u16) -> u16 {
+    fn shift_right(pb: &mut u16, b: u16, a: u16) -> u16 {
         *pb = b >> a;
         b << (0x10 - a)
     }
 
-    fn arithmetic_shift_right(pb: &mut u16, a: u16, b: u16) -> u16 {
+    fn arithmetic_shift_right(pb: &mut u16, b: u16, a: u16) -> u16 {
         *pb = (b as i16 >> a) as u16;
         ((b as i16) << (0x10 - a)) as u16
     }
 
-    fn shift_left(pb: &mut u16, a: u16, b: u16) -> u16 {
+    fn shift_left(pb: &mut u16, b: u16, a: u16) -> u16 {
         let result = (b as u32) << a;
         *pb = result as u16;
         (result >> 16) as u16

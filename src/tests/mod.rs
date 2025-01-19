@@ -1,4 +1,5 @@
 mod add;
+mod arithmetic_shift_right;
 mod binary_and;
 mod binary_exclusive_or;
 mod binary_or;
@@ -14,4 +15,6 @@ mod if_under;
 mod modulo;
 mod multiply;
 mod multiply_signed;
+mod shift_left;
+mod shift_right;
 mod subtract;
