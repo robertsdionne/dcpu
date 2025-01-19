@@ -1,6 +1,7 @@
 use clap::Parser;
 use std::{error, fs};
 
+mod assembler;
 mod clock;
 mod cursive;
 mod dcpu;
@@ -13,7 +14,6 @@ mod keyboard;
 mod stderr;
 mod stdin;
 mod stdout;
-mod assembler;
 
 fn main() -> Result<(), Box<dyn error::Error>> {
     match Cli::parse() {
@@ -38,8 +38,9 @@ fn print(program: &str) -> Result<(), Box<dyn error::Error>> {
             _ => unreachable!(),
         })
         .collect::<Vec<_>>();
-    let data = (0..data.len() - 3).into_iter()
-        .map(|i| &data[i..i+3])
+    let data = (0..data.len() - 3)
+        .into_iter()
+        .map(|i| &data[i..i + 3])
         .collect::<Vec<_>>();
 
     for instruction in data {

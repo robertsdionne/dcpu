@@ -77,7 +77,8 @@ impl Dcpu {
 
         let carry = self.extra;
         let stack_pointer = self.stack_pointer;
-        let instruction_words = (0..3).into_iter()
+        let instruction_words = (0..3)
+            .into_iter()
             .map(|i| self.program_counter.wrapping_add(i))
             .map(|i| self.memory[i as usize])
             .collect::<Vec<_>>();
@@ -453,19 +454,21 @@ impl Dcpu {
 
         match operand_a {
             OperandA::LeftValue(operand_b) => match operand_b {
-                OperandB::WithRegister(with_register, register) => Operand::Address(
-                    match with_register {
+                OperandB::WithRegister(with_register, register) => {
+                    Operand::Address(match with_register {
                         WithRegister::Register => self.register_address(register),
-                        WithRegister::LocationInRegister => self.location_in_register_address(register),
-                    }
-                ),
+                        WithRegister::LocationInRegister => {
+                            self.location_in_register_address(register)
+                        }
+                    })
+                }
                 OperandB::WithPayload(with_payload, payload) => match with_payload {
-                    WithPayload::LocationOffsetByRegister(register) => {
-                        Operand::Address(self.location_offset_by_register_address(payload, register))
-                    }
-                    WithPayload::Pick => {
-                        Operand::Address(self.address_derived_from_program_counter(self.stack_pointer + payload))
-                    }
+                    WithPayload::LocationOffsetByRegister(register) => Operand::Address(
+                        self.location_offset_by_register_address(payload, register),
+                    ),
+                    WithPayload::Pick => Operand::Address(
+                        self.address_derived_from_program_counter(self.stack_pointer + payload),
+                    ),
                     WithPayload::Location => {
                         Operand::Address(self.address_derived_from_program_counter(payload))
                     }
@@ -473,7 +476,7 @@ impl Dcpu {
                         self.program_counter = self.program_counter.wrapping_add(1);
                         Operand::Literal(payload)
                     }
-                }
+                },
                 OperandB::PushOrPop => {
                     if assignable {
                         self.stack_pointer = self.stack_pointer.wrapping_sub(1);
@@ -521,7 +524,11 @@ impl Dcpu {
         }
     }
 
-    fn location_offset_by_register_address(&mut self, location: u16, register: instructions::Register) ->  &mut u16 {
+    fn location_offset_by_register_address(
+        &mut self,
+        location: u16,
+        register: instructions::Register,
+    ) -> &mut u16 {
         use instructions::Register;
         match register {
             Register::A => self.address_derived_from_program_counter(location + self.register_a),

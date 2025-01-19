@@ -1,7 +1,6 @@
-use std::{error, fs};
-use chumsky::prelude::*;
 use crate::instructions;
-use crate::instructions::OperandB::WithPayload;
+use chumsky::prelude::*;
+use std::{error, fs};
 
 pub fn assemble(program: &str) -> Result<(), Box<dyn error::Error>> {
     let source = fs::read_to_string(program)?;
@@ -19,8 +18,10 @@ impl Program {
     ///     : statement+ EOF
     ///     ;
     fn parser() -> impl Parser<char, Self, Error = Simple<char>> {
-        Statement::parser().padded()
-            .repeated().at_least(1)
+        Statement::parser()
+            .padded()
+            .repeated()
+            .at_least(1)
             .then_ignore(end())
             .map(|statements| Program(statements))
     }
@@ -55,8 +56,7 @@ impl Statement {
     }
 
     fn instruction_parser() -> impl Parser<char, Self, Error = Simple<char>> {
-        InstructionWithLabels::parser()
-            .map(|instruction| Statement::Instruction(instruction))
+        InstructionWithLabels::parser().map(|instruction| Statement::Instruction(instruction))
     }
 
     /// dataSection
@@ -75,7 +75,11 @@ impl Statement {
 
 #[derive(Debug)]
 enum InstructionWithLabels {
-    Basic(instructions::BasicOpcode, OperandBWithLabel, OperandAWithLabel),
+    Basic(
+        instructions::BasicOpcode,
+        OperandBWithLabel,
+        OperandAWithLabel,
+    ),
     Special(instructions::SpecialOpcode, OperandAWithLabel),
     Debug(instructions::DebugOpcode),
 }
@@ -96,29 +100,36 @@ impl InstructionWithLabels {
     ///     : basicOpcode operandB ',' operandA
     ///     ;
     fn basic_parser() -> impl Parser<char, Self, Error = Simple<char>> {
-        instructions::BasicOpcode::parser().padded()
-            .then(OperandBWithLabel::parser(true)).padded()
-            .then_ignore(just(',')).padded()
+        instructions::BasicOpcode::parser()
+            .padded()
+            .then(OperandBWithLabel::parser(true))
+            .padded()
+            .then_ignore(just(','))
+            .padded()
             .then(OperandAWithLabel::parser())
-            .map(|((basic_opcode, operand_b), operand_a)|
-                InstructionWithLabels::Basic(basic_opcode, operand_b, operand_a))
+            .map(|((basic_opcode, operand_b), operand_a)| {
+                InstructionWithLabels::Basic(basic_opcode, operand_b, operand_a)
+            })
     }
 
     /// special
     ///     : specialOpcode operandA
     ///     ;
     fn special_parser() -> impl Parser<char, Self, Error = Simple<char>> {
-        instructions::SpecialOpcode::parser().padded()
+        instructions::SpecialOpcode::parser()
+            .padded()
             .then(OperandAWithLabel::parser())
-            .map(|(special_opcode, operand_a)|
-                InstructionWithLabels::Special(special_opcode, operand_a))
+            .map(|(special_opcode, operand_a)| {
+                InstructionWithLabels::Special(special_opcode, operand_a)
+            })
     }
 
     /// debug
     ///     : debugOpcode
     ///     ;
     fn debug_parser() -> impl Parser<char, Self, Error = Simple<char>> {
-        instructions::DebugOpcode::parser().padded()
+        instructions::DebugOpcode::parser()
+            .padded()
             .map(|debug_opcode| InstructionWithLabels::Debug(debug_opcode))
     }
 }
@@ -166,9 +177,13 @@ impl instructions::BasicOpcode {
             just("MDI").or(just("mdi")).to(BasicOpcode::ModuloSigned),
             just("AND").or(just("and")).to(BasicOpcode::BinaryAnd),
             just("BOR").or(just("bor")).to(BasicOpcode::BinaryOr),
-            just("XOR").or(just("xor")).to(BasicOpcode::BinaryExclusiveOr),
+            just("XOR")
+                .or(just("xor"))
+                .to(BasicOpcode::BinaryExclusiveOr),
             just("SHR").or(just("shr")).to(BasicOpcode::ShiftRight),
-            just("ASR").or(just("asr")).to(BasicOpcode::ArithmeticShiftRight),
+            just("ASR")
+                .or(just("asr"))
+                .to(BasicOpcode::ArithmeticShiftRight),
             just("SHL").or(just("shl")).to(BasicOpcode::ShiftLeft),
             just("IFB").or(just("ifb")).to(BasicOpcode::IfBitSet),
             just("IFC").or(just("ifc")).to(BasicOpcode::IfClear),
@@ -179,9 +194,15 @@ impl instructions::BasicOpcode {
             just("IFL").or(just("ifl")).to(BasicOpcode::IfLessThan),
             just("IFU").or(just("ifu")).to(BasicOpcode::IfUnder),
             just("ADX").or(just("adx")).to(BasicOpcode::AddWithCarry),
-            just("SBX").or(just("sbx")).to(BasicOpcode::SubtractWithCarry),
-            just("STI").or(just("sti")).to(BasicOpcode::SetThenIncrement),
-            just("STD").or(just("std")).to(BasicOpcode::SetThenDecrement),
+            just("SBX")
+                .or(just("sbx"))
+                .to(BasicOpcode::SubtractWithCarry),
+            just("STI")
+                .or(just("sti"))
+                .to(BasicOpcode::SetThenIncrement),
+            just("STD")
+                .or(just("std"))
+                .to(BasicOpcode::SetThenDecrement),
         ])
     }
 }
@@ -202,15 +223,31 @@ impl instructions::SpecialOpcode {
         use instructions::SpecialOpcode;
 
         choice([
-            just("JSR").or(just("jsr")).to(SpecialOpcode::JumpSubroutine),
-            just("INT").or(just("int")).to(SpecialOpcode::InterruptTrigger),
-            just("IAG").or(just("iag")).to(SpecialOpcode::InterruptAddressGet),
-            just("IAS").or(just("ias")).to(SpecialOpcode::InterruptAddressSet),
-            just("RFI").or(just("rfi")).to(SpecialOpcode::ReturnFromInterrupt),
-            just("IAQ").or(just("iaq")).to(SpecialOpcode::InterruptAddToQueue),
-            just("HWN").or(just("hwn")).to(SpecialOpcode::HardwareNumberConnected),
+            just("JSR")
+                .or(just("jsr"))
+                .to(SpecialOpcode::JumpSubroutine),
+            just("INT")
+                .or(just("int"))
+                .to(SpecialOpcode::InterruptTrigger),
+            just("IAG")
+                .or(just("iag"))
+                .to(SpecialOpcode::InterruptAddressGet),
+            just("IAS")
+                .or(just("ias"))
+                .to(SpecialOpcode::InterruptAddressSet),
+            just("RFI")
+                .or(just("rfi"))
+                .to(SpecialOpcode::ReturnFromInterrupt),
+            just("IAQ")
+                .or(just("iaq"))
+                .to(SpecialOpcode::InterruptAddToQueue),
+            just("HWN")
+                .or(just("hwn"))
+                .to(SpecialOpcode::HardwareNumberConnected),
             just("HWQ").or(just("hwq")).to(SpecialOpcode::HardwareQuery),
-            just("HWI").or(just("hwi")).to(SpecialOpcode::HardwareInterrupt),
+            just("HWI")
+                .or(just("hwi"))
+                .to(SpecialOpcode::HardwareInterrupt),
         ])
     }
 }
@@ -251,46 +288,62 @@ impl OperandBWithLabel {
     ///     | literal
     ///     ;
     fn parser(operand_b: bool) -> impl Parser<char, Self, Error = Simple<char>> {
-        use instructions::{OperandB, Register, WithRegister, WithPayload};
+        use instructions::{OperandB, Register, WithPayload, WithRegister};
 
-        let register = Register::parser()
-            .map(|register|
-                OperandBWithLabel::Without(OperandB::WithRegister(WithRegister::Register, register)));
+        let register = Register::parser().map(|register| {
+            OperandBWithLabel::Without(OperandB::WithRegister(WithRegister::Register, register))
+        });
 
         // locationInRegister
         //     : '[' REGISTER ']'
         //     ;
-        let location_in_register = Register::parser()
-            .delimited_by(just('['), just(']'))
-            .map(|register|
-                OperandBWithLabel::Without(OperandB::WithRegister(WithRegister::LocationInRegister, register)));
+        let location_in_register =
+            Register::parser()
+                .delimited_by(just('['), just(']'))
+                .map(|register| {
+                    OperandBWithLabel::Without(OperandB::WithRegister(
+                        WithRegister::LocationInRegister,
+                        register,
+                    ))
+                });
 
         // registerOffsetByLiteral
         //     : REGISTER '+' (label | value)
         //     ;
-        let register_offset_by_literal = Register::parser().padded()
+        let register_offset_by_literal = Register::parser()
+            .padded()
             .then_ignore(just('+').padded())
-            .then(Datum::identifier_parser().or(Datum::number_parser()).padded());
+            .then(
+                Datum::identifier_parser()
+                    .or(Datum::number_parser())
+                    .padded(),
+            );
 
         // literalOffsetByRegister
         //     : (label | value) '+' REGISTER
         //     ;
         let literal_offset_by_register = Datum::identifier_parser()
-            .or(Datum::number_parser()).padded()
+            .or(Datum::number_parser())
+            .padded()
             .then_ignore(just('+').padded())
-            .then(Register::parser()).padded()
+            .then(Register::parser())
+            .padded()
             .map(|(datum, register)| (register, datum));
 
         // locationOffsetByRegister
         //     : '[' (registerOffsetByLiteral | literalOffsetByRegister) ']'
         //     ;
-        let location_offset_by_register = register_offset_by_literal.or(literal_offset_by_register)
+        let location_offset_by_register = register_offset_by_literal
+            .or(literal_offset_by_register)
             .delimited_by(just('['), just(']'))
             .map(|(register, datum)| match datum {
-                Datum::Identifier(label) =>
-                    OperandBWithLabel::With(WithPayload::LocationOffsetByRegister(register), label),
-                Datum::Number(value) =>
-                    OperandBWithLabel::Without(OperandB::WithPayload(WithPayload::LocationOffsetByRegister(register), value)),
+                Datum::Identifier(label) => {
+                    OperandBWithLabel::With(WithPayload::LocationOffsetByRegister(register), label)
+                }
+                Datum::Number(value) => OperandBWithLabel::Without(OperandB::WithPayload(
+                    WithPayload::LocationOffsetByRegister(register),
+                    value,
+                )),
                 _ => unreachable!(),
             });
 
@@ -302,50 +355,72 @@ impl OperandBWithLabel {
             just("push").or(just("PUSH"))
         } else {
             just("pop").or(just("POP"))
-        }.ignored()
-            .map(|_| OperandBWithLabel::Without(OperandB::PushOrPop));
+        }
+        .ignored()
+        .map(|_| OperandBWithLabel::Without(OperandB::PushOrPop));
 
-        let peek = just("peek").or(just("PEEK")).ignored()
+        let peek = just("peek")
+            .or(just("PEEK"))
+            .ignored()
             .map(|_| OperandBWithLabel::Without(OperandB::Peek));
 
         // pick
         //     : PICK (label | value)
         //     ;
-        let pick = just("pick").or(just("PICK")).padded().ignored()
+        let pick = just("pick")
+            .or(just("PICK"))
+            .padded()
+            .ignored()
             .then(Datum::identifier_parser().or(Datum::number_parser()))
             .map(|(_, datum)| match datum {
                 Datum::Identifier(label) => OperandBWithLabel::With(WithPayload::Pick, label),
-                Datum::Number(value) => OperandBWithLabel::Without(OperandB::WithPayload(WithPayload::Pick, value)),
+                Datum::Number(value) => {
+                    OperandBWithLabel::Without(OperandB::WithPayload(WithPayload::Pick, value))
+                }
                 _ => unreachable!(),
             });
 
-        let stack_pointer = just("sp").or(just("SP")).ignored()
+        let stack_pointer = just("sp")
+            .or(just("SP"))
+            .ignored()
             .map(|_| OperandBWithLabel::Without(OperandB::StackPointer));
 
-        let program_counter = just("pc").or(just("PC")).ignored()
+        let program_counter = just("pc")
+            .or(just("PC"))
+            .ignored()
             .map(|_| OperandBWithLabel::Without(OperandB::ProgramCounter));
 
-        let extra = just("ex").or(just("EX")).ignored()
+        let extra = just("ex")
+            .or(just("EX"))
+            .ignored()
             .map(|_| OperandBWithLabel::Without(OperandB::Extra));
 
         // location
         //     : '[' (label | value) ']'
         //     ;
-        let location = Datum::identifier_parser().or(Datum::number_parser()).padded()
+        let location = Datum::identifier_parser()
+            .or(Datum::number_parser())
+            .padded()
             .delimited_by(just('['), just(']'))
             .map(|datum| match datum {
                 Datum::Identifier(label) => OperandBWithLabel::With(WithPayload::Location, label),
-                Datum::Number(value) => OperandBWithLabel::Without(OperandB::WithPayload(WithPayload::Location, value)),
+                Datum::Number(value) => {
+                    OperandBWithLabel::Without(OperandB::WithPayload(WithPayload::Location, value))
+                }
                 _ => unreachable!(),
             });
 
         // literal
         //     : (label | value)
         //     ;
-        let literal = Datum::identifier_parser().or(Datum::number_parser()).padded()
+        let literal = Datum::identifier_parser()
+            .or(Datum::number_parser())
+            .padded()
             .map(|datum| match datum {
                 Datum::Identifier(label) => OperandBWithLabel::With(WithPayload::Literal, label),
-                Datum::Number(value) => OperandBWithLabel::Without(OperandB::WithPayload(WithPayload::Literal, value)),
+                Datum::Number(value) => {
+                    OperandBWithLabel::Without(OperandB::WithPayload(WithPayload::Literal, value))
+                }
                 _ => unreachable!(),
             });
 
@@ -377,20 +452,21 @@ impl OperandAWithLabel {
     fn parser() -> impl Parser<char, Self, Error = Simple<char>> {
         use instructions::{OperandA, OperandB};
 
-        OperandBWithLabel::parser(false)
-            .map(|operand_b| match operand_b {
-                OperandBWithLabel::With(with_payload, label) =>
-                    OperandAWithLabel::With(with_payload, label),
-                OperandBWithLabel::Without(operand_b @ OperandB::WithPayload(_, payload)) => {
-                    if payload == 0xffff || payload <= 30 {
-                        OperandAWithLabel::Without(OperandA::SmallLiteral(payload as i8))
-                    } else {
-                        OperandAWithLabel::Without(OperandA::LeftValue(operand_b))
-                    }
+        OperandBWithLabel::parser(false).map(|operand_b| match operand_b {
+            OperandBWithLabel::With(with_payload, label) => {
+                OperandAWithLabel::With(with_payload, label)
+            }
+            OperandBWithLabel::Without(operand_b @ OperandB::WithPayload(_, payload)) => {
+                if payload == 0xffff || payload <= 30 {
+                    OperandAWithLabel::Without(OperandA::SmallLiteral(payload as i8))
+                } else {
+                    OperandAWithLabel::Without(OperandA::LeftValue(operand_b))
                 }
-                OperandBWithLabel::Without(operand_b) =>
-                    OperandAWithLabel::Without(OperandA::LeftValue(operand_b)),
-            })
+            }
+            OperandBWithLabel::Without(operand_b) => {
+                OperandAWithLabel::Without(OperandA::LeftValue(operand_b))
+            }
+        })
     }
 }
 
@@ -401,7 +477,8 @@ impl instructions::Register {
     fn parser() -> impl Parser<char, Self, Error = Simple<char>> {
         use instructions::Register;
 
-        one_of("abcxyzijABCXYZIJ").padded()
+        one_of("abcxyzijABCXYZIJ")
+            .padded()
             .then_ignore(one_of(",+[]").rewind())
             .map(|register| match register {
                 'a' | 'A' => Register::A,
@@ -425,7 +502,8 @@ impl Data {
     ///     : datum (',' datum)*
     ///     ;
     fn parser() -> impl Parser<char, Self, Error = Simple<char>> {
-        Datum::parser().padded()
+        Datum::parser()
+            .padded()
             .separated_by(just(','))
             .map(|data| Data(data))
     }
@@ -465,8 +543,7 @@ impl Datum {
     ///     : [._a-zA-Z]+[._a-zA-Z0-9]*
     ///     ;
     fn identifier_parser() -> impl Parser<char, Self, Error = Simple<char>> {
-        text::ident()
-            .map(|identifier| Datum::Identifier(identifier))
+        text::ident().map(|identifier| Datum::Identifier(identifier))
     }
 
     /// NUMBER
@@ -475,7 +552,8 @@ impl Datum {
     ///     | '-'? [0-9]+
     ///     ;
     fn number_parser() -> impl Parser<char, Self, Error = Simple<char>> {
-        let decimal = just('-').or_not()
+        let decimal = just('-')
+            .or_not()
             .then(text::digits(10))
             .map(|(minus_sign, digits)| {
                 let value = digits.parse().unwrap();
@@ -499,8 +577,6 @@ impl Datum {
             .map(|text: String| u16::from_str_radix(text.as_str(), 16).unwrap())
             .map(|number| Datum::Number(number));
 
-        binary
-            .or(hexadecimal)
-            .or(decimal)
+        binary.or(hexadecimal).or(decimal)
     }
 }
