@@ -5,7 +5,7 @@ use crate::instructions::{
 };
 
 #[test]
-fn if_greater_than_with_lesser_small_literal() {
+fn with_lesser_small_literal() {
     let mut cpu = Dcpu::default();
     let mut hardware = vec![];
     cpu.load(
@@ -44,7 +44,7 @@ fn if_greater_than_with_lesser_small_literal() {
 }
 
 #[test]
-fn if_greater_than_with_greater_small_literal() {
+fn with_greater_small_literal() {
     let mut cpu = Dcpu::default();
     let mut hardware = vec![];
     cpu.load(
@@ -83,7 +83,7 @@ fn if_greater_than_with_greater_small_literal() {
 }
 
 #[test]
-fn if_greater_than_with_greater_literal() {
+fn with_greater_literal() {
     let mut cpu = Dcpu::default();
     let mut hardware = vec![];
     cpu.load(
@@ -122,7 +122,7 @@ fn if_greater_than_with_greater_literal() {
 }
 
 #[test]
-fn if_greater_than_with_lesser_literal() {
+fn with_lesser_literal() {
     let mut cpu = Dcpu::default();
     let mut hardware = vec![];
     cpu.load(

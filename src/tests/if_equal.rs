@@ -3,7 +3,7 @@ use crate::instructions;
 use crate::instructions::{BasicOpcode, Instruction, OperandA, OperandB, Register, WithRegister};
 
 #[test]
-fn if_equal_register_with_equal_small_literal() {
+fn register_with_equal_small_literal() {
     let mut cpu = Dcpu::default();
     let mut hardware = vec![];
     cpu.load(
@@ -42,7 +42,7 @@ fn if_equal_register_with_equal_small_literal() {
 }
 
 #[test]
-fn if_equal_register_with_unequal_small_literal() {
+fn register_with_unequal_small_literal() {
     let mut cpu = Dcpu::default();
     let mut hardware = vec![];
     cpu.load(
@@ -81,7 +81,7 @@ fn if_equal_register_with_unequal_small_literal() {
 }
 
 #[test]
-fn if_equal_skips_conditionals_when_not_equal() {
+fn skips_conditionals_when_not_equal() {
     let mut cpu = Dcpu::default();
     let mut hardware = vec![];
     cpu.load(
@@ -126,7 +126,7 @@ fn if_equal_skips_conditionals_when_not_equal() {
 }
 
 #[test]
-fn if_equal_does_not_skip_conditionals_when_equal() {
+fn does_not_skip_conditionals_when_equal() {
     let mut cpu = Dcpu::default();
     let mut hardware = vec![];
     cpu.load(

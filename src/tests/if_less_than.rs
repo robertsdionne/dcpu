@@ -3,7 +3,7 @@ use crate::instructions;
 use crate::instructions::{BasicOpcode, Instruction, OperandA, OperandB, Register, WithRegister};
 
 #[test]
-fn if_less_than_with_lesser_small_literal() {
+fn with_lesser_small_literal() {
     let mut cpu = Dcpu::default();
     let mut hardware = vec![];
     cpu.load(
@@ -42,7 +42,7 @@ fn if_less_than_with_lesser_small_literal() {
 }
 
 #[test]
-fn if_less_than_with_greater_small_literal() {
+fn with_greater_small_literal() {
     let mut cpu = Dcpu::default();
     let mut hardware = vec![];
     cpu.load(

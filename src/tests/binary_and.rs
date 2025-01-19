@@ -5,7 +5,7 @@ use crate::instructions::{
 };
 
 #[test]
-fn binary_and_register_with_small_literal() {
+fn register_with_small_literal() {
     let mut cpu = Dcpu::default();
     let mut hardware = vec![];
     cpu.load(

@@ -3,7 +3,7 @@ use crate::instructions;
 use crate::instructions::{BasicOpcode, Instruction, OperandA, OperandB, Register, WithRegister};
 
 #[test]
-fn if_clear_with_common_bits() {
+fn with_common_bits() {
     let mut cpu = Dcpu::default();
     let mut hardware = vec![];
     cpu.load(
@@ -42,7 +42,7 @@ fn if_clear_with_common_bits() {
 }
 
 #[test]
-fn if_clear_without_common_bits() {
+fn without_common_bits() {
     let mut cpu = Dcpu::default();
     let mut hardware = vec![];
     cpu.load(

@@ -3,7 +3,7 @@ use crate::instructions;
 use crate::instructions::{BasicOpcode, Instruction, OperandA, OperandB, Register, WithRegister};
 
 #[test]
-fn modulo_register_with_small_literal() {
+fn register_with_small_literal() {
     let mut cpu = Dcpu::default();
     let mut hardware = vec![];
     cpu.load(

@@ -5,7 +5,7 @@ use crate::instructions::{
 };
 
 #[test]
-fn divide_signed_register_with_small_literal() {
+fn register_with_small_literal() {
     let mut cpu = Dcpu::default();
     let mut hardware = vec![];
     cpu.load(
@@ -32,7 +32,7 @@ fn divide_signed_register_with_small_literal() {
 }
 
 #[test]
-fn divide_signed_by_zero() {
+fn by_zero() {
     let mut cpu = Dcpu::default();
     let mut hardware = vec![];
     cpu.load(
