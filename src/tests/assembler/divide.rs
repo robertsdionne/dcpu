@@ -22,10 +22,8 @@ fn register_with_small_literal() -> Result<(), Box<dyn error::Error>> {
             .into(),
         ]),
         assembler::assemble(
-            "
-            set a, 30
-            div a, 16
-        "
+            "set a, 30
+            div a, 16"
         )?,
     );
     Ok(())
@@ -49,10 +47,8 @@ fn by_zero() -> Result<(), Box<dyn error::Error>> {
             .into(),
         ]),
         assembler::assemble(
-            "
-            set a, 30
-            div a, 0
-        "
+            "set a, 30
+            div a, 0"
         )?,
     );
     Ok(())

@@ -32,12 +32,10 @@ fn register_with_lesser_small_literal() -> Result<(), Box<dyn error::Error>> {
             .into(),
         ]),
         assembler::assemble(
-            "
-            set a, 30
+            "set a, 30
             ifa a, -1
             set push, 13
-            set push, 14
-        "
+            set push, 14"
         )?,
     );
     Ok(())
@@ -73,12 +71,10 @@ fn register_with_greater_small_literal() -> Result<(), Box<dyn error::Error>> {
             .into(),
         ]),
         assembler::assemble(
-            "
-            set a, -1
+            "set a, -1
             ifa a, 30
             set push, 13
-            set push, 14
-        "
+            set push, 14"
         )?,
     );
     Ok(())

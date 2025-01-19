@@ -23,10 +23,8 @@ fn register_with_small_literal() -> Result<(), Box<dyn error::Error>> {
             0xfffe,
         ],
         assembler::assemble(
-            "
-            set a, 16
-            dvi a, 0xfffe
-        "
+            "set a, 16
+            dvi a, 0xfffe"
         )?,
     );
     Ok(())
@@ -50,10 +48,8 @@ fn by_zero() -> Result<(), Box<dyn error::Error>> {
             .into(),
         ]),
         assembler::assemble(
-            "
-            set a, 30
-            dvi a, 0
-        "
+            "set a, 30
+            dvi a, 0"
         )?,
     );
     Ok(())

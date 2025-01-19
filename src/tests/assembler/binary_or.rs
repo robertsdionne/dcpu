@@ -24,10 +24,8 @@ fn register_with_small_literal() -> Result<(), Box<dyn error::Error>> {
             0x00ff,
         ],
         assembler::assemble(
-            "
-            set a, 0xf0f0
-            bor a, 0x00ff
-        "
+            "set a, 0xf0f0
+            bor a, 0x00ff"
         )?,
     );
     Ok(())

@@ -20,10 +20,8 @@ fn register_with_small_literal() -> Result<(), Box<dyn error::Error>> {
             .into(),
         ]),
         assembler::assemble(
-            "
-            set a, 13
-            add a, 14
-        "
+            "set a, 13
+            add a, 14"
         )?,
     );
     Ok(())
@@ -47,10 +45,8 @@ fn register_with_overflow() -> Result<(), Box<dyn error::Error>> {
             .into(),
         ]),
         assembler::assemble(
-            "
-            set a, -1
-            add a, -1
-        "
+            "set a, -1
+            add a, -1"
         )?,
     );
     Ok(())
