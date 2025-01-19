@@ -1,7 +1,7 @@
 use crate::dcpu::Dcpu;
 use crate::hardware;
 
-#[derive(Debug)]
+#[derive(Debug, Default)]
 pub struct Device {
     last_error: u16,
     region_address: u16,

@@ -2,7 +2,7 @@ use std::time;
 use crate::dcpu::Dcpu;
 use crate::hardware;
 
-#[derive(Default, Debug)]
+#[derive(Debug, Default)]
 pub struct Device {
     border_color: u16,
     font_address: u16,
