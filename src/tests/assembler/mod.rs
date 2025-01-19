@@ -5,3 +5,4 @@ mod binary_or;
 mod divide;
 mod divide_signed;
 mod if_above;
+mod if_bit_set;
