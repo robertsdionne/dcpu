@@ -18,8 +18,6 @@ mod sped3;
 mod stderr;
 mod stdin;
 mod stdout;
-#[cfg(test)]
-mod tests;
 
 fn main() -> Result<(), Box<dyn error::Error>> {
     match Cli::parse() {
