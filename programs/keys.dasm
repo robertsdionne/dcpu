@@ -28,9 +28,13 @@
     hwi 0
     mod c, 4
     set [0xf000], [graphics + c]
+    bor [0xf000], 0xfc00
     set [0xf01f], [graphics + c]
+    bor [0xf01f], 0xfc00
     set [0xf160], [graphics + c]
+    bor [0xf160], 0xfc00
     set [0xf17f], [graphics + c]
+    bor [0xf17f], 0xfc00
     set pc, pop
 
 :graphics

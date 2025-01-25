@@ -2,14 +2,105 @@ use crate::dcpu::Dcpu;
 use crate::hardware;
 use std::time;
 
+#[allow(dead_code)]
 #[derive(Debug, Default)]
 pub struct Device {
-    border_color: u16,
+    pub border_color: u16,
     font_address: u16,
     palette_address: u16,
     pub video_address: u16,
     boot_png_path: Option<String>,
     start_time: Option<time::Instant>,
+}
+
+impl Device {
+    pub fn paint(&self, dcpu: &Dcpu, pixels: &mut Vec<Pixel>) {
+        pixels.resize_with((WIDTH * HEIGHT) as usize, Pixel::default);
+
+        let font = if self.font_address > 0 {
+            &dcpu.memory[self.font_address as usize .. self.font_address as usize + 0x100]
+        } else {
+            &DEFAULT_FONT[..]
+        };
+
+        let palette = if self.palette_address > 0 {
+            &dcpu.memory[self.palette_address as usize .. self.palette_address as usize + 0x100]
+        } else {
+            &DEFAULT_PALETTE[..]
+        };
+
+        let time_to_blink = if let Some(start_time) = self.start_time {
+            start_time.elapsed().as_secs_f32() % 2.0 < 1.0
+        } else {
+            false
+        };
+
+        for x in 0..WIDTH {
+            for y in 0..HEIGHT {
+                let i = (x / BORDER_WIDTH) as i16 - 1;
+                let j = (y / BORDER_HEIGHT) as i16 - 1;
+
+                let in_border = i < 0 || i == BUFFER_WIDTH as i16 || j < 0 || j == BUFFER_HEIGHT as i16;
+                if in_border {
+                    Self::set_pixel(x, y, palette[(self.border_color & 0xf) as usize], pixels);
+                    continue;
+                }
+
+                let offset = BUFFER_WIDTH * j as u16 + i as u16;
+                let character = dcpu.memory[self.video_address.wrapping_add(offset) as usize];
+                let blink = character & 0x0080 > 0;
+                let mut foreground_color = (character & 0xf000) >> 12;
+                let mut background_color = (character & 0x0f00) >> 8;
+                if blink && time_to_blink {
+                    (foreground_color, background_color) = (background_color, foreground_color);
+                }
+
+                let foreground = Self::lookup_font_pixel(font, x % BORDER_WIDTH, y % BORDER_HEIGHT, character & 0x7f);
+                let value = if foreground {
+                    palette[foreground_color as usize]
+                } else {
+                    palette[background_color as usize]
+                };
+
+                Self::set_pixel(x, y, value, pixels);
+            }
+        }
+    }
+
+    fn set_pixel(x: u16, y: u16, value: u16, pixels: &mut [Pixel]) {
+        let r = ((value & 0x0f00) >> 8) as u8;
+        let r = r | (r << 4);
+        let g = ((value & 0x00f0) >> 4) as u8;
+        let g = g | (g << 4);
+        let b = (value & 0x000f) as u8;
+        let b = b | (b << 4);
+        pixels[(y * WIDTH + x) as usize] = Pixel {
+            r,
+            g,
+            b,
+            a: 0xff,
+        };
+    }
+
+    fn lookup_font_pixel(font: &[u16], x: u16, y: u16, index: u16) -> bool {
+        let lo = font[2 * index as usize];
+        let hi = font[2 * index as usize + 1];
+
+        let mut mask = (1 << y) as u16;
+        if x < 2 {
+            if x == 0 {
+                mask = mask << BORDER_HEIGHT;
+            }
+
+            lo & mask > 0
+        } else {
+            if x == 2 {
+                mask = mask << BORDER_HEIGHT;
+            }
+
+            hi & mask > 0
+        }
+    }
 }
 
 impl hardware::Hardware for Device {
@@ -47,14 +138,14 @@ impl hardware::Hardware for Device {
     }
 }
 
-const WIDTH: u16 = AREA_WIDTH + 2 * BORDER_WIDTH;
-const HEIGHT: u16 = AREA_HEIGHT + 2 * BORDER_HEIGHT;
+pub const WIDTH: u16 = AREA_WIDTH + 2 * BORDER_WIDTH;
+pub const HEIGHT: u16 = AREA_HEIGHT + 2 * BORDER_HEIGHT;
 const AREA_WIDTH: u16 = 128;
 const AREA_HEIGHT: u16 = 96;
 const BORDER_WIDTH: u16 = 4;
 const BORDER_HEIGHT: u16 = 8;
-const BUFFER_WIDTH: u16 = 32;
-const BUFFER_HEIGHT: u16 = 12;
+pub const BUFFER_WIDTH: u16 = 32;
+pub const BUFFER_HEIGHT: u16 = 12;
 const SCALE: u16 = 3;
 const TITLE: &'static str = "LEM1802";
 const BOOT_PNG: &'static str = "documents/boot.png";
@@ -103,7 +194,7 @@ const DEFAULT_PALETTE: [u16; 16] = [
     0x0fff, // white
 ];
 
-const TEST_PATTERN: [u16; 128] = [
+pub const TEST_PATTERN: [u16; 128] = [
     0xf000, 0xf001, 0xf002, 0xf003, 0xf004, 0xf005, 0xf006, 0xf007, 0xf008, 0xf009, 0xf00a, 0xf00b,
     0xf00c, 0xf00d, 0xf00e, 0xf00f, 0xf010, 0xf011, 0xf012, 0xf013, 0xf014, 0xf015, 0xf016, 0xf017,
     0xf018, 0xf019, 0xf01a, 0xf01b, 0xf01c, 0xf01d, 0xf01e, 0xf01f, 0xf020, 0xf021, 0xf022, 0xf023,
@@ -133,4 +224,13 @@ impl From<u16> for Message {
     fn from(value: u16) -> Self {
         unsafe { std::mem::transmute(value & 0b111) }
     }
+}
+
+#[repr(C)]
+#[derive(Clone, Debug, Default)]
+pub struct Pixel {
+    r: u8,
+    g: u8,
+    b: u8,
+    a: u8,
 }

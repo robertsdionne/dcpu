@@ -2,6 +2,7 @@ use crate::dcpu::Dcpu;
 use crate::hardware;
 use std::fs;
 
+#[allow(dead_code)]
 #[derive(Debug, Default)]
 pub struct Device {
     file: Option<fs::File>,
@@ -23,11 +24,12 @@ impl hardware::Hardware for Device {
         VERSION
     }
 
-    fn handle_hardware_interrupt(&mut self, dcpu: &mut Dcpu) {
+    fn handle_hardware_interrupt(&mut self, _dcpu: &mut Dcpu) {
         todo!()
     }
 }
 
+#[allow(dead_code)]
 #[repr(u16)]
 enum Message {
     QueryMediaPresent,
@@ -47,6 +49,7 @@ impl From<u16> for Message {
     }
 }
 
+#[allow(dead_code)]
 #[repr(u16)]
 enum Flags {
     NonBlocking,
@@ -59,6 +62,7 @@ impl From<u16> for Flags {
     }
 }
 
+#[allow(dead_code)]
 #[repr(u16)]
 enum Interrupt {
     None,
@@ -67,12 +71,14 @@ enum Interrupt {
     WriteComplete,
 }
 
+#[allow(dead_code)]
 #[repr(u16)]
 enum MediaQuality {
     AuthenticHITMedia = 0x7fff,
     MediaFromOtherCompanies = 0xffff,
 }
 
+#[allow(dead_code)]
 #[repr(u16)]
 enum Error {
     None,

@@ -20,11 +20,12 @@ impl hardware::Hardware for Device {
         VERSION
     }
 
-    fn handle_hardware_interrupt(&mut self, dcpu: &mut Dcpu) {
+    fn handle_hardware_interrupt(&mut self, _dcpu: &mut Dcpu) {
         todo!()
     }
 }
 
+#[allow(dead_code)]
 #[repr(u16)]
 enum Message {
     SetEnvelope1,
