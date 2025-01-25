@@ -1,5 +1,6 @@
 use clap::Parser;
-use std::{error, fs};
+use std::{error, fs, io};
+use std::io::{IsTerminal, Write};
 
 #[allow(dead_code)]
 mod assembler;
@@ -40,7 +41,14 @@ fn main() -> Result<(), Box<dyn error::Error>> {
     match Cli::parse() {
         Cli::Assemble { program } => {
             let program = assembler::assemble_file(&program)?;
-            println!("{:#06x?}", program);
+            if io::stdout().is_terminal() {
+                println!("{:04x?}", program);
+            } else {
+                let bytes: Vec<u8> = program.iter()
+                    .flat_map(|word| word.to_le_bytes())
+                    .collect();
+                io::stdout().write_all(&bytes)?;
+            }
             Ok(())
         }
         Cli::Print { program } => print(&program),
