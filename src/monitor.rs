@@ -74,13 +74,7 @@ impl Device {
     }
 
     fn set_pixel(x: u16, y: u16, value: u16, pixels: &mut [Pixel]) {
-        let r = ((value & 0x0f00) >> 8) as u8;
-        let r = r | (r << 4);
-        let g = ((value & 0x00f0) >> 4) as u8;
-        let g = g | (g << 4);
-        let b = (value & 0x000f) as u8;
-        let b = b | (b << 4);
-        pixels[(y * WIDTH + x) as usize] = Pixel { r, g, b, a: 0xff };
+        pixels[(y * WIDTH + x) as usize] = Pixel::from(value);
     }
 
     fn lookup_font_pixel(font: &[u16], x: u16, y: u16, index: u16) -> bool {
@@ -176,7 +170,7 @@ const DEFAULT_FONT: [u16; 8 * 32] = [
     0x0201, 0x0201, 0x0205, 0x0200,
 ];
 
-const DEFAULT_PALETTE: [u16; 16] = [
+pub const DEFAULT_PALETTE: [u16; 16] = [
     0x0000, // black
     0x0008, // navy
     0x0080, // green
@@ -230,8 +224,20 @@ impl From<u16> for Message {
 #[repr(C)]
 #[derive(Clone, Debug, Default)]
 pub struct Pixel {
-    r: u8,
-    g: u8,
-    b: u8,
-    a: u8,
+    pub r: u8,
+    pub g: u8,
+    pub b: u8,
+    pub a: u8,
+}
+
+impl From<u16> for Pixel {
+    fn from(value: u16) -> Self {
+        let r = ((value & 0x0f00) >> 8) as u8;
+        let r = r | (r << 4);
+        let g = ((value & 0x00f0) >> 4) as u8;
+        let g = g | (g << 4);
+        let b = (value & 0x000f) as u8;
+        let b = b | (b << 4);
+        Self { r, g, b, a: 0xff }
+    }
 }

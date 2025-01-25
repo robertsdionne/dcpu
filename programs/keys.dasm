@@ -47,4 +47,5 @@
 	set a, [0xefff]
 	mod a, 0x180
 	set [0xf000+a], c
+	bor [0xf000+a], 0xf000
 	set pc, pop

@@ -1,20 +1,26 @@
 use crate::{assembler, clock, dcpu, hardware, keyboard, monitor};
 use cursive;
 use cursive::event::Key;
-use cursive::{event, view, views, CursiveExt};
+use cursive::{event, theme, view, views, CursiveExt};
 use std::error;
+use cursive::utils::span;
 
 pub fn run(program: &str) -> Result<(), Box<dyn error::Error>> {
     let program = assembler::assemble_file(&program)?;
 
     let clock = clock::Device::default();
     let keyboard = keyboard::Device::default();
-    let monitor = monitor::Device::default();
+    let mut monitor = monitor::Device::default();
+    monitor.border_color = 1;
     let mut dcpu = dcpu::Dcpu::default();
+    dcpu.memory[0xf000..0xf080].copy_from_slice(&monitor::TEST_PATTERN);
+    for i in 0..16 {
+        for j in 0..16 {
+            let offset = 0xf000 + (j * monitor::BUFFER_WIDTH + i) as usize;
+            dcpu.memory[offset] = (dcpu.memory[offset] & 0x00ff) | (j << 12) | (i << 8);
+        }
+    }
     dcpu.load(0, &program);
-
-    let data = vec![0x20; 0x180];
-    dcpu.load(0xf000, &data);
 
     let mut siv = cursive::Cursive::new();
     siv.add_layer(View {
@@ -69,28 +75,73 @@ impl view::ViewWrapper for View {
                 hardware.push(&mut self.monitor);
                 self.cpu.execute_instructions(&mut hardware, 3333);
                 let video = self.monitor.video_address as usize;
-                let text: Vec<u8> = self.cpu.memory[video..video + 0x180].iter()
-                    .map(|word| *word as u8)
-                    .collect();
 
-                self.view.set_content(format!(
-                    "{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}",
-                    String::from_utf8_lossy(&text[..0x20]),
-                    String::from_utf8_lossy(&text[0x20..0x40]),
-                    String::from_utf8_lossy(&text[0x40..0x60]),
-                    String::from_utf8_lossy(&text[0x60..0x80]),
-                    String::from_utf8_lossy(&text[0x80..0xa0]),
-                    String::from_utf8_lossy(&text[0xa0..0xc0]),
-                    String::from_utf8_lossy(&text[0xc0..0xe0]),
-                    String::from_utf8_lossy(&text[0xe0..0x100]),
-                    String::from_utf8_lossy(&text[0x100..0x120]),
-                    String::from_utf8_lossy(&text[0x120..0x140]),
-                    String::from_utf8_lossy(&text[0x140..0x160]),
-                    String::from_utf8_lossy(&text[0x160..0x180]),
-                ));
+                let styled_text = span::SpannedString::concatenate(
+                    self.cpu.memory[video..video + 0x180].chunks(monitor::BUFFER_WIDTH as usize)
+                        .map(|words| self.word_to_styled(false, words))
+                );
+                let styled_text = span::SpannedString::concatenate(vec![
+                    self.word_to_styled(true, &[0x20; monitor::BUFFER_WIDTH as usize]),
+                    styled_text,
+                    self.word_to_styled(true, &[0x20; monitor::BUFFER_WIDTH as usize]),
+                ]);
+
+                self.view.set_content(styled_text);
                 event::EventResult::Consumed(None)
             }
             _ => event::EventResult::Ignored,
         }
+    }
+}
+
+impl View {
+    fn word_to_styled(&self, is_border: bool, words: &[u16]) -> span::SpannedString<theme::Style> {
+        let palette = monitor::DEFAULT_PALETTE;
+        let border_color = monitor::Pixel::from(palette[(self.monitor.border_color & 0xf) as usize]);
+        let border = span::SpannedString::styled(" ", theme::Style {
+            color: theme::ColorStyle {
+                back: border_color.clone().into(),
+                ..Default::default()
+            },
+            ..Default::default()
+        });
+        let newline = span::SpannedString::styled("\n", theme::Style::default());
+        let content = span::SpannedString::concatenate(
+            words.iter()
+                .map(|word| {
+                    let bytes = [*word as u8];
+                    let text = if (*word as u8 as char).is_control() {
+                        ".".into()
+                    } else {
+                        String::from_utf8_lossy(&bytes)
+                    };
+                    let foreground_color = (word & 0xf000) >> 12;
+                    let foreground_color = monitor::Pixel::from(palette[foreground_color as usize]);
+                    let background_color = if is_border {
+                        self.monitor.border_color & 0xf
+                    } else {
+                        (word & 0x0f00) >> 8
+                    };
+                    let background_color = monitor::Pixel::from(palette[background_color as usize]);
+                    let blink = word & 0x80 > 0;
+                    span::SpannedString::styled(text, theme::Style {
+                        color: theme::ColorStyle {
+                            front: foreground_color.into(),
+                            back: background_color.into(),
+                        },
+                        effects: if blink {
+                            theme::Effects::only(theme::Effect::Blink)
+                        } else {
+                            theme::Effects::default()
+                        },
+                    })
+                }));
+        span::SpannedString::concatenate(vec![border.clone(), content, border, newline])
+    }
+}
+
+impl Into<theme::ColorType> for monitor::Pixel {
+    fn into(self) -> theme::ColorType {
+        theme::ColorType::Color(theme::Color::Rgb(self.r, self.g, self.b))
     }
 }
