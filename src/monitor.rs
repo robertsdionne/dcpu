@@ -18,13 +18,13 @@ impl Device {
         pixels.resize_with((WIDTH * HEIGHT) as usize, Pixel::default);
 
         let font = if self.font_address > 0 {
-            &dcpu.memory[self.font_address as usize .. self.font_address as usize + 0x100]
+            &dcpu.memory[self.font_address as usize..self.font_address as usize + 0x100]
         } else {
             &DEFAULT_FONT[..]
         };
 
         let palette = if self.palette_address > 0 {
-            &dcpu.memory[self.palette_address as usize .. self.palette_address as usize + 0x100]
+            &dcpu.memory[self.palette_address as usize..self.palette_address as usize + 0x100]
         } else {
             &DEFAULT_PALETTE[..]
         };
@@ -40,7 +40,8 @@ impl Device {
                 let i = (x / BORDER_WIDTH) as i16 - 1;
                 let j = (y / BORDER_HEIGHT) as i16 - 1;
 
-                let in_border = i < 0 || i == BUFFER_WIDTH as i16 || j < 0 || j == BUFFER_HEIGHT as i16;
+                let in_border =
+                    i < 0 || i == BUFFER_WIDTH as i16 || j < 0 || j == BUFFER_HEIGHT as i16;
                 if in_border {
                     Self::set_pixel(x, y, palette[(self.border_color & 0xf) as usize], pixels);
                     continue;
@@ -55,7 +56,12 @@ impl Device {
                     (foreground_color, background_color) = (background_color, foreground_color);
                 }
 
-                let foreground = Self::lookup_font_pixel(font, x % BORDER_WIDTH, y % BORDER_HEIGHT, character & 0x7f);
+                let foreground = Self::lookup_font_pixel(
+                    font,
+                    x % BORDER_WIDTH,
+                    y % BORDER_HEIGHT,
+                    character & 0x7f,
+                );
                 let value = if foreground {
                     palette[foreground_color as usize]
                 } else {
@@ -74,12 +80,7 @@ impl Device {
         let g = g | (g << 4);
         let b = (value & 0x000f) as u8;
         let b = b | (b << 4);
-        pixels[(y * WIDTH + x) as usize] = Pixel {
-            r,
-            g,
-            b,
-            a: 0xff,
-        };
+        pixels[(y * WIDTH + x) as usize] = Pixel { r, g, b, a: 0xff };
     }
 
     fn lookup_font_pixel(font: &[u16], x: u16, y: u16, index: u16) -> bool {

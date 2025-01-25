@@ -1,6 +1,6 @@
-use std::f32::consts;
 use crate::dcpu::Dcpu;
 use crate::hardware;
+use std::f32::consts;
 
 #[derive(Debug, Default)]
 pub struct Device {
@@ -17,7 +17,10 @@ impl Device {
         self.rotation = 0.99 * self.rotation + 0.01 * (self.target_rotation % 360) as f32;
     }
 
-    pub fn paint(&self, dcpu: &Dcpu) -> (Vec<[f32; 7]>, Vec<[f32; 7]>, Vec<[f32; 7]>, Vec<[f32; 7]>) {
+    pub fn paint(
+        &self,
+        dcpu: &Dcpu,
+    ) -> (Vec<[f32; 7]>, Vec<[f32; 7]>, Vec<[f32; 7]>, Vec<[f32; 7]>) {
         let (red, green, blue) = self.beam(dcpu);
         let lines = self.lines(dcpu);
 
@@ -31,9 +34,33 @@ impl Device {
         let theta1 = 2.0 * consts::PI / 3.0 + offset;
         let theta2 = 4.0 * consts::PI / 3.0 + offset;
         let origin = [
-            [theta0.cos() / 2.0, 0.0, theta0.sin() / 2.0, 0.0, 0.0, 0.0, alpha],
-            [theta1.cos() / 2.0, 0.0, theta1.sin() / 2.0, 0.0, 0.0, 0.0, alpha],
-            [theta2.cos() / 2.0, 0.0, theta2.sin() / 2.0, 0.0, 0.0, 0.0, alpha],
+            [
+                theta0.cos() / 2.0,
+                0.0,
+                theta0.sin() / 2.0,
+                0.0,
+                0.0,
+                0.0,
+                alpha,
+            ],
+            [
+                theta1.cos() / 2.0,
+                0.0,
+                theta1.sin() / 2.0,
+                0.0,
+                0.0,
+                0.0,
+                alpha,
+            ],
+            [
+                theta2.cos() / 2.0,
+                0.0,
+                theta2.sin() / 2.0,
+                0.0,
+                0.0,
+                0.0,
+                alpha,
+            ],
         ];
 
         let mut red = vec![];
@@ -42,7 +69,7 @@ impl Device {
 
         for i in 0..self.vertex_count {
             let offset = (self.region_address + 2 * i) as usize;
-            let words = &dcpu.memory[offset .. offset + i as usize];
+            let words = &dcpu.memory[offset..offset + i as usize];
 
             let color0 = words[1] >> 8;
             let color1 = words[3] >> 8;
@@ -63,44 +90,20 @@ impl Device {
 
                 match c {
                     4 => {
-                        red.push(if color0 & c > 0 {
-                            v0_prime
-                        } else {
-                            v0_black
-                        });
-                        red.push(if color1 & c > 0 {
-                            v1_prime
-                        } else {
-                            v1_black
-                        });
+                        red.push(if color0 & c > 0 { v0_prime } else { v0_black });
+                        red.push(if color1 & c > 0 { v1_prime } else { v1_black });
                         red.push(origin[s]);
-                    },
+                    }
                     2 => {
-                        green.push(if color0 & c > 0 {
-                            v0_prime
-                        } else {
-                            v0_black
-                        });
-                        green.push(if color1 & c > 0 {
-                            v1_prime
-                        } else {
-                            v1_black
-                        });
+                        green.push(if color0 & c > 0 { v0_prime } else { v0_black });
+                        green.push(if color1 & c > 0 { v1_prime } else { v1_black });
                         green.push(origin[s]);
-                    },
+                    }
                     1 => {
-                        blue.push(if color0 & c > 0 {
-                            v0_prime
-                        } else {
-                            v0_black
-                        });
-                        blue.push(if color1 & c > 0 {
-                            v1_prime
-                        } else {
-                            v1_black
-                        });
+                        blue.push(if color0 & c > 0 { v0_prime } else { v0_black });
+                        blue.push(if color1 & c > 0 { v1_prime } else { v1_black });
                         blue.push(origin[s]);
-                    },
+                    }
                     _ => unreachable!(),
                 }
             }
@@ -118,18 +121,22 @@ impl Device {
         let g = ((0x2 & color) >> 1) as f32;
         let b = (0x1 & color) as f32;
         let theta = consts::PI / 180.0 + self.rotation;
-        [x * theta.cos() + z * theta.sin(), y, x * theta.sin() - z * theta.cos(), r, g, b, alpha]
+        [
+            x * theta.cos() + z * theta.sin(),
+            y,
+            x * theta.sin() - z * theta.cos(),
+            r,
+            g,
+            b,
+            alpha,
+        ]
     }
 
     fn lines(&self, dcpu: &Dcpu) -> Vec<[f32; 7]> {
         let mut lines = vec![];
         for i in 0..self.vertex_count {
             let offset = (self.region_address + 2 * i) as usize;
-            lines.push(self.build_vertex(
-                dcpu.memory[offset],
-                dcpu.memory[offset + 1],
-                0.8,
-            ));
+            lines.push(self.build_vertex(dcpu.memory[offset], dcpu.memory[offset + 1], 0.8));
         }
         lines
     }

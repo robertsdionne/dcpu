@@ -1,6 +1,4 @@
-use crate::instructions::{
-    BasicOpcode, Instruction, OperandA, OperandB, Register, WithRegister,
-};
+use crate::instructions::{BasicOpcode, Instruction, OperandA, OperandB, Register, WithRegister};
 use crate::{assembler, instructions};
 use std::error;
 
