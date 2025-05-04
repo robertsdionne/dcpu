@@ -2,40 +2,17 @@ use clap::Parser;
 use std::{error, fs, io};
 use std::io::{IsTerminal, Write};
 
-#[allow(dead_code)]
-mod assembler;
-#[allow(dead_code)]
-mod clock;
-#[allow(dead_code)]
-mod cursive;
-#[allow(dead_code)]
-mod dcpu;
-#[allow(dead_code)]
-mod floppy;
-#[allow(dead_code)]
-mod hardware;
-#[allow(dead_code)]
-mod harold;
-#[allow(dead_code)]
-mod instructions;
-#[allow(dead_code)]
-mod keyboard;
-#[allow(dead_code)]
-mod kulog;
-#[allow(dead_code)]
-mod monitor;
-#[allow(dead_code)]
-mod printer;
-#[allow(dead_code)]
-mod sleep_chamber;
-#[allow(dead_code)]
-mod sped3;
-#[allow(dead_code)]
-mod stderr;
-#[allow(dead_code)]
-mod stdin;
-#[allow(dead_code)]
-mod stdout;
+use dcpu::assembler;
+use dcpu::clock;
+use dcpu::cursive;
+use dcpu::floppy;
+use dcpu::hardware;
+use dcpu::instructions;
+use dcpu::monitor;
+use dcpu::printer;
+use dcpu::stderr;
+use dcpu::stdin;
+use dcpu::stdout;
 
 fn main() -> Result<(), Box<dyn error::Error>> {
     match Cli::parse() {
